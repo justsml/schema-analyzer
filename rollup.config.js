@@ -8,15 +8,24 @@ const includePackages = {
   'debug': 'debug'
 }
 
+const envOptions = process.env.NODE_ENV === 'production' ? {
+  compact: true, // DEV MODE
+  sourcemap: false
+} : {
+  compact: true, // PRODUCTION MODE
+  sourcemap: 'inline'
+}
+
 export default [
   // browser-friendly UMD build
   {
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: pkg.browser,
+      file: `${pkg.browser}`,
       format: 'umd',
-      globals: includePackages
+      globals: includePackages,
+      ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
@@ -37,9 +46,10 @@ export default [
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: pkg.main,
+      file: `${pkg.main}`,
       format: 'cjs',
-      globals: includePackages
+      globals: includePackages,
+      ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
@@ -60,9 +70,10 @@ export default [
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: pkg.module,
+      file: `${pkg.module}`,
       format: 'es',
-      globals: includePackages
+      globals: includePackages,
+      ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
