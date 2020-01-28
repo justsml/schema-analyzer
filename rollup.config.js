@@ -32,18 +32,90 @@ export default [
     ]
   },
 
+
+  {
+    input: './index.js',
+    output: {
+      name: 'schemaAnalyzer',
+      file: pkg.main,
+      format: 'cjs',
+      globals: includePackages
+    },
+    // external: [/lodash.*/, 'debug'],
+    plugins: [
+      // globals({} ),
+      resolve({
+        // pass custom options to the resolve plugin
+        customResolveOptions: {
+          moduleDirectory: 'node_modules'
+        },
+        browser: true
+      }), // so Rollup can find `ms`
+      commonjs()
+    ]
+  },
+
+
+  {
+    input: './index.js',
+    output: {
+      name: 'schemaAnalyzer',
+      file: pkg.module,
+      format: 'es',
+      globals: includePackages
+    },
+    // external: [/lodash.*/, 'debug'],
+    plugins: [
+      // globals({} ),
+      resolve({
+        // pass custom options to the resolve plugin
+        customResolveOptions: {
+          moduleDirectory: 'node_modules'
+        },
+        browser: true
+      }), // so Rollup can find `ms`
+      commonjs()
+    ]
+  },
+
   // CommonJS (for Node) and ES module (for bundlers) build.
   // (We could have three entries in the configuration array
   // instead of two, but it's quicker to generate multiple
   // builds from a single configuration where possible, using
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
-  {
-    input: './index.js',
-    external: [],
-    output: [
-      { file: pkg.main, format: 'cjs', globals: includePackages },
-      { file: pkg.module, format: 'es', globals: includePackages }
-    ]
-  }
+  // {
+  //   input: './index.js',
+  //   external: [],
+  //   output: [
+  //     {
+  //       file: pkg.main, format: 'cjs', globals: includePackages,
+  //       plugins: [
+  //         // globals({} ),
+  //         resolve({
+  //           // pass custom options to the resolve plugin
+  //           customResolveOptions: {
+  //             moduleDirectory: 'node_modules'
+  //           },
+  //           browser: true
+  //         }), // so Rollup can find `ms`
+  //         commonjs()
+  //       ]
+  //     },
+  //     {
+  //       file: pkg.module, format: 'es', globals: includePackages,
+  //       plugins: [
+  //         // globals({} ),
+  //         resolve({
+  //           // pass custom options to the resolve plugin
+  //           customResolveOptions: {
+  //             moduleDirectory: 'node_modules'
+  //           },
+  //           browser: true
+  //         }), // so Rollup can find `ms`
+  //         commonjs()
+  //       ]
+  //     }
+  //   ]
+  // }
 ];
