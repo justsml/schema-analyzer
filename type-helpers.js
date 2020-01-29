@@ -12,7 +12,7 @@ import {
 } from './utils/type-detectors.js'
 
 function detectTypes (value) {
-  return priority.reduce((types, typeHelper) => {
+  return prioritizedTypes.reduce((types, typeHelper) => {
     if (typeHelper.check(value)) types.push(typeHelper.type)
     return types
   }, [])
@@ -86,7 +86,7 @@ const TYPE_NULL = {
   check: isNullish
 }
 
-const priority = [
+const prioritizedTypes = [
   TYPE_UNKNOWN,
   TYPE_OBJECT_ID,
   TYPE_UUID,
@@ -103,8 +103,29 @@ const priority = [
   TYPE_OBJECT
 ]
 
+/**
+ * Type Rank Map: Use to sort Lowest to Highest
+ */
+const typeRankings = {
+  [TYPE_UNKNOWN.type]: -1,
+  [TYPE_OBJECT_ID.type]: 1,
+  [TYPE_UUID.type]: 2,
+  [TYPE_BOOLEAN.type]: 3,
+  [TYPE_DATE.type]: 4,
+  [TYPE_TIMESTAMP.type]: 5,
+  [TYPE_CURRENCY.type]: 6,
+  [TYPE_FLOAT.type]: 7,
+  [TYPE_NUMBER.type]: 8,
+  [TYPE_NULL.type]: 10,
+  [TYPE_EMAIL.type]: 11,
+  [TYPE_STRING.type]: 12,
+  [TYPE_ARRAY.type]: 13,
+  [TYPE_OBJECT.type]: 14
+}
+
 export {
-  priority,
+  typeRankings,
+  prioritizedTypes,
   detectTypes,
   TYPE_UNKNOWN,
   TYPE_OBJECT_ID,

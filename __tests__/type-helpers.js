@@ -205,6 +205,7 @@ describe('Type Detectors', () => {
     expect(TYPE_STRING.check('123')).toBeTruthy()
     expect(TYPE_STRING.check('TEST')).toBeTruthy()
     expect(TYPE_STRING.check('')).toBeFalsy() // too little entropy data
+    expect(TYPE_STRING.check(42)).toBeFalsy() // too little entropy data
   })
   it('can detect array', () => {
     expect(TYPE_ARRAY.check([''])).toBeTruthy()

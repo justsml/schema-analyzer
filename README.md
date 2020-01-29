@@ -64,72 +64,64 @@ Details about nested types can be found below.
   "fields": {
     "id": {
       "Number": {
+        "value": { "min": 1, "avg": 3, "max": 5, "percentiles": [ 2, 4, 5 ] },
         "count": 5,
-        "length": {
-          "min": 1, "avg": 1, "max": 1,
-          "percentiles": [ 1, 1, 1 ]
-        }
+        "rank": 8
       },
       "String": {
+        "length": { "min": 1, "avg": 1, "max": 1, "percentiles": [ 1, 1, 1 ] },
         "count": 5,
-        "length": {
-          "min": 1, "avg": 1, "max": 1,
-          "percentiles": [ 1, 1, 1 ]
-        }
+        "rank": 12
       }
     },
     "name": {
       "String": {
+        "length": { "min": 3, "avg": 7.2, "max": 15, "percentiles": [ 3, 10, 15 ] },
         "count": 5,
-        "length": {
-          "min": 3, "avg": 7.2, "max": 15,
-          "percentiles": [ 3, 10, 15 ]
-        }
+        "rank": 12
       }
     },
     "role": {
       "String": {
+        "length": { "min": 4, "avg": 5.4, "max": 9, "percentiles": [ 4, 5, 9 ] },
         "count": 5,
-        "length": {
-          "min": 4, "avg": 5.4, "max": 9,
-          "percentiles": [ 4, 5, 9 ]
-        }
+        "rank": 12
       }
     },
     "email": {
       "Email": {
-        "count": 5
+        "count": 5,
+        "rank": 11
       },
       "String": {
+        "length": { "min": 15, "avg": 19.4, "max": 26, "percentiles": [ 5, 3, 6 ] },
         "count": 5,
-        "length": {
-          "min": 15, "avg": 19.4, "max": 26,
-          "percentiles": [ 15, 23, 26 ]
-        }
+        "rank": 12
       }
     },
     "createdAt": {
-      "Date": {
-        "count": 5
+      "String": {
+        "length": { "min": 6, "avg": 9.2, "max": 10, "percentiles": [ 0, 0, 0 ] },
+        "count": 5,
+        "rank": 12
       }
     },
     "accountConfirmed": {
       "Boolean": {
-        "count": 5
+        "count": 5,
+        "rank": 3
       },
       "String": {
+        "length": { "min": 4, "avg": 4.4, "max": 5, "percentiles": [ 4, 5, 5 ] },
         "count": 5,
-        "length": {
-          "min": 4, "avg": 4.4, "max": 5,
-          "percentiles": [ 4, 5, 5 ]
-        }
+        "rank": 12
       }
     }
   }
 }
 ```
 
-#### Sample input dataset for the example results:
+#### Sample input dataset for the example results above:
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|

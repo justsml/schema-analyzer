@@ -37,7 +37,10 @@ it('can analyze schema for ./products.csv', async () => {
 5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`)
 
   return schemaBuilder('accountsCsv', sampleCsv)
-    .then(result => console.log(JSON.stringify(result, null, 2)) || expect(result).toMatchSnapshot('accountsCsvResult'))
+    .then(result => {
+      // console.log(JSON.stringify(result, null, 2))
+      expect(result).toMatchSnapshot('accountsCsvResult')
+    })
 })
 
 it('can analyze schema for ./people.json', () => {

@@ -3,7 +3,7 @@ import debug from 'debug'
 // import { detectTypes } from './type-helpers.js'
 // import StatsMap from 'stats-map';
 // import mem from 'mem';
-import { detectTypes } from './type-helpers.js'
+import { detectTypes, prioritizedTypes, typeRankings } from './type-helpers.js'
 const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
@@ -16,7 +16,7 @@ function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, column
   if (typeof name !== 'string') throw Error('Argument `name` must be a String')
   if (!Array.isArray(data)) throw Error('Input Data must be an Array of Objects')
   log('Starting')
-  const detectedSchema = { _uniques: {}, _fieldData: {}, _totalRecords: null }
+  const detectedSchema = { uniques: {}, fieldsData: {}, totalRecords: null }
   return Promise.resolve(data)
     .then(docs => {
       log(`  About to examine every row & cell. Found ${docs.length} records...`)
@@ -29,45 +29,39 @@ function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, column
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
-      const uniques = Object.keys(genSchema._fieldData)
+      const uniques = Object.keys(genSchema.fieldsData)
       .reduce((uniques, fieldName) => {
-        if (genSchema._uniques[fieldName]) {
-          uniques[fieldName] = genSchema._uniques[fieldName].length
+        if (genSchema.uniques[fieldName]) {
+          uniques[fieldName] = genSchema.uniques[fieldName].length
         }
         return uniques
       }, {})
 
       return {
-        totalRows: genSchema._totalRecords,
+        totalRows: genSchema.totalRecords,
         uniques: uniques,
-        fields: genSchema._fieldData
+        fields: genSchema.fieldsData
       }
     })
 
     function evaluateSchemaLevel (schema, row, index, array) { // eslint-disable-line
       schema = schema
-      schema._uniques = schema._uniques
-      schema._fieldData = schema._fieldData
-      schema._totalRecords = schema._totalRecords || array.length
+      schema.totalRecords = schema.totalRecords || array.length
       const fieldNames = Object.keys(row)
-      log(`Processing Row # ${index + 1}/${schema._totalRecords}...`)
-      onProgress({ totalRows: schema._totalRecords, currentRow: index + 1, columns: fieldNames })
-      fieldNames.forEach((key, index, array) => {
+      log(`Processing Row # ${index + 1}/${schema.totalRecords}...`)
+      onProgress({ totalRows: schema.totalRecords, currentRow: index + 1, columns: fieldNames })
+      fieldNames.forEach((fieldName, index, array) => {
         if (index === 0) log(`Found ${array.length} Column(s)!`)
         const typeFingerprint = getFieldMetadata({
           schema,
-          key: key,
-          currentValue: row[key]
+          fieldName,
+          value: row[fieldName]
         })
         const typeNames = Object.keys(typeFingerprint)
-        schema._uniques[key] = schema._uniques[key] || []
-        if (!schema._uniques[key].includes(row[key])) schema._uniques[key].push(row[key])
-        // if (typeNames.includes('Number') || typeNames.includes('String')) {
-        //   // console.log('✅ Tracking Uniques:', key, schema._uniques[key].length)
-        // }
-        // schema._totalRecords += 1;
-        schema._fieldData[key] = schema._fieldData[key] || []
-        schema._fieldData[key].push(typeFingerprint)
+        schema.uniques[fieldName] = schema.uniques[fieldName] || []
+        if (!schema.uniques[fieldName].includes(row[fieldName])) schema.uniques[fieldName].push(row[fieldName])
+        schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || []
+        schema.fieldsData[fieldName].push(typeFingerprint)
       })
       return schema
     }
@@ -75,19 +69,19 @@ function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, column
 
 
 function condenseFieldData (schema) {
-  const fields = schema._fieldData
-  const fieldNames = Object.keys(fields)
+  const fieldsData = schema.fieldsData
+  const fieldNames = Object.keys(fieldsData)
 
-  // console.log('condenseFieldData', fieldNames)
+  // console.log('condensefieldData', fieldNames)
   const fieldSummary = {}
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
   fieldNames
     .forEach((fieldName) => {
-      fieldSummary[fieldName] = condenseFieldSizes(fields[fieldName])
+      fieldSummary[fieldName] = condenseFieldSizes(fieldsData[fieldName])
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
-  schema._fieldData = fieldSummary
-  log('Replaced _fieldData with fieldSummary')
+  schema.fieldsData = fieldSummary
+  log('Replaced fieldData with fieldSummary')
   return schema
 }
 function condenseFieldSizes (typeSizesList) {
@@ -96,18 +90,21 @@ function condenseFieldSizes (typeSizesList) {
   log(`Processing ${typeSizesList.length} type guesses`)
   typeSizesList.map(currentTypeGuesses => {
     const typeSizes = Object.entries(currentTypeGuesses)
-      .map(([typeName, { length, scale, precision }]) => {
+      .map(([typeName, { value, length, scale, precision }]) => {
       // console.log(typeName, JSON.stringify({ length, scale, precision }))
         sumCounts[typeName] = sumCounts[typeName] || { count: 0 }
         if (!sumCounts[typeName].count) sumCounts[typeName].count = 0
         if (Number.isFinite(length) && !sumCounts[typeName].length) sumCounts[typeName].length = []
         if (Number.isFinite(scale) && !sumCounts[typeName].scale) sumCounts[typeName].scale = []
         if (Number.isFinite(precision) && !sumCounts[typeName].precision) sumCounts[typeName].precision = []
+        if (Number.isFinite(value) && !sumCounts[typeName].value) sumCounts[typeName].value = []
 
         sumCounts[typeName].count++
         if (length) sumCounts[typeName].length.push(length)
         if (scale) sumCounts[typeName].scale.push(scale)
         if (precision) sumCounts[typeName].precision.push(precision)
+        if (value) sumCounts[typeName].value.push(value)
+        sumCounts[typeName].rank = typeRankings[typeName]
         return sumCounts[typeName]
       })
   })
@@ -120,14 +117,15 @@ function condenseFieldSizes (typeSizesList) {
   }
   */
   log('Condensing data points to stats summaries...')
-  const sizeRangeSummary = {}
-  Object.entries(sumCounts)
-    .map(([typeName, { count, length, precision, scale }]) => {
-      if (!sizeRangeSummary[typeName]) sizeRangeSummary[typeName] = {}
-      if (sumCounts[typeName].length) sizeRangeSummary[typeName].length = getNumberRangeStats(sumCounts[typeName].length)
-      if (sumCounts[typeName].scale) sizeRangeSummary[typeName].scale = getNumberRangeStats(sumCounts[typeName].scale)
-      if (sumCounts[typeName].precision) sizeRangeSummary[typeName].precision = getNumberRangeStats(sumCounts[typeName].precision)
-      if (sumCounts[typeName].count) sizeRangeSummary[typeName].count = sumCounts[typeName].count
+  Object.keys(sumCounts)
+    .map(typeName => {
+      // if (!sizeRangeSummary[typeName]) sizeRangeSummary[typeName] = {}
+      if (sumCounts[typeName].value) sumCounts[typeName].value = getNumberRangeStats(sumCounts[typeName].value)
+      if (sumCounts[typeName].length) sumCounts[typeName].length = getNumberRangeStats(sumCounts[typeName].length)
+      if (sumCounts[typeName].scale) sumCounts[typeName].scale = getNumberRangeStats(sumCounts[typeName].scale)
+      if (sumCounts[typeName].precision) sumCounts[typeName].precision = getNumberRangeStats(sumCounts[typeName].precision)
+      // if (sumCounts[typeName].count) sumCounts[typeName].count = sumCounts[typeName].count
+
     })
   log('Done condensing data points...')
   /*
@@ -150,61 +148,16 @@ function condenseFieldSizes (typeSizesList) {
   */
   // console.log('typeSizes SUM:', sumCounts)
   // console.log(sizeRangeSummary)
-  return sizeRangeSummary
+  return sumCounts
 }
 
-// function condenseFieldData (schema) {
-//   console.log('schema', schema)
-//   const fields = Object.keys(schema._fieldData)
-//   // Summarize field/column data so only minimal field metadata is sent along to the Writer Adapters.
-//   schema._summary = fields.map(fieldName => {
-//     const fieldSummaryArray = schema._fieldData[fieldName]
-//     // Get min & max bytes seen for string fields, and min & max range for numeric fields.
-//     const getFieldRangeByName = sizeField =>
-//       getNumberRangeStats(
-//         fieldSummaryArray
-//           .map(f => f[sizeField])
-//           .sort()
-//           .filter(f => f != null)
-//       )
-//     const fieldLengths = getFieldRangeByName('length')
-//     // Get size info for floating point fields
-//     const fieldPrecisions = getFieldRangeByName('precision')
-//     const fieldScales = getFieldRangeByName('scale')
-
-//     // Count up each type's # of occurences
-//     const fieldTypesFound = fieldSummaryArray.reduce((counts, field) => {
-//       const name = field.typeGuess
-//       counts[name] = counts[name] || 0
-//       counts[name]++
-//       return counts
-//     }, {})
-//     // Get top type by sortting the types. We'll pass along all the type counts to the writer adapter.
-//     const typeRank = Object.entries(fieldTypesFound).sort(
-//       ([n1, count1], [n2, count2]) =>
-//         count1 > count2 ? -1 : count1 === count2 ? 0 : 1
-//     )
-//     return {
-//       fieldName,
-//       typeInfo: fieldTypesFound,
-//       typeRank,
-//       sizeInfo: {
-//         ...fieldLengths,
-//         precision: fieldPrecisions,
-//         scale: fieldScales
-//       }
-//     }
-//   })
-//   return schema
-// }
-
 function getFieldMetadata ({
-  currentValue,
-  key,
+  value,
+  fieldName,
   schema, // eslint-disable-line
   recursive = false
 }) {
-  const typeGuesses = detectTypes(currentValue)
+  const typeGuesses = detectTypes(value)
 
   const typeAnalysis = typeGuesses.reduce((analysis, typeGuess, rank) => {
     let length
@@ -214,25 +167,25 @@ function getFieldMetadata ({
     analysis[typeGuess] = { rank: rank + 1 }
 
     if (typeGuess === 'Float') {
-      length = parseFloat(currentValue)
-      const significandAndMantissa = String(currentValue).split('.')
+      value = parseFloat(value)
+      analysis[typeGuess] = { ...analysis[typeGuess], value }
+      const significandAndMantissa = String(value).split('.')
       if (significandAndMantissa.length === 2) {
-        // floating point number!
         precision = significandAndMantissa.join('').length // total # of numeric positions before & after decimal
         scale = significandAndMantissa[1].length
         analysis[typeGuess] = { ...analysis[typeGuess], precision, scale }
       }
     }
     if (typeGuess === 'Number') {
-      length = String(currentValue).length
-      analysis[typeGuess] = { ...analysis[typeGuess], length }
+      value = Number(value)
+      analysis[typeGuess] = { ...analysis[typeGuess], value }
     }
     if (typeGuess === 'String') {
-      length = String(currentValue).length
+      length = String(value).length
       analysis[typeGuess] = { ...analysis[typeGuess], length }
     }
     if (typeGuess === 'Array') {
-      length = currentValue.length
+      length = value.length
       analysis[typeGuess] = { ...analysis[typeGuess], length }
     }
     return analysis

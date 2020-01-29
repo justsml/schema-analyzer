@@ -6,6 +6,7 @@ Object {
     "birth_year": Object {
       "Null": Object {
         "count": 10,
+        "rank": 10,
       },
       "String": Object {
         "count": 30,
@@ -19,11 +20,13 @@ Object {
             7,
           ],
         },
+        "rank": 12,
       },
     },
     "created": Object {
       "Date": Object {
         "count": 40,
+        "rank": 4,
       },
       "String": Object {
         "count": 40,
@@ -37,11 +40,13 @@ Object {
             27,
           ],
         },
+        "rank": 12,
       },
     },
     "edited": Object {
       "Date": Object {
         "count": 40,
+        "rank": 4,
       },
       "String": Object {
         "count": 40,
@@ -55,6 +60,7 @@ Object {
             27,
           ],
         },
+        "rank": 12,
       },
     },
     "eye_color": Object {
@@ -70,6 +76,7 @@ Object {
             6,
           ],
         },
+        "rank": 12,
       },
     },
     "films": Object {
@@ -85,6 +92,7 @@ Object {
             5,
           ],
         },
+        "rank": 13,
       },
     },
     "gender": Object {
@@ -100,6 +108,7 @@ Object {
             6,
           ],
         },
+        "rank": 12,
       },
     },
     "hair_color": Object {
@@ -115,22 +124,25 @@ Object {
             6,
           ],
         },
+        "rank": 12,
       },
     },
     "height": Object {
       "Null": Object {
         "count": 1,
+        "rank": 10,
       },
       "Number": Object {
         "count": 39,
-        "length": Object {
-          "avg": 2.8974358974358974,
-          "max": 3,
-          "min": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 169.23076923076923,
+          "max": 228,
+          "min": 66,
           "percentiles": Array [
-            3,
-            3,
-            3,
+            170,
+            180,
+            202,
           ],
         },
       },
@@ -146,6 +158,7 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
     },
     "homeworld": Object {
@@ -161,19 +174,21 @@ Object {
             32,
           ],
         },
+        "rank": 12,
       },
     },
     "id": Object {
       "Number": Object {
         "count": 40,
-        "length": Object {
-          "avg": 1.775,
-          "max": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 21.275,
+          "max": 42,
           "min": 1,
           "percentiles": Array [
-            2,
-            2,
-            2,
+            13,
+            26,
+            39,
           ],
         },
       },
@@ -191,6 +206,7 @@ Object {
             3,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1,
           "max": 1,
@@ -201,28 +217,40 @@ Object {
             1,
           ],
         },
+        "value": Object {
+          "avg": 78.2,
+          "max": 78.2,
+          "min": 78.2,
+          "percentiles": Array [
+            78.2,
+            78.2,
+            78.2,
+          ],
+        },
       },
       "Null": Object {
         "count": 8,
+        "rank": 10,
       },
       "Number": Object {
         "count": 32,
-        "length": Object {
-          "avg": 2.34375,
-          "max": 5,
-          "min": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 77.84516129032258,
+          "max": 140,
+          "min": 17,
           "percentiles": Array [
-            2,
-            2,
-            3,
+            75,
+            80,
+            113,
           ],
         },
       },
       "String": Object {
         "count": 32,
         "length": Object {
-          "avg": 2.34375,
-          "max": 5,
+          "avg": 2.28125,
+          "max": 4,
           "min": 2,
           "percentiles": Array [
             2,
@@ -230,6 +258,7 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
     },
     "name": Object {
@@ -245,11 +274,13 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "skin_color": Object {
       "Null": Object {
         "count": 1,
+        "rank": 10,
       },
       "String": Object {
         "count": 39,
@@ -263,6 +294,7 @@ Object {
             11,
           ],
         },
+        "rank": 12,
       },
     },
     "species": Object {
@@ -278,6 +310,7 @@ Object {
             1,
           ],
         },
+        "rank": 13,
       },
     },
     "starships": Object {
@@ -293,6 +326,7 @@ Object {
             3,
           ],
         },
+        "rank": 13,
       },
     },
     "url": Object {
@@ -308,6 +342,7 @@ Object {
             31,
           ],
         },
+        "rank": 12,
       },
     },
     "vehicles": Object {
@@ -323,10 +358,11 @@ Object {
             2,
           ],
         },
+        "rank": 13,
       },
     },
   },
-  "total": 40,
+  "totalRows": 40,
   "uniques": Object {
     "birth_year": 28,
     "created": 40,
@@ -355,6 +391,7 @@ Object {
     "accountConfirmed": Object {
       "Boolean": Object {
         "count": 5,
+        "rank": 3,
       },
       "String": Object {
         "count": 5,
@@ -368,6 +405,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "createdAt": Object {
@@ -383,11 +421,13 @@ Object {
             10,
           ],
         },
+        "rank": 12,
       },
     },
     "email": Object {
       "Email": Object {
         "count": 5,
+        "rank": 11,
       },
       "String": Object {
         "count": 5,
@@ -401,19 +441,21 @@ Object {
             26,
           ],
         },
+        "rank": 12,
       },
     },
     "id": Object {
       "Number": Object {
         "count": 5,
-        "length": Object {
-          "avg": 1,
-          "max": 1,
+        "rank": 8,
+        "value": Object {
+          "avg": 3,
+          "max": 5,
           "min": 1,
           "percentiles": Array [
-            1,
-            1,
-            1,
+            2,
+            4,
+            5,
           ],
         },
       },
@@ -429,6 +471,7 @@ Object {
             1,
           ],
         },
+        "rank": 12,
       },
     },
     "name": Object {
@@ -444,6 +487,7 @@ Object {
             15,
           ],
         },
+        "rank": 12,
       },
     },
     "role": Object {
@@ -459,10 +503,11 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
   },
-  "total": 5,
+  "totalRows": 5,
   "uniques": Object {
     "accountConfirmed": 2,
     "createdAt": 5,
@@ -480,55 +525,49 @@ Object {
     "Alcohol By Volume": Object {
       "Float": Object {
         "count": 1,
-        "precision": Object {
-          "avg": 3,
-          "max": 3,
-          "min": 3,
+        "rank": 7,
+        "value": Object {
+          "avg": 40,
+          "max": 40,
+          "min": 40,
           "percentiles": Array [
-            3,
-            3,
-            3,
-          ],
-        },
-        "scale": Object {
-          "avg": 1,
-          "max": 1,
-          "min": 1,
-          "percentiles": Array [
-            1,
-            1,
-            1,
+            40,
+            40,
+            40,
           ],
         },
       },
       "Number": Object {
         "count": 1,
-        "length": Object {
-          "avg": 4,
-          "max": 4,
-          "min": 4,
+        "rank": 8,
+        "value": Object {
+          "avg": 40,
+          "max": 40,
+          "min": 40,
           "percentiles": Array [
-            4,
-            4,
-            4,
+            40,
+            40,
+            40,
           ],
         },
       },
       "String": Object {
         "count": 1,
         "length": Object {
-          "avg": 4,
-          "max": 4,
-          "min": 4,
+          "avg": 2,
+          "max": 2,
+          "min": 2,
           "percentiles": Array [
-            4,
-            4,
-            4,
+            2,
+            2,
+            2,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3134,
+        "rank": -1,
       },
     },
     "Author": Object {
@@ -544,22 +583,25 @@ Object {
             31,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3087,
+        "rank": -1,
       },
     },
     "Brand Name": Object {
       "Number": Object {
         "count": 3,
-        "length": Object {
-          "avg": 13,
-          "max": 13,
-          "min": 13,
+        "rank": 8,
+        "value": Object {
+          "avg": 6028831501996.667,
+          "max": 7429111285404,
+          "min": 5056071167017,
           "percentiles": Array [
-            13,
-            13,
-            13,
+            5056071167017,
+            5601312053569,
+            7429111285404,
           ],
         },
       },
@@ -575,25 +617,29 @@ Object {
             47,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 153,
+        "rank": -1,
       },
     },
     "Calories": Object {
       "Date": Object {
         "count": 4,
+        "rank": 4,
       },
       "Number": Object {
         "count": 134,
-        "length": Object {
-          "avg": 2.5597014925373136,
-          "max": 6,
+        "rank": 8,
+        "value": Object {
+          "avg": 3588.7413793103447,
+          "max": 372000,
           "min": 1,
           "percentiles": Array [
-            2,
-            3,
-            3,
+            114,
+            210,
+            513,
           ],
         },
       },
@@ -609,22 +655,25 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3001,
+        "rank": -1,
       },
     },
     "Carbohydrate (g)": Object {
       "Number": Object {
         "count": 121,
-        "length": Object {
-          "avg": 1.7024793388429753,
-          "max": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 34.37623762376238,
+          "max": 100,
           "min": 1,
           "percentiles": Array [
-            1,
-            2,
-            2,
+            15,
+            36,
+            70,
           ],
         },
       },
@@ -640,22 +689,25 @@ Object {
             2,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3014,
+        "rank": -1,
       },
     },
     "Cholesterol (mg)": Object {
       "Number": Object {
         "count": 56,
-        "length": Object {
-          "avg": 1.1071428571428572,
-          "max": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 26.25,
+          "max": 75,
           "min": 1,
           "percentiles": Array [
-            1,
-            1,
-            2,
+            10,
+            30,
+            75,
           ],
         },
       },
@@ -671,17 +723,19 @@ Object {
             2,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3079,
+        "rank": -1,
       },
     },
     "Fat (g)": Object {
       "Float": Object {
         "count": 129,
         "precision": Object {
-          "avg": 2.2713178294573644,
-          "max": 4,
+          "avg": 2.3157894736842106,
+          "max": 3,
           "min": 2,
           "percentiles": Array [
             2,
@@ -689,6 +743,7 @@ Object {
             3,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1,
           "max": 1,
@@ -699,48 +754,62 @@ Object {
             1,
           ],
         },
+        "value": Object {
+          "avg": 11.25125,
+          "max": 100,
+          "min": 0.5,
+          "percentiles": Array [
+            3.5,
+            10,
+            26,
+          ],
+        },
       },
       "Number": Object {
         "count": 129,
-        "length": Object {
-          "avg": 3.2713178294573644,
-          "max": 5,
-          "min": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 11.25125,
+          "max": 100,
+          "min": 0.5,
           "percentiles": Array [
-            3,
-            3,
-            4,
+            3.5,
+            10,
+            26,
           ],
         },
       },
       "String": Object {
         "count": 129,
         "length": Object {
-          "avg": 3.2713178294573644,
-          "max": 5,
-          "min": 3,
+          "avg": 1.565891472868217,
+          "max": 4,
+          "min": 1,
           "percentiles": Array [
+            1,
+            1,
             3,
-            3,
-            4,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3006,
+        "rank": -1,
       },
     },
     "Fat Calories": Object {
       "Number": Object {
         "count": 63,
-        "length": Object {
-          "avg": 1.6349206349206349,
-          "max": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 87.89473684210526,
+          "max": 824,
           "min": 1,
           "percentiles": Array [
-            1,
-            2,
-            3,
+            33,
+            70,
+            120,
           ],
         },
       },
@@ -756,22 +825,25 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3072,
+        "rank": -1,
       },
     },
     "Fiber (g)": Object {
       "Number": Object {
         "count": 82,
-        "length": Object {
-          "avg": 1.0365853658536586,
-          "max": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 3.441860465116279,
+          "max": 19,
           "min": 1,
           "percentiles": Array [
             1,
-            1,
-            1,
+            2,
+            7,
           ],
         },
       },
@@ -787,9 +859,11 @@ Object {
             1,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3053,
+        "rank": -1,
       },
     },
     "Format": Object {
@@ -805,37 +879,41 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3085,
+        "rank": -1,
       },
     },
     "GTIN-14": Object {
       "Number": Object {
         "count": 3135,
-        "length": Object {
-          "avg": 14,
-          "max": 14,
-          "min": 14,
+        "rank": 8,
+        "value": Object {
+          "avg": 4721649545280.991,
+          "max": 88089922063858,
+          "min": 75244,
           "percentiles": Array [
-            14,
-            14,
-            14,
+            4005808235353,
+            5296849397325,
+            8103115681064,
           ],
         },
       },
       "String": Object {
         "count": 3135,
         "length": Object {
-          "avg": 14,
+          "avg": 12.4688995215311,
           "max": 14,
-          "min": 14,
+          "min": 5,
           "percentiles": Array [
-            14,
-            14,
-            14,
+            13,
+            13,
+            13,
           ],
         },
+        "rank": 12,
       },
     },
     "Images": Object {
@@ -851,22 +929,25 @@ Object {
             318,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3116,
+        "rank": -1,
       },
     },
     "Ingredients": Object {
       "Number": Object {
         "count": 1,
-        "length": Object {
-          "avg": 6,
-          "max": 6,
-          "min": 6,
+        "rank": 8,
+        "value": Object {
+          "avg": 665274,
+          "max": 665274,
+          "min": 665274,
           "percentiles": Array [
-            6,
-            6,
-            6,
+            665274,
+            665274,
+            665274,
           ],
         },
       },
@@ -882,16 +963,18 @@ Object {
             312,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 2947,
+        "rank": -1,
       },
     },
     "Monounsaturated Fat (g)": Object {
       "Float": Object {
         "count": 31,
         "precision": Object {
-          "avg": 2.161290322580645,
+          "avg": 2.25,
           "max": 3,
           "min": 2,
           "percentiles": Array [
@@ -900,6 +983,7 @@ Object {
             3,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1,
           "max": 1,
@@ -910,51 +994,66 @@ Object {
             1,
           ],
         },
+        "value": Object {
+          "avg": 8.733333333333333,
+          "max": 42,
+          "min": 0.5,
+          "percentiles": Array [
+            3,
+            9.5,
+            11.5,
+          ],
+        },
       },
       "Number": Object {
         "count": 31,
-        "length": Object {
-          "avg": 3.161290322580645,
-          "max": 4,
-          "min": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 8.733333333333333,
+          "max": 42,
+          "min": 0.5,
           "percentiles": Array [
             3,
-            3,
-            4,
+            9.5,
+            11.5,
           ],
         },
       },
       "String": Object {
         "count": 31,
         "length": Object {
-          "avg": 3.161290322580645,
+          "avg": 1.6774193548387097,
           "max": 4,
-          "min": 3,
+          "min": 1,
           "percentiles": Array [
+            1,
+            1,
             3,
-            3,
-            4,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3104,
+        "rank": -1,
       },
     },
     "Name": Object {
       "Boolean": Object {
         "count": 1,
+        "rank": 3,
       },
       "Number": Object {
         "count": 2,
-        "length": Object {
-          "avg": 7.5,
-          "max": 13,
-          "min": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 2528035583513.5,
+          "max": 5056071167017,
+          "min": 10,
           "percentiles": Array [
-            2,
-            13,
-            13,
+            10,
+            5056071167017,
+            5056071167017,
           ],
         },
       },
@@ -970,22 +1069,25 @@ Object {
             36,
           ],
         },
+        "rank": 12,
       },
     },
     "Pages": Object {
       "Date": Object {
         "count": 3,
+        "rank": 4,
       },
       "Number": Object {
         "count": 50,
-        "length": Object {
-          "avg": 2.98,
-          "max": 4,
-          "min": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 364.36,
+          "max": 1943,
+          "min": 20,
           "percentiles": Array [
-            3,
-            3,
-            3,
+            208,
+            351,
+            704,
           ],
         },
       },
@@ -1001,17 +1103,19 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3085,
+        "rank": -1,
       },
     },
     "Polyunsaturated Fat (g)": Object {
       "Float": Object {
         "count": 31,
         "precision": Object {
-          "avg": 2.032258064516129,
-          "max": 3,
+          "avg": 2,
+          "max": 2,
           "min": 2,
           "percentiles": Array [
             2,
@@ -1019,6 +1123,7 @@ Object {
             2,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1,
           "max": 1,
@@ -1029,51 +1134,66 @@ Object {
             1,
           ],
         },
+        "value": Object {
+          "avg": 5.066666666666666,
+          "max": 39,
+          "min": 0.5,
+          "percentiles": Array [
+            2,
+            2.5,
+            8,
+          ],
+        },
       },
       "Number": Object {
         "count": 31,
-        "length": Object {
-          "avg": 3.032258064516129,
-          "max": 4,
-          "min": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 5.066666666666666,
+          "max": 39,
+          "min": 0.5,
           "percentiles": Array [
-            3,
-            3,
-            3,
+            2,
+            2.5,
+            8,
           ],
         },
       },
       "String": Object {
         "count": 31,
         "length": Object {
-          "avg": 3.032258064516129,
-          "max": 4,
-          "min": 3,
+          "avg": 1.4193548387096775,
+          "max": 3,
+          "min": 1,
           "percentiles": Array [
-            3,
-            3,
+            1,
+            1,
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3104,
+        "rank": -1,
       },
     },
     "Potassium (mg)": Object {
       "Date": Object {
         "count": 1,
+        "rank": 4,
       },
       "Number": Object {
         "count": 40,
-        "length": Object {
-          "avg": 1.575,
-          "max": 4,
-          "min": 1,
+        "rank": 8,
+        "value": Object {
+          "avg": 691,
+          "max": 8500,
+          "min": 3,
           "percentiles": Array [
-            1,
-            1,
-            3,
+            70,
+            120,
+            850,
           ],
         },
       },
@@ -1089,22 +1209,25 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3095,
+        "rank": -1,
       },
     },
     "Protein (g)": Object {
       "Number": Object {
         "count": 118,
-        "length": Object {
-          "avg": 1.0932203389830508,
-          "max": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 6.220779220779221,
+          "max": 45,
           "min": 1,
           "percentiles": Array [
-            1,
-            1,
-            1,
+            2,
+            6,
+            13,
           ],
         },
       },
@@ -1120,9 +1243,11 @@ Object {
             1,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3017,
+        "rank": -1,
       },
     },
     "Publisher": Object {
@@ -1138,16 +1263,18 @@ Object {
             27,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3083,
+        "rank": -1,
       },
     },
     "Saturated Fat (g)": Object {
       "Float": Object {
         "count": 101,
         "precision": Object {
-          "avg": 2.0693069306930694,
+          "avg": 2.0384615384615383,
           "max": 3,
           "min": 2,
           "percentiles": Array [
@@ -1156,6 +1283,7 @@ Object {
             2,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1,
           "max": 1,
@@ -1166,48 +1294,62 @@ Object {
             1,
           ],
         },
+        "value": Object {
+          "avg": 4.3277777777777775,
+          "max": 17,
+          "min": 0.2,
+          "percentiles": Array [
+            1.5,
+            3.5,
+            10.5,
+          ],
+        },
       },
       "Number": Object {
         "count": 101,
-        "length": Object {
-          "avg": 3.0693069306930694,
-          "max": 4,
-          "min": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 4.3277777777777775,
+          "max": 17,
+          "min": 0.2,
           "percentiles": Array [
-            3,
-            3,
-            3,
+            1.5,
+            3.5,
+            10.5,
           ],
         },
       },
       "String": Object {
         "count": 101,
         "length": Object {
-          "avg": 3.0693069306930694,
+          "avg": 1.5841584158415842,
           "max": 4,
-          "min": 3,
+          "min": 1,
           "percentiles": Array [
-            3,
-            3,
+            1,
+            1,
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3034,
+        "rank": -1,
       },
     },
     "Serving Size": Object {
       "Number": Object {
         "count": 13,
-        "length": Object {
-          "avg": 1.7692307692307692,
-          "max": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 53.61538461538461,
+          "max": 250,
           "min": 1,
           "percentiles": Array [
             1,
-            2,
-            3,
+            55,
+            100,
           ],
         },
       },
@@ -1223,9 +1365,11 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3031,
+        "rank": -1,
       },
     },
     "Servings Per Container": Object {
@@ -1241,6 +1385,7 @@ Object {
             3,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 1.2,
           "max": 2,
@@ -1251,17 +1396,28 @@ Object {
             2,
           ],
         },
+        "value": Object {
+          "avg": 3.504,
+          "max": 7.5,
+          "min": 0.5,
+          "percentiles": Array [
+            2.5,
+            3.52,
+            7.5,
+          ],
+        },
       },
       "Number": Object {
         "count": 71,
-        "length": Object {
-          "avg": 1.4929577464788732,
-          "max": 4,
-          "min": 1,
+        "rank": 8,
+        "value": Object {
+          "avg": 12.472112676056337,
+          "max": 100,
+          "min": 0.5,
           "percentiles": Array [
             1,
-            1,
-            2,
+            6,
+            32,
           ],
         },
       },
@@ -1277,52 +1433,66 @@ Object {
             7,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3034,
+        "rank": -1,
       },
     },
     "Size": Object {
       "Float": Object {
         "count": 10,
         "precision": Object {
-          "avg": 2.9,
-          "max": 4,
+          "avg": 2.7,
+          "max": 3,
           "min": 2,
           "percentiles": Array [
             3,
             3,
-            4,
+            3,
           ],
         },
+        "rank": 7,
         "scale": Object {
-          "avg": 1.5,
-          "max": 3,
+          "avg": 1.3,
+          "max": 2,
           "min": 1,
           "percentiles": Array [
             1,
+            1,
             2,
-            3,
+          ],
+        },
+        "value": Object {
+          "avg": 9.326,
+          "max": 28.3,
+          "min": 0.12,
+          "percentiles": Array [
+            0.75,
+            16.9,
+            28.3,
           ],
         },
       },
       "Number": Object {
         "count": 90,
-        "length": Object {
-          "avg": 2.577777777777778,
-          "max": 13,
-          "min": 1,
+        "rank": 8,
+        "value": Object {
+          "avg": 64821428385.07,
+          "max": 5056071167017,
+          "min": 0.12,
           "percentiles": Array [
-            2,
-            3,
-            4,
+            10,
+            28.3,
+            260,
           ],
         },
       },
       "String": Object {
         "count": 2284,
         "length": Object {
-          "avg": 5.995183887915937,
+          "avg": 5.992556917688266,
           "max": 92,
           "min": 1,
           "percentiles": Array [
@@ -1331,22 +1501,25 @@ Object {
             10,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 851,
+        "rank": -1,
       },
     },
     "Sodium (mg)": Object {
       "Number": Object {
         "count": 93,
-        "length": Object {
-          "avg": 1.935483870967742,
-          "max": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 137.93846153846152,
+          "max": 660,
           "min": 1,
           "percentiles": Array [
-            1,
-            2,
-            3,
+            23,
+            135,
+            390,
           ],
         },
       },
@@ -1362,22 +1535,25 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3042,
+        "rank": -1,
       },
     },
     "Sugars (g)": Object {
       "Number": Object {
         "count": 113,
-        "length": Object {
-          "avg": 1.424778761061947,
-          "max": 3,
+        "rank": 8,
+        "value": Object {
+          "avg": 21.846153846153847,
+          "max": 100,
           "min": 1,
           "percentiles": Array [
-            1,
-            2,
-            2,
+            4,
+            16,
+            58,
           ],
         },
       },
@@ -1393,25 +1569,45 @@ Object {
             2,
           ],
         },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3022,
+        "rank": -1,
       },
     },
     "Trans Fat (g)": Object {
       "Float": Object {
         "count": 58,
-        "precision": Object {
-          "avg": 2,
-          "max": 2,
-          "min": 2,
+        "rank": 7,
+        "value": Object {
+          "avg": 4,
+          "max": 7,
+          "min": 1,
           "percentiles": Array [
-            2,
-            2,
-            2,
+            1,
+            7,
+            7,
           ],
         },
-        "scale": Object {
+      },
+      "Number": Object {
+        "count": 58,
+        "rank": 8,
+        "value": Object {
+          "avg": 4,
+          "max": 7,
+          "min": 1,
+          "percentiles": Array [
+            1,
+            7,
+            7,
+          ],
+        },
+      },
+      "String": Object {
+        "count": 58,
+        "length": Object {
           "avg": 1,
           "max": 1,
           "min": 1,
@@ -1421,39 +1617,15 @@ Object {
             1,
           ],
         },
-      },
-      "Number": Object {
-        "count": 58,
-        "length": Object {
-          "avg": 3,
-          "max": 3,
-          "min": 3,
-          "percentiles": Array [
-            3,
-            3,
-            3,
-          ],
-        },
-      },
-      "String": Object {
-        "count": 58,
-        "length": Object {
-          "avg": 3,
-          "max": 3,
-          "min": 3,
-          "percentiles": Array [
-            3,
-            3,
-            3,
-          ],
-        },
+        "rank": 12,
       },
       "Unknown": Object {
         "count": 3077,
+        "rank": -1,
       },
     },
   },
-  "total": 3135,
+  "totalRows": 3135,
   "uniques": Object {
     "Alcohol By Volume": 2,
     "Author": 46,
@@ -1502,6 +1674,7 @@ Object {
             28,
           ],
         },
+        "rank": 12,
       },
     },
     "address2": Object {
@@ -1517,6 +1690,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "city": Object {
@@ -1532,6 +1706,7 @@ Object {
             16,
           ],
         },
+        "rank": 12,
       },
     },
     "commissionRate": Object {
@@ -1547,6 +1722,7 @@ Object {
             17,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 15.1,
           "max": 16,
@@ -1557,17 +1733,28 @@ Object {
             16,
           ],
         },
+        "value": Object {
+          "avg": 5.1270137861706315,
+          "max": 8.749067549034953,
+          "min": 0.5486978619359434,
+          "percentiles": Array [
+            3.8664440139196814,
+            6.178798334952444,
+            8.225929433479905,
+          ],
+        },
       },
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 17.1,
-          "max": 18,
-          "min": 16,
+        "rank": 8,
+        "value": Object {
+          "avg": 5.1270137861706315,
+          "max": 8.749067549034953,
+          "min": 0.5486978619359434,
           "percentiles": Array [
-            17,
-            17,
-            18,
+            3.8664440139196814,
+            6.178798334952444,
+            8.225929433479905,
           ],
         },
       },
@@ -1585,11 +1772,13 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "createdAt": Object {
       "Date": Object {
         "count": 100,
+        "rank": 4,
       },
       "String": Object {
         "count": 100,
@@ -1603,11 +1792,13 @@ Object {
             24,
           ],
         },
+        "rank": 12,
       },
     },
     "description": Object {
       "Null": Object {
         "count": 20,
+        "rank": 10,
       },
       "String": Object {
         "count": 100,
@@ -1621,11 +1812,13 @@ Object {
             312,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace1": Object {
       "Null": Object {
         "count": 6,
+        "rank": 10,
       },
       "String": Object {
         "count": 94,
@@ -1639,6 +1832,7 @@ Object {
             10,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace1Location": Object {
@@ -1654,11 +1848,13 @@ Object {
             14,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace2": Object {
       "Null": Object {
         "count": 7,
+        "rank": 10,
       },
       "String": Object {
         "count": 93,
@@ -1672,6 +1868,7 @@ Object {
             13,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace2Location": Object {
@@ -1687,11 +1884,13 @@ Object {
             14,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace3": Object {
       "Null": Object {
         "count": 7,
+        "rank": 10,
       },
       "String": Object {
         "count": 93,
@@ -1705,6 +1904,7 @@ Object {
             13,
           ],
         },
+        "rank": 12,
       },
     },
     "fireplace3Location": Object {
@@ -1720,11 +1920,13 @@ Object {
             14,
           ],
         },
+        "rank": 12,
       },
     },
     "garage": Object {
       "Null": Object {
         "count": 11,
+        "rank": 10,
       },
       "String": Object {
         "count": 89,
@@ -1738,11 +1940,13 @@ Object {
             8,
           ],
         },
+        "rank": 12,
       },
     },
     "heating": Object {
       "Null": Object {
         "count": 5,
+        "rank": 10,
       },
       "String": Object {
         "count": 95,
@@ -1756,6 +1960,7 @@ Object {
             10,
           ],
         },
+        "rank": 12,
       },
     },
     "hoaFrequency": Object {
@@ -1771,6 +1976,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "id": Object {
@@ -1786,9 +1992,11 @@ Object {
             36,
           ],
         },
+        "rank": 12,
       },
       "UUID": Object {
         "count": 100,
+        "rank": 2,
       },
     },
     "kitchenFeature1": Object {
@@ -1804,6 +2012,7 @@ Object {
             19,
           ],
         },
+        "rank": 12,
       },
     },
     "kitchenFeature2": Object {
@@ -1819,6 +2028,7 @@ Object {
             19,
           ],
         },
+        "rank": 12,
       },
     },
     "kitchenFeature3": Object {
@@ -1834,73 +2044,89 @@ Object {
             21,
           ],
         },
+        "rank": 12,
       },
     },
     "latitude": Object {
       "Float": Object {
         "count": 100,
         "precision": Object {
-          "avg": 6.37,
+          "avg": 6.26,
           "max": 7,
-          "min": 5,
+          "min": 4,
           "percentiles": Array [
             6,
             7,
             7,
           ],
         },
+        "rank": 7,
         "scale": Object {
-          "avg": 4,
+          "avg": 3.89,
           "max": 4,
-          "min": 4,
+          "min": 3,
           "percentiles": Array [
             4,
             4,
             4,
           ],
         },
+        "value": Object {
+          "avg": -10.680839999999995,
+          "max": 88.1641,
+          "min": -89.5787,
+          "percentiles": Array [
+            -37.3507,
+            1.2674,
+            49.5974,
+          ],
+        },
       },
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 7.37,
-          "max": 8,
-          "min": 6,
+        "rank": 8,
+        "value": Object {
+          "avg": -10.680839999999995,
+          "max": 88.1641,
+          "min": -89.5787,
           "percentiles": Array [
-            7,
-            8,
-            8,
+            -37.3507,
+            1.2674,
+            49.5974,
           ],
         },
       },
       "String": Object {
         "count": 100,
         "length": Object {
-          "avg": 7.37,
+          "avg": 7.26,
           "max": 8,
-          "min": 6,
+          "min": 5,
           "percentiles": Array [
             7,
             8,
             8,
           ],
         },
+        "rank": 12,
       },
     },
     "listPrice": Object {
       "Date": Object {
         "count": 2,
+        "rank": 4,
       },
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 8.89,
-          "max": 9,
-          "min": 8,
+        "rank": 8,
+        "value": Object {
+          "avg": 481287838.58,
+          "max": 984704804,
+          "min": 19427614,
           "percentiles": Array [
-            9,
-            9,
-            9,
+            261891095,
+            559555294,
+            909466591,
           ],
         },
       },
@@ -1918,6 +2144,7 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentFirstName": Object {
@@ -1933,6 +2160,7 @@ Object {
             8,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentFullName": Object {
@@ -1948,6 +2176,7 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentLastName": Object {
@@ -1963,6 +2192,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentNamePrefix": Object {
@@ -1978,6 +2208,7 @@ Object {
             4,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentNameSuffix": Object {
@@ -1993,6 +2224,7 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
     },
     "listingAgentPhone": Object {
@@ -2008,19 +2240,21 @@ Object {
             12,
           ],
         },
+        "rank": 12,
       },
     },
     "listingId": Object {
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 8.89,
-          "max": 9,
-          "min": 8,
+        "rank": 8,
+        "value": Object {
+          "avg": 512365274.53,
+          "max": 978292997,
+          "min": 12694263,
           "percentiles": Array [
-            9,
-            9,
-            9,
+            357895271,
+            618818935,
+            882060865,
           ],
         },
       },
@@ -2028,6 +2262,7 @@ Object {
     "locationBedroom2": Object {
       "Null": Object {
         "count": 17,
+        "rank": 10,
       },
       "String": Object {
         "count": 83,
@@ -2041,11 +2276,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationBedroom3": Object {
       "Null": Object {
         "count": 18,
+        "rank": 10,
       },
       "String": Object {
         "count": 82,
@@ -2059,11 +2296,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationBedroom4": Object {
       "Null": Object {
         "count": 19,
+        "rank": 10,
       },
       "String": Object {
         "count": 81,
@@ -2077,11 +2316,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationBedroom5": Object {
       "Null": Object {
         "count": 13,
+        "rank": 10,
       },
       "String": Object {
         "count": 87,
@@ -2095,11 +2336,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationBonusRoom": Object {
       "Null": Object {
         "count": 17,
+        "rank": 10,
       },
       "String": Object {
         "count": 83,
@@ -2113,11 +2356,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationDenRoom": Object {
       "Null": Object {
         "count": 17,
+        "rank": 10,
       },
       "String": Object {
         "count": 83,
@@ -2131,11 +2376,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationEatingSpace": Object {
       "Null": Object {
         "count": 14,
+        "rank": 10,
       },
       "String": Object {
         "count": 86,
@@ -2149,11 +2396,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationEntryRoom": Object {
       "Null": Object {
         "count": 19,
+        "rank": 10,
       },
       "String": Object {
         "count": 81,
@@ -2167,11 +2416,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationFamilyRoom": Object {
       "Null": Object {
         "count": 19,
+        "rank": 10,
       },
       "String": Object {
         "count": 81,
@@ -2185,11 +2436,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationFormalDiningR": Object {
       "Null": Object {
         "count": 19,
+        "rank": 10,
       },
       "String": Object {
         "count": 81,
@@ -2203,11 +2456,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationGreatRoom": Object {
       "Null": Object {
         "count": 17,
+        "rank": 10,
       },
       "String": Object {
         "count": 83,
@@ -2221,11 +2476,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationKitchen": Object {
       "Null": Object {
         "count": 12,
+        "rank": 10,
       },
       "String": Object {
         "count": 88,
@@ -2239,11 +2496,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationLivingRoom": Object {
       "Null": Object {
         "count": 19,
+        "rank": 10,
       },
       "String": Object {
         "count": 81,
@@ -2257,11 +2516,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationMasterBedroom": Object {
       "Null": Object {
         "count": 24,
+        "rank": 10,
       },
       "String": Object {
         "count": 76,
@@ -2275,11 +2536,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationOffice": Object {
       "Null": Object {
         "count": 17,
+        "rank": 10,
       },
       "String": Object {
         "count": 83,
@@ -2293,11 +2556,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationOtherRoom": Object {
       "Null": Object {
         "count": 13,
+        "rank": 10,
       },
       "String": Object {
         "count": 87,
@@ -2311,11 +2576,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationRecreationRoo": Object {
       "Null": Object {
         "count": 13,
+        "rank": 10,
       },
       "String": Object {
         "count": 87,
@@ -2329,11 +2596,13 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "locationUtilityRoom": Object {
       "Null": Object {
         "count": 22,
+        "rank": 10,
       },
       "String": Object {
         "count": 78,
@@ -2347,13 +2616,14 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "longitude": Object {
       "Float": Object {
         "count": 100,
         "precision": Object {
-          "avg": 6.87,
+          "avg": 6.72,
           "max": 8,
           "min": 5,
           "percentiles": Array [
@@ -2362,34 +2632,46 @@ Object {
             8,
           ],
         },
+        "rank": 7,
         "scale": Object {
-          "avg": 4,
+          "avg": 3.85,
           "max": 4,
-          "min": 4,
+          "min": 2,
           "percentiles": Array [
             4,
             4,
             4,
           ],
         },
+        "value": Object {
+          "avg": -11.956353999999997,
+          "max": 160.1952,
+          "min": -175.8343,
+          "percentiles": Array [
+            -68.7502,
+            21.246,
+            139.0413,
+          ],
+        },
       },
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 7.87,
-          "max": 9,
-          "min": 6,
+        "rank": 8,
+        "value": Object {
+          "avg": -11.956353999999997,
+          "max": 160.1952,
+          "min": -175.8343,
           "percentiles": Array [
-            7,
-            8,
-            9,
+            -68.7502,
+            21.246,
+            139.0413,
           ],
         },
       },
       "String": Object {
         "count": 100,
         "length": Object {
-          "avg": 7.87,
+          "avg": 7.72,
           "max": 9,
           "min": 6,
           "percentiles": Array [
@@ -2398,11 +2680,13 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "modifiedAt": Object {
       "Date": Object {
         "count": 100,
+        "rank": 4,
       },
       "String": Object {
         "count": 100,
@@ -2416,11 +2700,13 @@ Object {
             24,
           ],
         },
+        "rank": 12,
       },
     },
     "poolSpa": Object {
       "Null": Object {
         "count": 10,
+        "rank": 10,
       },
       "String": Object {
         "count": 90,
@@ -2434,6 +2720,7 @@ Object {
             12,
           ],
         },
+        "rank": 12,
       },
     },
     "propertyType": Object {
@@ -2449,6 +2736,7 @@ Object {
             24,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentCompanyName": Object {
@@ -2464,6 +2752,7 @@ Object {
             16,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentFirstName": Object {
@@ -2479,6 +2768,7 @@ Object {
             8,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentFullName": Object {
@@ -2494,6 +2784,7 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentLastName": Object {
@@ -2509,6 +2800,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentNamePrefix": Object {
@@ -2524,6 +2816,7 @@ Object {
             4,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentNameSuffix": Object {
@@ -2539,6 +2832,7 @@ Object {
             3,
           ],
         },
+        "rank": 12,
       },
     },
     "sellingAgentPhone": Object {
@@ -2554,6 +2848,7 @@ Object {
             12,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeBedroom2": Object {
@@ -2569,6 +2864,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeBedroom3": Object {
@@ -2584,6 +2880,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeBedroom4": Object {
@@ -2599,6 +2896,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeBedroom5": Object {
@@ -2614,6 +2912,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeBonusRoom": Object {
@@ -2629,6 +2928,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeDenRoom": Object {
@@ -2644,6 +2944,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeEatingSpace": Object {
@@ -2659,6 +2960,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeEntryRoom": Object {
@@ -2674,6 +2976,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeFamilyRoom": Object {
@@ -2689,6 +2992,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeFormalDiningRoom": Object {
@@ -2704,6 +3008,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeGreatRoom": Object {
@@ -2719,6 +3024,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeKitchen": Object {
@@ -2734,6 +3040,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeLivingRoom": Object {
@@ -2749,6 +3056,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeMasterBedroom": Object {
@@ -2764,6 +3072,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeOffice": Object {
@@ -2779,6 +3088,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeOtherRoom": Object {
@@ -2794,6 +3104,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeRecreationRoom": Object {
@@ -2809,6 +3120,7 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "sizeUtilityRoom": Object {
@@ -2824,22 +3136,25 @@ Object {
             5,
           ],
         },
+        "rank": 12,
       },
     },
     "soldPrice": Object {
       "Date": Object {
         "count": 2,
+        "rank": 4,
       },
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 8.88,
-          "max": 9,
-          "min": 7,
+        "rank": 8,
+        "value": Object {
+          "avg": 478893431.05,
+          "max": 973356904,
+          "min": 3833095,
           "percentiles": Array [
-            9,
-            9,
-            9,
+            219576556,
+            597903788,
+            927463791,
           ],
         },
       },
@@ -2857,6 +3172,7 @@ Object {
             2,
           ],
         },
+        "rank": 12,
       },
     },
     "status": Object {
@@ -2872,6 +3188,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "structureFeature1": Object {
@@ -2887,6 +3204,7 @@ Object {
             21,
           ],
         },
+        "rank": 12,
       },
     },
     "structureFeature2": Object {
@@ -2902,6 +3220,7 @@ Object {
             18,
           ],
         },
+        "rank": 12,
       },
     },
     "structureFeature3": Object {
@@ -2917,6 +3236,7 @@ Object {
             21,
           ],
         },
+        "rank": 12,
       },
     },
     "water": Object {
@@ -2932,38 +3252,41 @@ Object {
             17,
           ],
         },
+        "rank": 12,
       },
     },
     "zip": Object {
       "Number": Object {
         "count": 100,
-        "length": Object {
-          "avg": 5,
-          "max": 5,
-          "min": 5,
+        "rank": 8,
+        "value": Object {
+          "avg": 51313.78,
+          "max": 97513,
+          "min": 424,
           "percentiles": Array [
-            5,
-            5,
-            5,
+            36429,
+            62321,
+            85151,
           ],
         },
       },
       "String": Object {
         "count": 100,
         "length": Object {
-          "avg": 5,
+          "avg": 4.88,
           "max": 5,
-          "min": 5,
+          "min": 3,
           "percentiles": Array [
             5,
             5,
             5,
           ],
         },
+        "rank": 12,
       },
     },
   },
-  "total": 100,
+  "totalRows": 100,
   "uniques": Object {
     "address1": 100,
     "address2": 96,
@@ -3070,6 +3393,7 @@ Object {
             39,
           ],
         },
+        "rank": 12,
       },
     },
     "companyName": Object {
@@ -3085,11 +3409,13 @@ Object {
             15,
           ],
         },
+        "rank": 12,
       },
     },
     "createdAt": Object {
       "Date": Object {
         "count": 26,
+        "rank": 4,
       },
       "String": Object {
         "count": 26,
@@ -3103,19 +3429,21 @@ Object {
             24,
           ],
         },
+        "rank": 12,
       },
     },
     "credits": Object {
       "Number": Object {
         "count": 26,
-        "length": Object {
-          "avg": 1.8461538461538463,
-          "max": 2,
+        "rank": 8,
+        "value": Object {
+          "avg": 17.32,
+          "max": 20,
           "min": 1,
           "percentiles": Array [
-            2,
-            2,
-            2,
+            20,
+            20,
+            20,
           ],
         },
       },
@@ -3123,9 +3451,11 @@ Object {
     "email": Object {
       "Boolean": Object {
         "count": 1,
+        "rank": 3,
       },
       "Email": Object {
         "count": 21,
+        "rank": 11,
       },
       "String": Object {
         "count": 25,
@@ -3139,11 +3469,13 @@ Object {
             28,
           ],
         },
+        "rank": 12,
       },
     },
     "firstName": Object {
       "Boolean": Object {
         "count": 1,
+        "rank": 3,
       },
       "String": Object {
         "count": 25,
@@ -3157,19 +3489,21 @@ Object {
             8,
           ],
         },
+        "rank": 12,
       },
     },
     "id": Object {
       "Number": Object {
         "count": 1,
-        "length": Object {
-          "avg": 7,
-          "max": 7,
-          "min": 7,
+        "rank": 8,
+        "value": Object {
+          "avg": 9999999,
+          "max": 9999999,
+          "min": 9999999,
           "percentiles": Array [
-            7,
-            7,
-            7,
+            9999999,
+            9999999,
+            9999999,
           ],
         },
       },
@@ -3185,19 +3519,23 @@ Object {
             36,
           ],
         },
+        "rank": 12,
       },
       "UUID": Object {
         "count": 25,
+        "rank": 2,
       },
     },
     "isActive": Object {
       "Boolean": Object {
         "count": 26,
+        "rank": 3,
       },
     },
     "lastName": Object {
       "Boolean": Object {
         "count": 1,
+        "rank": 3,
       },
       "String": Object {
         "count": 25,
@@ -3211,6 +3549,7 @@ Object {
             9,
           ],
         },
+        "rank": 12,
       },
     },
     "location": Object {
@@ -3226,11 +3565,13 @@ Object {
             6,
           ],
         },
+        "rank": 12,
       },
     },
     "modifiedAt": Object {
       "Date": Object {
         "count": 26,
+        "rank": 4,
       },
       "String": Object {
         "count": 26,
@@ -3244,22 +3585,25 @@ Object {
             24,
           ],
         },
+        "rank": 12,
       },
     },
     "profile": Object {
       "Null": Object {
         "count": 4,
+        "rank": 10,
       },
       "Number": Object {
         "count": 1,
-        "length": Object {
-          "avg": 12,
-          "max": 12,
-          "min": 12,
+        "rank": 8,
+        "value": Object {
+          "avg": 999999999999,
+          "max": 999999999999,
+          "min": 999999999999,
           "percentiles": Array [
-            12,
-            12,
-            12,
+            999999999999,
+            999999999999,
+            999999999999,
           ],
         },
       },
@@ -3275,6 +3619,7 @@ Object {
             231,
           ],
         },
+        "rank": 12,
       },
     },
     "salesScore": Object {
@@ -3290,6 +3635,7 @@ Object {
             9,
           ],
         },
+        "rank": 7,
         "scale": Object {
           "avg": 5.5,
           "max": 7,
@@ -3300,23 +3646,34 @@ Object {
             7,
           ],
         },
+        "value": Object {
+          "avg": 15.63873061538461,
+          "max": 20.9877865,
+          "min": 0.75129,
+          "percentiles": Array [
+            11.453456,
+            20.65545,
+            20.9877865,
+          ],
+        },
       },
       "Number": Object {
         "count": 26,
-        "length": Object {
-          "avg": 8.346153846153847,
-          "max": 10,
-          "min": 7,
+        "rank": 8,
+        "value": Object {
+          "avg": 15.63873061538461,
+          "max": 20.9877865,
+          "min": 0.75129,
           "percentiles": Array [
-            8,
-            8,
-            10,
+            11.453456,
+            20.65545,
+            20.9877865,
           ],
         },
       },
     },
   },
-  "total": 26,
+  "totalRows": 26,
   "uniques": Object {
     "catchPhrase": 25,
     "companyName": 25,

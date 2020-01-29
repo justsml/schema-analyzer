@@ -91,7 +91,7 @@ function isEmailShaped(value) {
   if (value == null) return false
   value = String(value).trim()
   if (value.includes(' ') || !value.includes('@')) return false
-  return value.length >= 6 && value.length < 80 && emailPattern.test(value)
+  return value.length >= 5 && value.length < 80 && emailPattern.test(value)
 }
 
 function isNullish (value) {
