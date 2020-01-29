@@ -1,6 +1,6 @@
 {
   "name": "schema-analyzer",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Heuristic JSON \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",
@@ -12,6 +12,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "jest --coverage",
+    "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
     "pretest": "npm run build"
   },
   "repository": {

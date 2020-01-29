@@ -31,12 +31,14 @@ function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, column
 
       const uniques = Object.keys(genSchema._fieldData)
       .reduce((uniques, fieldName) => {
-        if (genSchema._uniques[fieldName]) uniques[fieldName] = genSchema._uniques[fieldName].length
+        if (genSchema._uniques[fieldName]) {
+          uniques[fieldName] = genSchema._uniques[fieldName].length
+        }
         return uniques
       }, {})
 
       return {
-        total: genSchema._totalRecords,
+        totalRows: genSchema._totalRecords,
         uniques: uniques,
         fields: genSchema._fieldData
       }
@@ -96,7 +98,7 @@ function condenseFieldSizes (typeSizesList) {
     const typeSizes = Object.entries(currentTypeGuesses)
       .map(([typeName, { length, scale, precision }]) => {
       // console.log(typeName, JSON.stringify({ length, scale, precision }))
-        sumCounts[typeName] = sumCounts[typeName] || {}
+        sumCounts[typeName] = sumCounts[typeName] || { count: 0 }
         if (!sumCounts[typeName].count) sumCounts[typeName].count = 0
         if (Number.isFinite(length) && !sumCounts[typeName].length) sumCounts[typeName].length = []
         if (Number.isFinite(scale) && !sumCounts[typeName].scale) sumCounts[typeName].scale = []
