@@ -78,7 +78,7 @@ function isCurrency(value) {
 }
 
 function isNumeric (value, fieldName) {
-  if (value == null) return false
+  // if (value == null) return false
   value = String(value).trim()
   return value.length < 30 && numberishPattern.test(value)
 }

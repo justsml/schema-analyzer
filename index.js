@@ -13,10 +13,10 @@ export { schemaBuilder, condenseFieldData, condenseFieldSizes, getNumberRangeSta
 
 function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, columns}) => {}) {
   // const { promise, resolve, reject } = FP.unpack()
-  if (typeof name !== 'string') throw Error('Argument "name" must be a String')
-  if (!Array.isArray(data)) throw Error('Can\'t process input.\nSupply a JSON Array or CSV w/ named column headers!')
+  if (typeof name !== 'string') throw Error('Argument `name` must be a String')
+  if (!Array.isArray(data)) throw Error('Input Data must be an Array of Objects')
   log('Starting')
-  const detectedSchema = { _uniques: {}, _totalRecords: null }
+  const detectedSchema = { _uniques: {}, _fieldData: {}, _totalRecords: null }
   return Promise.resolve(data)
     .then(docs => {
       log(`  About to examine every row & cell. Found ${docs.length} records...`)
@@ -43,9 +43,9 @@ function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, column
     })
 
     function evaluateSchemaLevel (schema, row, index, array) { // eslint-disable-line
-      schema = schema || {}
-      schema._uniques = schema._uniques || {}
-      schema._fieldData = schema._fieldData || {}
+      schema = schema
+      schema._uniques = schema._uniques
+      schema._fieldData = schema._fieldData
       schema._totalRecords = schema._totalRecords || array.length
       const fieldNames = Object.keys(row)
       log(`Processing Row # ${index + 1}/${schema._totalRecords}...`)

@@ -1,6 +1,56 @@
 import { schemaBuilder, condenseFieldData } from './index.js'
-import users from '../../public/users.example.json'
-// import people from '../../public/swapi-people.json'
+import path from 'path'
+import fs from 'fs'
+import csvParse from 'csv-parse'
+
+it('handles missing arguments', () => {
+  expect(() => schemaBuilder([{}])).toThrowError(/must be a String/)
+  expect(() => schemaBuilder('test', null)).toThrowError(/must be an Array/)
+})
+
+it('can analyze schema for ./users.json', () => {
+  const users = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/users.example.json'), 'utf8'))
+  return schemaBuilder('users', users)
+  .then(result => expect(result).toMatchSnapshot('usersResult'))
+})
+
+it('can analyze schema for ./properties.json', () => {
+  const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
+  return schemaBuilder('properties', properties)
+  .then(result => expect(result).toMatchSnapshot('propertiesResult'))
+})
+
+it('can analyze schema for ./products.csv', () => {
+  const productCsv = parseCsv(fs.readFileSync(path.resolve(__dirname, './__tests__/products-3000.csv'), 'utf8'))
+  return productCsv.then(products => {
+    return schemaBuilder('products', products)
+      .then(result => expect(result).toMatchSnapshot('productsResult'))
+  })
+})
+
+it('can analyze schema for ./people.json', () => {
+  const people = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/swapi-people.json'), 'utf8'))
+  return schemaBuilder('people', people)
+  .then(result => expect(result).toMatchSnapshot('peopleResult'))
+})
+
+
+function parseCsv (content) {
+  return new Promise((resolve, reject) => {
+    csvParse(
+      content,
+      {
+        columns: true,
+        trim: true,
+        skip_empty_lines: true
+      },
+      (err, results, info) => {
+        if (err) return reject(err)
+        resolve(results)
+      }
+    )
+  })
+}
 
 // const uniques = {
 //   title: ['lorem ipsum dolor sit amet', 'amit ipsum dolor sit amet', 'amit ipsum dolor sit Lorem ipsum', 'amit Lorem ipsum amit dolor amet'],
@@ -86,10 +136,3 @@ import users from '../../public/users.example.json'
 //   }
 //   ]
 // }
-
-it('should handle sample user data', () => {
-  schemaBuilder('users', users)
-})
-// it('should compute range stats from array of objects', () => {
-//   expect(condenseFieldData(fieldInfoByKey)).toMatchSnapshot('fieldInfoByKey')
-// })
