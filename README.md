@@ -6,6 +6,35 @@
 
 Schema **Analyzer** is the core library behind Dan's [Schema **Generator**](https://github.com/justsml/schema-generator).
 
+### Features
+
+The primary goal is to support any input JSON/CSV and infer as much as possible. More data will generally yield better results.
+
+- [x] Heuristic type analysis for arrays of objects.
+- [x] Browser-based (local, no server necessary)
+- [x] Automatic type detection:
+    - [x] Object Id (MongoDB's 96 bit/12 Byte ID. 4B timestamp + 3B MachineID + 2B ProcessID + 3B counter)
+    - [x] UUID/GUID (Common 128 bit/16 Byte ID. Stored as a hex string, dash delimited in parts: 8, 4, 4, 4, 12)
+    - [x] Boolean (detects obvious strings `true`, `false`, `Y`, `N`)
+    - [x] Date (Smart detection via comprehensive regex pattern)
+    - [x] Timestamp (integer, number of milliseconds since unix epoch)
+    - [x] Currency (62 currency symbols supported)
+    - [x] Float (w/ scale & precision measurements)
+    - [x] Number (Integers)
+    - [x] Null (sparse column data helps w/ certain inferences)
+    - [x] Email (falls back to string)
+    - [x] String (big text and varchar awareness)
+    - [x] Array (includes min/max/avg length)
+    - [x] Object
+- [x] Detects column size minimum, maximum and average
+- [x] Includes data points at the 30th, 60th and 90th percentiles (for detecting outliers and enum types!)
+- [x] Handles some error/outliers
+- [x] Quantify # of unique values per column
+- [ ] Identify enum Fields w/ Values
+- [ ] Identify `Not Null` fields
+- [ ] Nested data structure & multi-table relational output.
+- [ ] _Un-de-normalize_ JSON into flat typed objects.
+
 
 ### Data Analysis Results
 
@@ -125,35 +154,6 @@ Numeric and String types include a summary of the observed field sizes:
   "percentiles": [ 1, 1, 1 ]
 }
 ```
-
-### Features
-
-The primary goal is to support any input JSON/CSV and infer as much as possible. More data will generally yield better results.
-
-- [x] Heuristic type analysis for arrays of objects.
-- [x] Browser-based (local, no server necessary)
-- [x] Automatic type detection:
-    - [x] Object Id (MongoDB's 96 bit/12 Byte ID. 4B timestamp + 3B MachineID + 2B ProcessID + 3B counter)
-    - [x] UUID/GUID (Common 128 bit/16 Byte ID. Stored as a hex string, dash delimited in parts: 8, 4, 4, 4, 12)
-    - [x] Boolean (detects obvious strings `true`, `false`, `Y`, `N`)
-    - [x] Date (Smart detection via comprehensive regex pattern)
-    - [x] Timestamp (integer, number of milliseconds since unix epoch)
-    - [x] Currency (62 currency symbols supported)
-    - [x] Float (w/ scale & precision measurements)
-    - [x] Number (Integers)
-    - [x] Null (sparse column data helps w/ certain inferences)
-    - [x] Email (falls back to string)
-    - [x] String (big text and varchar awareness)
-    - [x] Array (includes min/max/avg length)
-    - [x] Object
-- [x] Detects column size minimum, maximum and average
-- [x] Includes data points at the 30th, 60th and 90th percentiles (for detecting outliers and enum types!)
-- [x] Handles some error/outliers
-- [x] Quantify # of unique values per column
-- [ ] Identify enum Fields w/ Values
-- [ ] Identify `Not Null` fields
-- [ ] Nested data structure & multi-table relational output.
-- [ ] _Un-de-normalize_ JSON into flat typed objects.
 
 ## Notes
 
