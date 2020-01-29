@@ -1,7 +1,7 @@
 {
   "name": "schema-analyzer",
-  "version": "1.0.0",
-  "description": "Heuristic JSON \"column\" type & size analysis w/ enumeration detection.",
+  "version": "1.0.1",
+  "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",
   "browser": "dist/schema-analyzer.umd.js",
