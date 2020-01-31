@@ -73,13 +73,22 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  * @param {Object} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
-function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {},
-  {enumDetectAtRowCount = 100} = {enumDetectAtRowCount: 100}) {
-    const isEnumEnabled = input.length >= enumDetectAtRowCount
-
-  // const { promise, resolve, reject } = FP.unpack()
+function schemaBuilder (
+  name, input, onProgress = ({totalRows, currentRow}) => {},
+  {
+    enumMinimumRowCount = 100, enumAbsoluteLimit = 10, enumPercentThreshold = 0.01,
+    nullableRowsThreshold = 0.02,
+    uniqueRowsThreshold = 0.98
+  } = {
+    enumMinimumRowCount: 100, enumAbsoluteLimit: 10, enumPercentThreshold: 0.01,
+    nullableRowsThreshold: 0.02,
+    uniqueRowsThreshold: 0.98
+  }
+) {
   if (typeof name !== 'string') throw Error('Argument `name` must be a String')
   if (!Array.isArray(input)) throw Error('Input Data must be an Array of Objects')
+  const isEnumEnabled = input.length >= enumMinimumRowCount
+
   log('Starting')
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
@@ -88,15 +97,24 @@ function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
-      const fieldNames = Object.keys(schema.fields)
+      const uniqueValueCounts = Object.keys(schema.fields)
       .reduce((uniques, fieldName) => {
-        schema.fields[fieldName] = MetaChecks.TYPE_ENUM.check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] })
+        schema.fields[fieldName] = MetaChecks.TYPE_ENUM
+        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+          { enumAbsoluteLimit, enumPercentThreshold })
+        schema.fields[fieldName] = MetaChecks.TYPE_NULLABLE
+        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+          { nullableRowsThreshold })
+        schema.fields[fieldName] = MetaChecks.TYPE_UNIQUE
+        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+          { uniqueRowsThreshold })
+
         if (schema.uniques && schema.uniques[fieldName]) {
           uniques[fieldName] = schema.uniques[fieldName].length
         }
         return uniques
       }, {})
-
+      log('Unique field value counts:', uniqueValueCounts)
       return {
         totalRows: schema.totalRows,
         // uniques: uniques,
