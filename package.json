@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "jest --coverage",
+    "test": "jest --coverage --maxWorkers 4",
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
     "pretest": "npm run build"
   },
