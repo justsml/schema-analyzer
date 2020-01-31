@@ -70,9 +70,13 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  * @param {String} name - Name of the resource, Table or collection.
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
  * @param {progressCallback} [onProgress] - Callback function called with updates on # of rows processed.
+ * @param {Object} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
-function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {}) {
+function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {},
+  {enumDetectAtRowCount = 100} = {enumDetectAtRowCount: 100}) {
+    const isEnumEnabled = input.length >= enumDetectAtRowCount
+
   // const { promise, resolve, reject } = FP.unpack()
   if (typeof name !== 'string') throw Error('Argument `name` must be a String')
   if (!Array.isArray(input)) throw Error('Input Data must be an Array of Objects')
@@ -86,8 +90,8 @@ function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {
 
       const fieldNames = Object.keys(schema.fields)
       .reduce((uniques, fieldName) => {
-        schema.fields[fieldName] = MetaChecks.TYPE_ENUM.check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques[fieldName] })
-        if (schema.uniques[fieldName]) {
+        schema.fields[fieldName] = MetaChecks.TYPE_ENUM.check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] })
+        if (schema.uniques && schema.uniques[fieldName]) {
           uniques[fieldName] = schema.uniques[fieldName].length
         }
         return uniques
@@ -105,7 +109,7 @@ function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {
    * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: FieldTypeData[]; }; }} schema
    */
     function pivotRowsGroupedByType(docs) {
-      const detectedSchema = { uniques: {}, fieldsData: {}, totalRows: null }
+      const detectedSchema = { uniques: isEnumEnabled ? {} : null, fieldsData: {}, totalRows: null }
       log(`  About to examine every row & cell. Found ${docs.length} records...`)
       const pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema)
       log('  Extracted data points from Field Type analysis')
@@ -129,13 +133,18 @@ function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {
           fieldName,
           value: row[fieldName]
         })
-        // const typeNames = Object.keys(typeFingerprint)
-        schema.uniques[fieldName] = schema.uniques[fieldName] || []
-        if (!schema.uniques[fieldName].includes(row[fieldName])) schema.uniques[fieldName].push(row[fieldName])
+        const typeNames = Object.keys(typeFingerprint)
+        const isEnumType = typeNames.includes('Number') || typeNames.includes('String')
+        if (isEnumEnabled && isEnumType) {
+          schema.uniques[fieldName] = schema.uniques[fieldName] || []
+          if (!schema.uniques[fieldName].includes(row[fieldName])) schema.uniques[fieldName].push(row[fieldName])
+        // } else {
+        //   schema.uniques[fieldName] = null
+        }
         schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || []
         schema.fieldsData[fieldName].push(typeFingerprint)
       })
-      onProgress({ totalRows: array.length, currentRow: index + 1 })
+      onProgress({ totalRows: schema.totalRows, currentRow: index + 1 })
       return schema
     }
 }
@@ -143,8 +152,8 @@ function schemaBuilder (name, input, onProgress = ({totalRows, currentRow}) => {
 
 /**
  *
- * @param {{ fieldsData: Object.<string, FieldTypeData[]>, uniques: Object.<string, any[]>}} schema
- * @returns {{fields: Object.<string, FieldTypeSummary>, uniques: Object.<string, any[]>}}
+ * @param {{ fieldsData: Object.<string, FieldTypeData[]>, uniques: Object.<string, any[]>, totalRows: number}} schema
+ * @returns {{fields: Object.<string, FieldTypeSummary>, uniques: Object.<string, any[]>, totalRows: number}}
  */
 function condenseFieldData (schema) {
   const {fieldsData} = schema
@@ -162,7 +171,7 @@ function condenseFieldData (schema) {
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
   log('Replaced fieldData with fieldSummary')
-  return {fields: fieldSummary, uniques: schema.uniques}
+  return {fields: fieldSummary, uniques: schema.uniques, totalRows: schema.totalRows}
 }
 
 /**
@@ -240,7 +249,7 @@ function condenseFieldSizes(pivotedDataByType) {
       if (!aggregateSummary[typeName]) {
         aggregateSummary[typeName] = {
           // typeName,
-          rank: pivotedDataByType[typeName].rank,
+          rank: typeRankings[typeName],
           count: pivotedDataByType[typeName].count
         }
       }
@@ -280,11 +289,11 @@ function getFieldMetadata ({
         analysis[typeGuess] = { ...analysis[typeGuess], precision, scale }
       }
     }
-    if (typeGuess === 'Number') {
+    if (typeGuess === 'Number' || typeGuess === 'Timestamp') {
       value = Number(value)
       analysis[typeGuess] = { ...analysis[typeGuess], value }
     }
-    if (typeGuess === 'String') {
+    if (typeGuess === 'String' || typeGuess === 'Email') {
       length = String(value).length
       analysis[typeGuess] = { ...analysis[typeGuess], length }
     }

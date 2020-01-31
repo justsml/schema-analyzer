@@ -17,10 +17,15 @@ import {
  * @returns {string[]}
  */
 function detectTypes (value) {
-  return prioritizedTypes.reduce((types, typeHelper) => {
-    if (typeHelper.check(value)) types.push(typeHelper.type)
+  const excludedTypes = []
+  const matchedTypes = prioritizedTypes.reduce((types, typeHelper) => {
+    if (typeHelper.check(value)) {
+      if (typeHelper.supercedes) excludedTypes.push(...typeHelper.supercedes)
+      types.push(typeHelper.type)
+    }
     return types
   }, [])
+  return matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
 }
 
 /**
@@ -31,21 +36,18 @@ const MetaChecks = {
   TYPE_ENUM: {
     type: 'enum',
     matchBasicTypes: ['String', 'Number'],
-    check: (typeInfo, {rowCount, uniques}, {absoluteLimit = 20, percentThreshold = 0.01} = {}) => {
+    check: (typeInfo, {rowCount, uniques}, {absoluteLimit = 10, percentThreshold = 0.01} = {}) => {
+      if (!uniques || uniques.length === 0) return typeInfo
       // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
       const uniqueness = rowCount / uniques.length
-      const relativeEnumLimit = parseInt(String(rowCount * percentThreshold), 10)
-      if (relativeEnumLimit > absoluteLimit) return typeInfo
+      const relativeEnumLimit = Math.min(parseInt(String(rowCount * percentThreshold), 10), absoluteLimit)
+      if (uniques.length > relativeEnumLimit) return typeInfo
       // const enumLimit = uniqueness < absoluteLimit && relativeEnumLimit < absoluteLimit
       //   ? absoluteLimit
       //   : relativeEnumLimit
 
       return {...typeInfo, enum: uniques}
       // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
-      // const entropy = rowCount / typeCount
-      // const nullCount = nullTypeInfo && nullTypeInfo.count
-
-
     }
   }
 }
@@ -61,30 +63,37 @@ const TYPE_UNKNOWN = {
 }
 const TYPE_OBJECT_ID = {
   type: 'ObjectId',
+  supercedes: ['String'],
   check: isObjectId
 }
 const TYPE_UUID = {
   type: 'UUID',
+  supercedes: ['String'],
   check: isUuid
 }
 const TYPE_BOOLEAN = {
   type: 'Boolean',
+  supercedes: ['String'],
   check: isBoolish
 }
 const TYPE_DATE = {
   type: 'Date',
+  supercedes: ['String'],
   check: isDateString
 }
 const TYPE_TIMESTAMP = {
   type: 'Timestamp',
+  supercedes: ['String', 'Number'],
   check: isTimestamp
 }
 const TYPE_CURRENCY = {
   type: 'Currency',
+  supercedes: ['String', 'Number'],
   check: isCurrency
 }
 const TYPE_FLOAT = {
   type: 'Float',
+  supercedes: ['String', 'Number'],
   check: isFloatish
 }
 const TYPE_NUMBER = {
@@ -95,6 +104,7 @@ const TYPE_NUMBER = {
 }
 const TYPE_EMAIL = {
   type: 'Email',
+  supercedes: ['String'],
   check: isEmailShaped
 }
 const TYPE_STRING = {
