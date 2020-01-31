@@ -1,4 +1,4 @@
-import { schemaBuilder, condenseFieldData, getNumberRangeStats } from './index.js'
+import { schemaBuilder, getNumberRangeStats } from './index.js'
 import path from 'path'
 import fs from 'fs'
 import csvParse from 'csv-parse'

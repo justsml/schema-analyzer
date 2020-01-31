@@ -11,11 +11,43 @@ import {
   isUuid
 } from './utils/type-detectors.js'
 
+/**
+ * Returns an array of TypeName.
+ * @param {any} value - input data
+ * @returns {string[]}
+ */
 function detectTypes (value) {
   return prioritizedTypes.reduce((types, typeHelper) => {
     if (typeHelper.check(value)) types.push(typeHelper.type)
     return types
   }, [])
+}
+
+/**
+ * MetaChecks are used to analyze the intermediate results, after the Basic (discreet) type checks are complete.
+ * They have access to all the data points before it is finally processed.
+ */
+const MetaChecks = {
+  TYPE_ENUM: {
+    type: 'enum',
+    matchBasicTypes: ['String', 'Number'],
+    check: (typeInfo, {rowCount, uniques}, {absoluteLimit = 20, percentThreshold = 0.01} = {}) => {
+      // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
+      const uniqueness = rowCount / uniques.length
+      const relativeEnumLimit = parseInt(String(rowCount * percentThreshold), 10)
+      if (relativeEnumLimit > absoluteLimit) return typeInfo
+      // const enumLimit = uniqueness < absoluteLimit && relativeEnumLimit < absoluteLimit
+      //   ? absoluteLimit
+      //   : relativeEnumLimit
+
+      return {...typeInfo, enum: uniques}
+      // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
+      // const entropy = rowCount / typeCount
+      // const nullCount = nullTypeInfo && nullTypeInfo.count
+
+
+    }
+  }
 }
 
 // Basic Type Filters - rudimentary data sniffing used to tally up "votes" for a given field
@@ -127,6 +159,7 @@ export {
   typeRankings,
   prioritizedTypes,
   detectTypes,
+  MetaChecks,
   TYPE_UNKNOWN,
   TYPE_OBJECT_ID,
   TYPE_UUID,

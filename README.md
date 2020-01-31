@@ -56,7 +56,7 @@ It consists of 3 key top-level properties:
 
 - `totalRows` - # of rows analyzed.
 - `uniques: ` - a 'map' of field names & the # of unique values found.
-- `fields: FieldRangeInfo` - a map of field names with all detected types ([includes meta-data](#fieldrangeinfo) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
+- `fields: FieldRangeSummary` - a map of field names with all detected types ([includes meta-data](#fieldrangesummary) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
 
 #### Review the raw results below
 
@@ -147,7 +147,7 @@ Details about nested types can be found below.
 
 Numeric and String types include a summary of the observed field sizes:
 
-#### `FieldRangeInfo<Object>`
+#### `FieldRangeSummary<Object>`
 
 ##### Properties
 
