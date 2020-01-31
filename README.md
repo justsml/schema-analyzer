@@ -13,7 +13,8 @@ The primary goal is to support any input JSON/CSV and infer as much as possible.
 - [x] Heuristic type analysis for arrays of objects.
 - [x] Browser-based (local, no server necessary)
 - [x] Automatic type detection:
-    - [x] Object Id (MongoDB's 96 bit/12 Byte ID. 4B timestamp + 3B MachineID + 2B ProcessID + 3B counter)
+    - [x] ID - Identifier column, by name and unique Integer check (detects BigInteger)
+    - [x] ObjectId (MongoDB's 96 bit/12 Byte ID. 32bit timestamp + 24bit MachineID + 16bit ProcessID + 24bit Counter)
     - [x] UUID/GUID (Common 128 bit/16 Byte ID. Stored as a hex string, dash delimited in parts: 8, 4, 4, 4, 12)
     - [x] Boolean (detects obvious strings `true`, `false`, `Y`, `N`)
     - [x] Date (Smart detection via comprehensive regex pattern)
@@ -35,16 +36,27 @@ The primary goal is to support any input JSON/CSV and infer as much as possible.
 - [ ] Nested data structure & multi-table relational output.
 - [ ] _Un-de-normalize_ JSON into flat typed objects.
 
+### Getting Started
 
-### Data Analysis Results
+```js
+npm install schema-analyzer
+```
+
+```js
+import { schemaBuilder } from 'schema-builder'
+
+schemaBuilder(schemaName: String, data: Array<Object>): TypeSummary
+```
+
+### Data Analysis Results: `TypeSummary`
 
 > What does this library's analysis look like?
 
 It consists of 3 key top-level properties:
 
 - `totalRows` - # of rows analyzed.
-- `uniques` - a 'map' of field names & the # of unique values found.
-- `fields` - field names with all detected types (includes metadata for each type detected, with any overlaps. e.g. an Email is also a String, `"42"` is a String and Number)
+- `uniques: ` - a 'map' of field names & the # of unique values found.
+- `fields: FieldRangeInfo` - a map of field names with all detected types ([includes meta-data](#fieldrangeinfo) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
 
 #### Review the raw results below
 
@@ -134,6 +146,10 @@ Details about nested types can be found below.
 ### Number & String Range Object Details
 
 Numeric and String types include a summary of the observed field sizes:
+
+#### `FieldRangeInfo<Object>`
+
+##### Properties
 
 - `min` the minimum number or string length
 - `max` the maximum number or string length

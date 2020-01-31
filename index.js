@@ -8,16 +8,32 @@ const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
 
-export { schemaBuilder, condenseFieldData, condenseFieldSizes, getNumberRangeStats }
+export { schemaBuilder, condenseFieldData, pivotFieldDataByType as condenseFieldSizes, getNumberRangeStats }
 
 
-function schemaBuilder (name, data, onProgress = ({totalRows, currentRow, columns}) => {}) {
+
+
+/**
+ * Includes the complete results of input analysis..
+ * @typedef TypeSummary
+ * @type {Promise<{ totalRows: number; uniques: Object.<string, number>; fields: Object.<string, FieldMetadata>; }>}
+ */
+//  * @property {object} typeSummary - includes extracted type analysis.
+
+/**
+ * schemaBuilder is the main function and where all the analysis & processing happens.
+ * @param {String} name - Name of the resource, Table or collection.
+ * @param {Array<Object>} input - data The data to analyze which must be an array of objects.
+ * @returns {TypeSummary}  Returns
+ *
+ */
+function schemaBuilder (name, input, onProgress = ({totalRows, currentRow, columns}) => {}) {
   // const { promise, resolve, reject } = FP.unpack()
   if (typeof name !== 'string') throw Error('Argument `name` must be a String')
-  if (!Array.isArray(data)) throw Error('Input Data must be an Array of Objects')
+  if (!Array.isArray(input)) throw Error('Input Data must be an Array of Objects')
   log('Starting')
   const detectedSchema = { uniques: {}, fieldsData: {}, totalRecords: null }
-  return Promise.resolve(data)
+  return Promise.resolve(input)
     .then(docs => {
       log(`  About to examine every row & cell. Found ${docs.length} records...`)
       const pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema)
@@ -77,36 +93,37 @@ function condenseFieldData (schema) {
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
   fieldNames
     .forEach((fieldName) => {
-      fieldSummary[fieldName] = condenseFieldSizes(fieldsData[fieldName])
+      fieldSummary[fieldName] = pivotFieldDataByType(fieldsData[fieldName])
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
   schema.fieldsData = fieldSummary
   log('Replaced fieldData with fieldSummary')
   return schema
 }
-function condenseFieldSizes (typeSizesList) {
+function pivotFieldDataByType (typeSizesList) {
   // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
-  const sumCounts = {}
+  const pivotedData = {}
   log(`Processing ${typeSizesList.length} type guesses`)
   typeSizesList.map(currentTypeGuesses => {
     const typeSizes = Object.entries(currentTypeGuesses)
       .map(([typeName, { value, length, scale, precision }]) => {
       // console.log(typeName, JSON.stringify({ length, scale, precision }))
-        sumCounts[typeName] = sumCounts[typeName] || { count: 0 }
-        if (!sumCounts[typeName].count) sumCounts[typeName].count = 0
-        if (Number.isFinite(length) && !sumCounts[typeName].length) sumCounts[typeName].length = []
-        if (Number.isFinite(scale) && !sumCounts[typeName].scale) sumCounts[typeName].scale = []
-        if (Number.isFinite(precision) && !sumCounts[typeName].precision) sumCounts[typeName].precision = []
-        if (Number.isFinite(value) && !sumCounts[typeName].value) sumCounts[typeName].value = []
+        pivotedData[typeName] = pivotedData[typeName] || { count: 0 }
+        if (!pivotedData[typeName].count) pivotedData[typeName].count = 0
+        if (Number.isFinite(length) && !pivotedData[typeName].length) pivotedData[typeName].length = []
+        if (Number.isFinite(scale) && !pivotedData[typeName].scale) pivotedData[typeName].scale = []
+        if (Number.isFinite(precision) && !pivotedData[typeName].precision) pivotedData[typeName].precision = []
+        if (Number.isFinite(value) && !pivotedData[typeName].value) pivotedData[typeName].value = []
 
-        sumCounts[typeName].count++
-        if (length) sumCounts[typeName].length.push(length)
-        if (scale) sumCounts[typeName].scale.push(scale)
-        if (precision) sumCounts[typeName].precision.push(precision)
-        if (value) sumCounts[typeName].value.push(value)
-        sumCounts[typeName].rank = typeRankings[typeName]
-        return sumCounts[typeName]
+        pivotedData[typeName].count++
+        if (length) pivotedData[typeName].length.push(length)
+        if (scale) pivotedData[typeName].scale.push(scale)
+        if (precision) pivotedData[typeName].precision.push(precision)
+        if (value) pivotedData[typeName].value.push(value)
+        pivotedData[typeName].rank = typeRankings[typeName]
+        return pivotedData[typeName]
       })
+    return pivotedData
   })
   /*
   > Example of sumCounts at this point
@@ -115,16 +132,19 @@ function condenseFieldSizes (typeSizesList) {
     String: { count: 3, length: [ 2, 3, 6 ] },
     Number: { count: 1, length: [ 6 ] }
   }
-  */
-  log('Condensing data points to stats summaries...')
-  Object.keys(sumCounts)
+*/
+}
+
+function condenseFieldSizes(pivotedDataByType) {
+  log('Condensing data points to a TypeSummary...')
+  Object.keys(pivotedDataByType)
     .map(typeName => {
       // if (!sizeRangeSummary[typeName]) sizeRangeSummary[typeName] = {}
-      if (sumCounts[typeName].value) sumCounts[typeName].value = getNumberRangeStats(sumCounts[typeName].value)
-      if (sumCounts[typeName].length) sumCounts[typeName].length = getNumberRangeStats(sumCounts[typeName].length)
-      if (sumCounts[typeName].scale) sumCounts[typeName].scale = getNumberRangeStats(sumCounts[typeName].scale)
-      if (sumCounts[typeName].precision) sumCounts[typeName].precision = getNumberRangeStats(sumCounts[typeName].precision)
-      // if (sumCounts[typeName].count) sumCounts[typeName].count = sumCounts[typeName].count
+      if (pivotedDataByType[typeName].value) pivotedDataByType[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
+      if (pivotedDataByType[typeName].length) pivotedDataByType[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length)
+      if (pivotedDataByType[typeName].scale) pivotedDataByType[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale)
+      if (pivotedDataByType[typeName].precision) pivotedDataByType[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision)
+      // if (pivotedDataByType[typeName].count) pivotedDataByType[typeName].count = pivotedDataByType[typeName].count
 
     })
   log('Done condensing data points...')
@@ -146,9 +166,9 @@ function condenseFieldSizes (typeSizesList) {
     }
   }
   */
-  // console.log('typeSizes SUM:', sumCounts)
+  // console.log('typeSizes SUM:', pivotedDataByType)
   // console.log(sizeRangeSummary)
-  return sumCounts
+  return pivotedDataByType
 }
 
 function getFieldMetadata ({
