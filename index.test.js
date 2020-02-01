@@ -11,29 +11,29 @@ it('handles missing arguments', () => {
 it('can analyze schema for ./users.json', () => {
   const users = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/users.example.json'), 'utf8'))
   return schemaBuilder('users', users)
-  .then(result => expect(result).toMatchSnapshot('usersResult'))
+    .then(result => expect(result).toMatchSnapshot('usersResult'))
 })
 
 it('can analyze schema for ./properties.json', () => {
   const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
   return schemaBuilder('properties', properties)
-  .then(result => expect(result).toMatchSnapshot('propertiesResult'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult'))
 })
 
 it('can analyze schema w/ enum options', () => {
   const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
   const lowEnumLimitLoosePct = schemaBuilder('properties', properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30, enumPercentThreshold: 0.2 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'))
   const lowEnumLimitLoose = schemaBuilder('properties', properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoose'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoose'))
   const lowEnumLimit = schemaBuilder('properties', properties, { enumMinimumRowCount: 10 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimit'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimit'))
   const highEnumLimit = schemaBuilder('properties', properties, { enumMinimumRowCount: 1000 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_highEnumLimit'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_highEnumLimit'))
   const highNullableLimit = schemaBuilder('properties', properties, { nullableRowsThreshold: 0.25 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
   const lowNullableLimit = schemaBuilder('properties', properties, { nullableRowsThreshold: 0 })
-  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
   return Promise.all([
     lowEnumLimitLoosePct,
     lowEnumLimitLoose,
@@ -70,7 +70,7 @@ it('can analyze schema for inline csv', async () => {
 it('can analyze schema for ./people.json', () => {
   const people = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/swapi-people.json'), 'utf8'))
   return schemaBuilder('people', people)
-  .then(result => expect(result).toMatchSnapshot('peopleResult'))
+    .then(result => expect(result).toMatchSnapshot('peopleResult'))
 })
 
 it('number range analysis handles invalid data', () => {

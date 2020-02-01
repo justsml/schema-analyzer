@@ -1,11 +1,11 @@
 // import globals from 'rollup-plugin-node-globals';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json';
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import pkg from './package.json'
 
 const includePackages = {
   'lodash.isdate': 'isDate',
-  'debug': 'debug'
+  debug: 'debug'
 }
 
 const envOptions = process.env.NODE_ENV === 'production' ? {
@@ -41,7 +41,6 @@ export default [
     ]
   },
 
-
   {
     input: './index.js',
     output: {
@@ -65,7 +64,6 @@ export default [
     ]
   },
 
-
   {
     input: './index.js',
     output: {
@@ -87,7 +85,7 @@ export default [
       }), // so Rollup can find `ms`
       commonjs()
     ]
-  },
+  }
 
   // CommonJS (for Node) and ES module (for bundlers) build.
   // (We could have three entries in the configuration array
@@ -129,4 +127,4 @@ export default [
   //     }
   //   ]
   // }
-];
+]

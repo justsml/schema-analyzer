@@ -36,7 +36,7 @@ const MetaChecks = {
   TYPE_ENUM: {
     type: 'enum',
     matchBasicTypes: ['String', 'Number'],
-    check: (typeInfo, {rowCount, uniques}, {enumAbsoluteLimit, enumPercentThreshold}) => {
+    check: (typeInfo, { rowCount, uniques }, { enumAbsoluteLimit, enumPercentThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
       // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
       // const uniqueness = rowCount / uniques.length
@@ -46,16 +46,16 @@ const MetaChecks = {
       //   ? enumAbsoluteLimit
       //   : relativeEnumLimit
 
-      return {enum: uniques, ...typeInfo}
+      return { enum: uniques, ...typeInfo }
       // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     }
   },
   TYPE_NULLABLE: {
     type: 'nullable',
     // matchBasicTypes: ['String', 'Number'],
-    check: (typeInfo, {rowCount, uniques}, {nullableRowsThreshold}) => {
+    check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
-      const {types} = typeInfo
+      const { types } = typeInfo
       let nullishTypeCount = 0
       if (types.Null) {
         nullishTypeCount += types.Null.count
@@ -66,19 +66,19 @@ const MetaChecks = {
       const nullLimit = rowCount * nullableRowsThreshold
       const isNotNullable = nullishTypeCount <= nullLimit
       // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-      return {nullable: !isNotNullable, ...typeInfo}
+      return { nullable: !isNotNullable, ...typeInfo }
       // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     }
   },
   TYPE_UNIQUE: {
     type: 'unique',
     // matchBasicTypes: ['String', 'Number'],
-    check: (typeInfo, {rowCount, uniques}, {uniqueRowsThreshold}) => {
+    check: (typeInfo, { rowCount, uniques }, { uniqueRowsThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
       // const uniqueness = rowCount / uniques.length
       const isUnique = uniques.length === (rowCount * uniqueRowsThreshold)
       // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-      return {unique: isUnique, ...typeInfo}
+      return { unique: isUnique, ...typeInfo }
       // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}
       // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     }
