@@ -11,11 +11,78 @@ import {
   isUuid
 } from './utils/type-detectors.js'
 
+/**
+ * Returns an array of TypeName.
+ * @param {any} value - input data
+ * @returns {string[]}
+ */
 function detectTypes (value) {
-  return prioritizedTypes.reduce((types, typeHelper) => {
-    if (typeHelper.check(value)) types.push(typeHelper.type)
+  const excludedTypes = []
+  const matchedTypes = prioritizedTypes.reduce((types, typeHelper) => {
+    if (typeHelper.check(value)) {
+      if (typeHelper.supercedes) excludedTypes.push(...typeHelper.supercedes)
+      types.push(typeHelper.type)
+    }
     return types
   }, [])
+  return matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
+}
+
+/**
+ * MetaChecks are used to analyze the intermediate results, after the Basic (discreet) type checks are complete.
+ * They have access to all the data points before it is finally processed.
+ */
+const MetaChecks = {
+  TYPE_ENUM: {
+    type: 'enum',
+    matchBasicTypes: ['String', 'Number'],
+    check: (typeInfo, {rowCount, uniques}, {enumAbsoluteLimit, enumPercentThreshold}) => {
+      if (!uniques || uniques.length === 0) return typeInfo
+      // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
+      // const uniqueness = rowCount / uniques.length
+      const relativeEnumLimit = Math.min(parseInt(String(rowCount * enumPercentThreshold), 10), enumAbsoluteLimit)
+      if (uniques.length > relativeEnumLimit) return typeInfo
+      // const enumLimit = uniqueness < enumAbsoluteLimit && relativeEnumLimit < enumAbsoluteLimit
+      //   ? enumAbsoluteLimit
+      //   : relativeEnumLimit
+
+      return {enum: uniques, ...typeInfo}
+      // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
+    }
+  },
+  TYPE_NULLABLE: {
+    type: 'nullable',
+    // matchBasicTypes: ['String', 'Number'],
+    check: (typeInfo, {rowCount, uniques}, {nullableRowsThreshold}) => {
+      if (!uniques || uniques.length === 0) return typeInfo
+      const {types} = typeInfo
+      let nullishTypeCount = 0
+      if (types.Null) {
+        nullishTypeCount += types.Null.count
+      }
+      if (types.Unknown) {
+        nullishTypeCount += types.Unknown.count
+      }
+      const nullLimit = rowCount * nullableRowsThreshold
+      const isNotNullable = nullishTypeCount <= nullLimit
+      // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
+      return {nullable: !isNotNullable, ...typeInfo}
+      // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
+    }
+  },
+  TYPE_UNIQUE: {
+    type: 'unique',
+    // matchBasicTypes: ['String', 'Number'],
+    check: (typeInfo, {rowCount, uniques}, {uniqueRowsThreshold}) => {
+      if (!uniques || uniques.length === 0) return typeInfo
+      // const uniqueness = rowCount / uniques.length
+      const isUnique = uniques.length === (rowCount * uniqueRowsThreshold)
+      // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
+      return {unique: isUnique, ...typeInfo}
+      // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}
+      // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
+    }
+  }
 }
 
 // Basic Type Filters - rudimentary data sniffing used to tally up "votes" for a given field
@@ -29,30 +96,37 @@ const TYPE_UNKNOWN = {
 }
 const TYPE_OBJECT_ID = {
   type: 'ObjectId',
+  supercedes: ['String'],
   check: isObjectId
 }
 const TYPE_UUID = {
   type: 'UUID',
+  supercedes: ['String'],
   check: isUuid
 }
 const TYPE_BOOLEAN = {
   type: 'Boolean',
+  supercedes: ['String'],
   check: isBoolish
 }
 const TYPE_DATE = {
   type: 'Date',
+  supercedes: ['String'],
   check: isDateString
 }
 const TYPE_TIMESTAMP = {
   type: 'Timestamp',
+  supercedes: ['String', 'Number'],
   check: isTimestamp
 }
 const TYPE_CURRENCY = {
   type: 'Currency',
+  supercedes: ['String', 'Number'],
   check: isCurrency
 }
 const TYPE_FLOAT = {
   type: 'Float',
+  supercedes: ['String', 'Number'],
   check: isFloatish
 }
 const TYPE_NUMBER = {
@@ -63,6 +137,7 @@ const TYPE_NUMBER = {
 }
 const TYPE_EMAIL = {
   type: 'Email',
+  supercedes: ['String'],
   check: isEmailShaped
 }
 const TYPE_STRING = {
@@ -127,6 +202,7 @@ export {
   typeRankings,
   prioritizedTypes,
   detectTypes,
+  MetaChecks,
   TYPE_UNKNOWN,
   TYPE_OBJECT_ID,
   TYPE_UUID,
