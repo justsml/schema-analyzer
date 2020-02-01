@@ -1,8 +1,12 @@
 [![Build Status](https://travis-ci.org/justsml/schema-analyzer.svg?branch=master)](https://travis-ci.org/justsml/schema-analyzer)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2c9bcb087db456a991655c3e87126a7)](https://www.codacy.com/manual/justsml/schema-analyzer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=justsml/schema-analyzer&amp;utm_campaign=Badge_Grade)
 [![GitHub package version](https://img.shields.io/github/package-json/v/justsml/schema-analyzer.svg?style=flat)](https://github.com/justsml/schema-analyzer)
 [![GitHub stars](https://img.shields.io/github/stars/justsml/schema-analyzer.svg?label=Stars&style=flat)](https://github.com/justsml/schema-analyzer)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fjustsml%2Fschema-analyzer%2Fbadge&style=flat)](https://actions-badge.atrox.dev/justsml/schema-analyzer/goto)
-
+[![Node.js CI](https://github.com/justsml/schema-analyzer/workflows/Node.js%20CI/badge.svg)](https://github.com/justsml/schema-analyzer/actions)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/schema-analyzer?color=green)
+<!-- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/justsml/schema-analyzer) -->
+![npm downloads](https://img.shields.io/npm/dm/schema-analyzer?color=yellow&label=npm%20downloads&logo=npm)
+<!-- ![GitHub All Releases](https://img.shields.io/github/downloads/justsml/schema-analyzer/total?color=cyan&label=github%20release%20downloads) -->
 
 # Schema Analyzer
 
@@ -137,7 +141,7 @@ Details about each field can be found below.
 }
 ```
 
-#### Sample input dataset for the example results above:
+#### Sample input dataset for the example results above
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|

@@ -1,6 +1,6 @@
 {
   "name": "schema-analyzer",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",
@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
+    "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
     "test": "jest --coverage --maxWorkers 4",
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
@@ -31,10 +33,7 @@
   "homepage": "https://github.com/justsml/schema-analyzer#readme",
   "dependencies": {
     "core-js": "^3.6.4",
-    "lodash.camelcase": "^4.3.0",
-    "lodash.isdate": "^4.0.1",
-    "lodash.isnumber": "^3.0.3",
-    "lodash.snakecase": "^4.1.1"
+    "lodash.isdate": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
@@ -45,11 +44,15 @@
     "@rollup/plugin-node-resolve": "^7.0.0",
     "@types/jest": "^25.1.0",
     "babel-jest": "^25.1.0",
+    "codecov": "^3.6.3",
     "csv-parse": "^4.8.5",
     "jest": "^25.1.0",
     "rollup": "^1.30.1",
     "rollup-plugin-node-globals": "^1.4.0",
     "typescript": "^3.7.5"
+  },
+  "prettier": {
+    "endOfLine": "lf"
   },
   "babel": {
     "plugins": [
