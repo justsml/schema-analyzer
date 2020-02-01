@@ -21,7 +21,7 @@ jobs:
     - run: |
         npm i -g codecov
         npm ci
-        npm i cross-env
+        npm i -g cross-env
         cross-env CI=true npm test
 
     # - uses: actions/checkout@v2
