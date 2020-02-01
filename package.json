@@ -85,6 +85,31 @@
       "jest"
     ]
   },
+  "eslintIgnore": [
+    "node_modules",
+    "dist"
+  ],
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": true,
+      "jest": true
+    },
+    "plugins": [
+      "import",
+      "node",
+      "promise",
+      "standard"
+    ],
+    "extends": "standard"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
