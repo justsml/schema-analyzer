@@ -19,7 +19,7 @@ import {
 function detectTypes (value) {
   const excludedTypes = []
   const matchedTypes = prioritizedTypes.reduce((types, typeHelper) => {
-    if (typeHelper.check(value)) {
+    if (!excludedTypes.includes(typeHelper.type) && typeHelper.check(value)) {
       if (typeHelper.supercedes) excludedTypes.push(...typeHelper.supercedes)
       types.push(typeHelper.type)
     }

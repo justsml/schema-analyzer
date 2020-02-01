@@ -47,10 +47,10 @@ describe('Multiple Type Matching', () => {
   })
   it('correctly handles timestamps', () => {
     let matchResult = detectTypes(1579994163473)
-    expect(matchResult).toContain('Timestamp')
+    expect(matchResult).toEqual(['Timestamp'])
     expect(matchResult.length).toBe(1)
     matchResult = detectTypes('1579994163473')
-    expect(matchResult).toContain('Timestamp')
+    expect(matchResult).toEqual(['Timestamp'])
     expect(matchResult.length).toBe(1)
   })
   it('correctly handles currency', () => {
