@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/justsml/schema-analyzer.svg?branch=master)](https://travis-ci.org/justsml/schema-analyzer)
+[![GitHub package version](https://img.shields.io/github/package-json/v/justsml/schema-analyzer.svg?style=flat)](https://github.com/justsml/schema-analyzer)
+[![GitHub stars](https://img.shields.io/github/stars/justsml/schema-analyzer.svg?label=Stars&style=flat)](https://github.com/justsml/schema-analyzer)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fjustsml%2Fschema-analyzer%2Fbadge&style=flat)](https://actions-badge.atrox.dev/justsml/schema-analyzer/goto)
+
+
 # Schema Analyzer
 
 > An Open Source joint by [Dan Levy](https://danlevy.net/) ✨
@@ -31,10 +37,10 @@ The primary goal is to support any input JSON/CSV and infer as much as possible.
 - [x] Includes data points at the 30th, 60th and 90th percentiles (for detecting outliers and enum types!)
 - [x] Handles some error/outliers
 - [x] Quantify # of unique values per column
-- [ ] Identify enum Fields w/ Values
-- [ ] Identify `Not Null` fields
+- [x] Identify `enum` Fields w/ Values
+- [x] Identify `Not Null` fields
 - [ ] Nested data structure & multi-table relational output.
-- [ ] _Un-de-normalize_ JSON into flat typed objects.
+<!-- - [ ] _Un-de-normalize_ JSON into flat typed objects. -->
 
 ### Getting Started
 
@@ -48,88 +54,86 @@ import { schemaBuilder } from 'schema-builder'
 schemaBuilder(schemaName: String, data: Array<Object>): TypeSummary
 ```
 
-### Data Analysis Results: `TypeSummary`
+### Preview Analysis Results
 
 > What does this library's analysis look like?
 
 It consists of 3 key top-level properties:
 
 - `totalRows` - # of rows analyzed.
-- `uniques: ` - a 'map' of field names & the # of unique values found.
-- `fields: FieldRangeInfo` - a map of field names with all detected types ([includes meta-data](#fieldrangeinfo) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
+- `fields: FieldTypeSummary` - a map of field names with all detected types ([includes meta-data](#fieldtypesummary) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
 
 #### Review the raw results below
 
-Details about nested types can be found below.
+Details about each field can be found below.
 
 ```json
 {
-  "totalRows": 5,
-  "uniques": {
-    "id": 5,
-    "name": 5,
-    "role": 3,
-    "email": 5,
-    "createdAt": 5,
-    "accountConfirmed": 2
-  },
   "fields": {
     "id": {
-      "Number": {
-        "value": { "min": 1, "avg": 3, "max": 5, "percentiles": [ 2, 4, 5 ] },
-        "count": 5,
-        "rank": 8
-      },
-      "String": {
-        "length": { "min": 1, "avg": 1, "max": 1, "percentiles": [ 1, 1, 1 ] },
-        "count": 5,
-        "rank": 12
+      "unique": true,
+      "nullable": false,
+      "types": {
+        "Number": {
+          "count": 5,
+          "value": {"min": 1, "mean": 3, "max": 5, "percentiles": [ 2, 4, 5 ] }
+        },
+        "String": {
+          "count": 5,
+          "length": {"min": 1, "mean": 1, "max": 1, "percentiles": [ 1, 1, 1 ] }
+        }
       }
     },
     "name": {
-      "String": {
-        "length": { "min": 3, "avg": 7.2, "max": 15, "percentiles": [ 3, 10, 15 ] },
-        "count": 5,
-        "rank": 12
+      "unique": false,
+      "nullable": false,
+      "types": {
+        "String": {
+          "count": 5,
+          "length": {"min": 3, "mean": 7.2, "max": 15, "percentiles": [ 3, 10, 15 ] }
+        }
       }
     },
     "role": {
-      "String": {
-        "length": { "min": 4, "avg": 5.4, "max": 9, "percentiles": [ 4, 5, 9 ] },
-        "count": 5,
-        "rank": 12
+      "enum": ["admin", "user", "poweruser"],
+      "unique": false,
+      "nullable": true,
+      "types": {
+        "String": {
+          "count": 5,
+          "length": {"min": 4, "mean": 5.4, "max": 9, "percentiles": [ 4, 5, 9 ] }
+        }
       }
     },
     "email": {
-      "Email": {
-        "count": 5,
-        "rank": 11
-      },
-      "String": {
-        "length": { "min": 15, "avg": 19.4, "max": 26, "percentiles": [ 5, 3, 6 ] },
-        "count": 5,
-        "rank": 12
+      "unique": true,
+      "nullable": true,
+      "types": {
+        "Email": {
+          "count": 5,
+          "length": {"min": 15, "mean": 19.4, "max": 26, "percentiles": [ 15, 23, 26 ] }
+        }
       }
     },
     "createdAt": {
-      "String": {
-        "length": { "min": 6, "avg": 9.2, "max": 10, "percentiles": [ 0, 0, 0 ] },
-        "count": 5,
-        "rank": 12
+      "unique": false,
+      "nullable": false,
+      "types": {
+        "Date": {
+          "count": 5,
+          "length": {"min": 6, "mean": 9.2, "max": 10, "percentiles": [ 10, 10, 10 ] }
+        }
       }
     },
     "accountConfirmed": {
-      "Boolean": {
-        "count": 5,
-        "rank": 3
-      },
-      "String": {
-        "length": { "min": 4, "avg": 4.4, "max": 5, "percentiles": [ 4, 5, 5 ] },
-        "count": 5,
-        "rank": 12
+      "unique": false,
+      "nullable": false,
+      "types": {
+        "Boolean": { "count": 5 }
       }
     }
-  }
+  },
+  "totalRows": 5
 }
 ```
 
@@ -143,18 +147,20 @@ Details about nested types can be found below.
 | 4  | Elliot Alderson | admin     | `falkensmaze@protonmail.com` | 01/01/2001 | false            |
 | 5  | Sam Sepiol      | admin     | `falkensmaze@hotmail.com`    | 9/9/99     | true             |
 
-### Number & String Range Object Details
+
+
+#### `AggregateSummary`
 
 Numeric and String types include a summary of the observed field sizes:
 
-#### `FieldRangeInfo<Object>`
+> Number & String Range Object Details
 
 ##### Properties
 
 - `min` the minimum number or string length
 - `max` the maximum number or string length
 - `avg` the average number or string length
-- `percentiles[30th, 60th, 90th]` values from the `Nth` percentile number or string length
+- `percentiles[33th, 66th, 99th]` values from the `Nth` percentile number or string length
 
 ```js
 {
