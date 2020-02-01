@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/41b83e51a7dd498a9ca389a59f80def4)](https://app.codacy.com/manual/justsml/schema-analyzer?utm_source=github.com&utm_medium=referral&utm_content=justsml/schema-analyzer&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/justsml/schema-analyzer.svg?branch=master)](https://travis-ci.org/justsml/schema-analyzer)
 [![GitHub package version](https://img.shields.io/github/package-json/v/justsml/schema-analyzer.svg?style=flat)](https://github.com/justsml/schema-analyzer)
 [![GitHub stars](https://img.shields.io/github/stars/justsml/schema-analyzer.svg?label=Stars&style=flat)](https://github.com/justsml/schema-analyzer)
