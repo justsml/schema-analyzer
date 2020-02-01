@@ -3,7 +3,7 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  build:
+  tests:
     runs-on: ${{ matrix.os }}
     # runs-on: ubuntu-latest
 
@@ -19,12 +19,21 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
-        npm i -g codecov
         npm ci
-        npm i -g cross-env
-        cross-env CI=true npm test
+        npm test
 
-    # - uses: actions/checkout@v2
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Test Code Coverage
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12
+    - run: |
+        npm ci
+        npm test
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }} #required
