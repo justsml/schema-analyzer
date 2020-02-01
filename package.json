@@ -15,7 +15,8 @@
     "dev": "rollup -c -w",
     "test": "jest --coverage --maxWorkers 4",
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'"
   },
   "repository": {
     "type": "git",
@@ -46,9 +47,15 @@
     "babel-jest": "^25.1.0",
     "codecov": "^3.6.3",
     "csv-parse": "^4.8.5",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "jest": "^25.1.0",
     "rollup": "^1.30.1",
     "rollup-plugin-node-globals": "^1.4.0",
+    "standard": "^14.3.1",
     "typescript": "^3.7.5"
   },
   "prettier": {
@@ -78,6 +85,31 @@
       "jest"
     ]
   },
+  "eslintIgnore": [
+    "node_modules",
+    "dist"
+  ],
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": true,
+      "jest": true
+    },
+    "plugins": [
+      "import",
+      "node",
+      "promise",
+      "standard"
+    ],
+    "extends": "standard"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
@@ -89,5 +121,13 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "remarkConfig": {
+    "settings": {
+      "listItemIndent": "mixed"
+    },
+    "plugins": [
+      "remark-stringify"
+    ]
+  }
 }
