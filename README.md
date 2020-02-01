@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/justsml/schema-analyzer.svg?branch=master)](https://travis-ci.org/justsml/schema-analyzer)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b2c9bcb087db456a991655c3e87126a7)](https://www.codacy.com/manual/justsml/schema-analyzer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=justsml/schema-analyzer&amp;utm_campaign=Badge_Grade)
 [![GitHub package version](https://img.shields.io/github/package-json/v/justsml/schema-analyzer.svg?style=flat)](https://github.com/justsml/schema-analyzer)
 [![GitHub stars](https://img.shields.io/github/stars/justsml/schema-analyzer.svg?label=Stars&style=flat)](https://github.com/justsml/schema-analyzer)
 [![Node.js CI](https://github.com/justsml/schema-analyzer/workflows/Node.js%20CI/badge.svg)](https://github.com/justsml/schema-analyzer/actions)
@@ -22,20 +23,20 @@ The primary goal is to support any input JSON/CSV and infer as much as possible.
 - [x] Heuristic type analysis for arrays of objects.
 - [x] Browser-based (local, no server necessary)
 - [x] Automatic type detection:
-    - [x] ID - Identifier column, by name and unique Integer check (detects BigInteger)
-    - [x] ObjectId (MongoDB's 96 bit/12 Byte ID. 32bit timestamp + 24bit MachineID + 16bit ProcessID + 24bit Counter)
-    - [x] UUID/GUID (Common 128 bit/16 Byte ID. Stored as a hex string, dash delimited in parts: 8, 4, 4, 4, 12)
-    - [x] Boolean (detects obvious strings `true`, `false`, `Y`, `N`)
-    - [x] Date (Smart detection via comprehensive regex pattern)
-    - [x] Timestamp (integer, number of milliseconds since unix epoch)
-    - [x] Currency (62 currency symbols supported)
-    - [x] Float (w/ scale & precision measurements)
-    - [x] Number (Integers)
-    - [x] Null (sparse column data helps w/ certain inferences)
-    - [x] Email (falls back to string)
-    - [x] String (big text and varchar awareness)
-    - [x] Array (includes min/max/avg length)
-    - [x] Object
+  - [x] ID - Identifier column, by name and unique Integer check (detects BigInteger)
+  - [x] ObjectId (MongoDB's 96 bit/12 Byte ID. 32bit timestamp + 24bit MachineID + 16bit ProcessID + 24bit Counter)
+  - [x] UUID/GUID (Common 128 bit/16 Byte ID. Stored as a hex string, dash delimited in parts: 8, 4, 4, 4, 12)
+  - [x] Boolean (detects obvious strings `true`, `false`, `Y`, `N`)
+  - [x] Date (Smart detection via comprehensive regex pattern)
+  - [x] Timestamp (integer, number of milliseconds since unix epoch)
+  - [x] Currency (62 currency symbols supported)
+  - [x] Float (w/ scale & precision measurements)
+  - [x] Number (Integers)
+  - [x] Null (sparse column data helps w/ certain inferences)
+  - [x] Email (falls back to string)
+  - [x] String (big text and varchar awareness)
+  - [x] Array (includes min/max/avg length)
+  - [x] Object
 - [x] Detects column size minimum, maximum and average
 - [x] Includes data points at the 30th, 60th and 90th percentiles (for detecting outliers and enum types!)
 - [x] Handles some error/outliers
@@ -140,7 +141,7 @@ Details about each field can be found below.
 }
 ```
 
-#### Sample input dataset for the example results above:
+#### Sample input dataset for the example results above
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|
