@@ -16,19 +16,14 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  * @type {{ fields: Object.<string, FieldTypeSummary>; totalRows: number; }}
  */
 
-// /**
-//  * @typedef FieldsMetadata
-//  * @type {Object.<TypeName, AggregateNumericSummary>}
-//  */
-
 /**
  * This is an internal intermediate structure.
  * It mirrors the `FieldSummary` type it will become.
  * @private
  * @typedef FieldTypeData
  * @type {Object}
- * @property {number[]} [value] - array of values, pre processing into an AggregateNumericSummary
- * @property {number[]} [length] - array of string (or decimal) sizes, pre processing into an AggregateNumericSummary
+ * @property {number[]} [value] - array of values, pre processing into an AggregateSummary
+ * @property {number[]} [length] - array of string (or decimal) sizes, pre processing into an AggregateSummary
  * @property {number[]} [precision] - only applies to Float types. Array of sizes of the value both before and after the decimal.
  * @property {number[]} [scale] - only applies to Float types. Array of sizes of the value after the decimal.
  * @property {number} [count] - number of times the type was matched
@@ -40,12 +35,10 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  *
  * @typedef FieldTypeSummary
  * @type {Object}
- * //property {string} [name] - name of the field
- * //property {TypeName} typeName - detected type name
- * @property {AggregateNumericSummary} [value] - summary of array of values, pre processing into an AggregateNumericSummary
- * @property {AggregateNumericSummary} [length] - summary of array of string (or decimal) sizes, pre processing into an AggregateNumericSummary
- * @property {AggregateNumericSummary} [precision] - only applies to Float types. Summary of array of sizes of the value both before and after the decimal.
- * @property {AggregateNumericSummary} [scale] - only applies to Float types. Summary of array of sizes of the value after the decimal.
+ * @property {AggregateSummary} [value] - summary of array of values, pre processing into an AggregateSummary
+ * @property {AggregateSummary} [length] - summary of array of string (or decimal) sizes, pre processing into an AggregateSummary
+ * @property {AggregateSummary} [precision] - only applies to Float types. Summary of array of sizes of the value both before and after the decimal.
+ * @property {AggregateSummary} [scale] - only applies to Float types. Summary of array of sizes of the value after the decimal.
  * @property {string[]|number[]} [enum] - if enum rules were triggered will contain the detected unique values.
  * @property {number} count - number of times the type was matched
  * @property {number} rank - absolute priority of the detected TypeName, defined in the object `typeRankings`
@@ -53,9 +46,18 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  */
 
 /**
+ * @typedef FieldInfo
+ * @type {object}
+ * @property {Object.<string, FieldTypeSummary>} types - field stats organized by type
+ * @property {boolean} nullable - is the field nullable
+ * @property {boolean} unique - is the field unique
+ * @property {string[]|number[]} [enum] - enumeration detected, the values are listed on this property.
+ */
+
+/**
  * Used to represent a number series of any size.
  * Includes the lowest (`min`), highest (`max`), mean/average (`mean`) and measurements at certain `percentiles`.
- * @typedef AggregateNumericSummary
+ * @typedef AggregateSummary
  * @type {{min: number, max: number, mean: number, percentiles: number[]}}
  */
 
@@ -69,20 +71,21 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  * schemaBuilder is the main function and where all the analysis & processing happens.
  * @param {String} name - Name of the resource, Table or collection.
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
- * @param {progressCallback} [onProgress] - Callback function called with updates on # of rows processed.
- * @param {Object} [options] - Optional parameters
+ * @param {{ onProgress?: progressCallback, enumMinimumRowCount?: number, enumAbsoluteLimit?: number, enumPercentThreshold?: number, nullableRowsThreshold?: number, uniqueRowsThreshold?: number }} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
 function schemaBuilder (
-  name, input, onProgress = ({totalRows, currentRow}) => {},
+  name, input,
   {
+    onProgress = ({totalRows, currentRow}) => {},
     enumMinimumRowCount = 100, enumAbsoluteLimit = 10, enumPercentThreshold = 0.01,
     nullableRowsThreshold = 0.02,
-    uniqueRowsThreshold = 0.98
+    uniqueRowsThreshold = 1.0
   } = {
+    onProgress: ({totalRows, currentRow}) => {},
     enumMinimumRowCount: 100, enumAbsoluteLimit: 10, enumPercentThreshold: 0.01,
     nullableRowsThreshold: 0.02,
-    uniqueRowsThreshold: 0.98
+    uniqueRowsThreshold: 1.0
   }
 ) {
   if (typeof name !== 'string') throw Error('Argument `name` must be a String')
@@ -97,28 +100,35 @@ function schemaBuilder (
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
-      const uniqueValueCounts = Object.keys(schema.fields)
-      .reduce((uniques, fieldName) => {
-        schema.fields[fieldName] = MetaChecks.TYPE_ENUM
-        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+      const fields = Object.keys(schema.fields)
+      .reduce((fieldInfo, fieldName) => {
+        /** @type {FieldInfo} */
+        fieldInfo[fieldName] = {
+          // nullable: null,
+          // unique: null,
+          types: schema.fields[fieldName]
+        }
+        fieldInfo[fieldName] = MetaChecks.TYPE_ENUM.check(fieldInfo[fieldName],
+          { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
           { enumAbsoluteLimit, enumPercentThreshold })
-        schema.fields[fieldName] = MetaChecks.TYPE_NULLABLE
-        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+        fieldInfo[fieldName] = MetaChecks.TYPE_NULLABLE.check(fieldInfo[fieldName],
+          { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
           { nullableRowsThreshold })
-        schema.fields[fieldName] = MetaChecks.TYPE_UNIQUE
-        .check(schema.fields[fieldName], { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
+        fieldInfo[fieldName] = MetaChecks.TYPE_UNIQUE.check(fieldInfo[fieldName],
+          { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
           { uniqueRowsThreshold })
 
         if (schema.uniques && schema.uniques[fieldName]) {
-          uniques[fieldName] = schema.uniques[fieldName].length
+          fieldInfo[fieldName].uniqueCount = schema.uniques[fieldName].length
         }
-        return uniques
+        return fieldInfo
       }, {})
-      log('Unique field value counts:', uniqueValueCounts)
+
       return {
+        fields,
         totalRows: schema.totalRows,
         // uniques: uniques,
-        fields: schema.fields
+        // fields: schema.fields
       }
     })
 
@@ -264,12 +274,10 @@ function condenseFieldSizes(pivotedDataByType) {
   log('Starting condenseFieldSizes()')
   Object.keys(pivotedDataByType)
     .map(typeName => {
-      if (!aggregateSummary[typeName]) {
-        aggregateSummary[typeName] = {
-          // typeName,
-          rank: typeRankings[typeName],
-          count: pivotedDataByType[typeName].count
-        }
+      aggregateSummary[typeName] = {
+        // typeName,
+        rank: typeRankings[typeName],
+        count: pivotedDataByType[typeName].count
       }
       if (pivotedDataByType[typeName].value) aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
       if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length)
@@ -329,7 +337,7 @@ function getFieldMetadata ({
  *  the range & spread of points in the set.
  *
  * @param {number[]} numbers - sequence of unsorted data points
- * @returns {AggregateNumericSummary}
+ * @returns {AggregateSummary}
  */
 function getNumberRangeStats (numbers) {
   if (!numbers || numbers.length < 1) return undefined

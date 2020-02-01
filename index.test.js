@@ -20,6 +20,30 @@ it('can analyze schema for ./properties.json', () => {
   .then(result => expect(result).toMatchSnapshot('propertiesResult'))
 })
 
+it('can analyze schema w/ enum options', () => {
+  const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
+  const lowEnumLimitLoosePct = schemaBuilder('properties', properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30, enumPercentThreshold: 0.2 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'))
+  const lowEnumLimitLoose = schemaBuilder('properties', properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoose'))
+  const lowEnumLimit = schemaBuilder('properties', properties, { enumMinimumRowCount: 10 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimit'))
+  const highEnumLimit = schemaBuilder('properties', properties, { enumMinimumRowCount: 1000 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_highEnumLimit'))
+  const highNullableLimit = schemaBuilder('properties', properties, { nullableRowsThreshold: 0.25 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
+  const lowNullableLimit = schemaBuilder('properties', properties, { nullableRowsThreshold: 0 })
+  .then(result => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
+  return Promise.all([
+    lowEnumLimitLoosePct,
+    lowEnumLimitLoose,
+    lowEnumLimit,
+    highEnumLimit,
+    highNullableLimit,
+    lowNullableLimit
+  ])
+})
+
 it('can analyze schema for ./products.csv', () => {
   const productCsv = parseCsv(fs.readFileSync(path.resolve(__dirname, './__tests__/products-3000.csv'), 'utf8'))
   return productCsv.then(products => {
@@ -28,7 +52,7 @@ it('can analyze schema for ./products.csv', () => {
   })
 })
 
-it('can analyze schema for ./products.csv', async () => {
+it('can analyze schema for inline csv', async () => {
   const sampleCsv = await parseCsv(`id,name,role,email,createdAt,accountConfirmed
 1,Eve,poweruser,eve@example.com,01/20/2020,false
 2,Alice,user,ali@example.com,02/02/2020,true
@@ -69,88 +93,3 @@ function parseCsv (content) {
     )
   })
 }
-
-// const uniques = {
-//   title: ['lorem ipsum dolor sit amet', 'amit ipsum dolor sit amet', 'amit ipsum dolor sit Lorem ipsum', 'amit Lorem ipsum amit dolor amet'],
-//   status: ['active', 'inactive'],
-//   features: [],
-//   listPrice: [],
-//   salePrice: [],
-//   estimatedPrice: []
-// }
-// const fieldInfoByKey = {
-//   title: [{
-//     String: { rank: 1, length: 20 }
-//   }, {
-//     String: { rank: 1, length: 50 }
-//   }, {
-//     String: { rank: 1, length: 40 }
-//   }, {
-//     String: { rank: 1, length: 66 },
-//     Null: { rank: 2 }
-//   }, {
-//     Null: {}
-//   }
-//   ],
-//   status: [
-//     { String: { rank: 1, length: 6 } },
-//     { String: { rank: 1, length: 6 } },
-//     { String: { rank: 1, length: 6 } },
-//     { String: { rank: 1, length: 6 } },
-//     { String: { rank: 1, length: 8 } },
-//     { String: { rank: 1, length: 8 } }
-//   ],
-//   features: [
-//     { Array: { length: 2 } },
-//     { Array: { length: 1 } },
-//     { Array: { length: 0 } },
-//     { Array: { length: 10 } },
-//     { Array: { length: 18 } }
-//   ],
-//   listPrice: [{
-//     Float: { scale: 7, precision: 2 },
-//     String: { length: 8 }
-//   }, {
-//     Float: { scale: 9, precision: 2 },
-//     String: { length: 10 }
-//   }, {
-//     Float: { scale: 2, precision: 2 }
-//   }, {
-//     Float: { scale: 4, precision: 2 },
-//     String: { length: 5 }
-//   }, {
-//     Float: { scale: 4, precision: 2 },
-//     String: { length: 5 }
-//   }
-//   ],
-//   salePrice: [{
-//     Float: { scale: 7, precision: 2 }
-//   }, {
-//     Float: { scale: 6, precision: 2 }
-//   }, {
-//     Number: { length: 4 },
-//     String: { length: 4 }
-//   }, {
-//     Float: { scale: 4, precision: 2 },
-//     String: { length: 5 }
-//   }, {
-//     Float: { scale: 5, precision: 2 },
-//     String: { length: 6 }
-//   }
-//   ],
-//   estimatedPrice: [{
-//     Float: { scale: 5, precision: 2 },
-//     String: { length: 6 }
-//   }, {
-//     Number: { length: 6 },
-//     String: { length: 3 }
-//   }, {
-//     Float: { scale: 5, precision: 2 }
-//   }, {
-//     Float: { scale: 5, precision: 2 }
-//   }, {
-//     Float: { scale: 5, precision: 2 },
-//     String: { length: 2 }
-//   }
-//   ]
-// }
