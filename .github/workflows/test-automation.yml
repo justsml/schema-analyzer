@@ -21,18 +21,18 @@ jobs:
     - run: |
         npm i -g codecov
         npm ci
-        CI=true npm test
-        codecov
+        npm i cross-env
+        cross-env CI=true npm test
 
     # - uses: actions/checkout@v2
-    # - uses: codecov/codecov-action@v1
-    #   with:
-    #     token: ${{ secrets.CODECOV_TOKEN }} #required
-    #     # file: ./coverage/coverage.xml #optional
-    #     flags: unittests #optional
-    #     name: schema-analyzer #optional
-    #     yml: ./codecov.yml #optional
-    #     fail_ci_if_error: true #optional (default = false)
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} #required
+        # file: ./coverage/coverage.xml #optional
+        flags: unittests #optional
+        name: schema-analyzer #optional
+        yml: ./codecov.yml #optional
+        fail_ci_if_error: true #optional (default = false)
 
     env:
         CI: true
