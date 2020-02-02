@@ -10,6 +10,15 @@ const log = debug('schema-builder:index')
 
 export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
 
+const isValidDate = date => {
+  date = date instanceof Date ? date : new Date(date)
+  return isNaN(date.getFullYear()) ? false : date
+}
+
+const parseDate = date => {
+  date = isValidDate(date)
+  return date && date.toISOString && date.toISOString()
+}
 /**
  * Includes the results of input analysis.
  * @typedef TypeSummary
@@ -58,7 +67,7 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
  * Used to represent a number series of any size.
  * Includes the lowest (`min`), highest (`max`), mean/average (`mean`) and measurements at certain `percentiles`.
  * @typedef AggregateSummary
- * @type {{min: number, max: number, mean: number, percentiles: number[]}}
+ * @type {{min: number, max: number, mean: number, p50: number, p33: number, p66: number, p99: number}}
  */
 
 /**
@@ -69,20 +78,21 @@ export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
 
 /**
  * schemaBuilder is the main function and where all the analysis & processing happens.
- * @param {String} name - Name of the resource, Table or collection.
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
- * @param {{ onProgress?: progressCallback, enumMinimumRowCount?: number, enumAbsoluteLimit?: number, enumPercentThreshold?: number, nullableRowsThreshold?: number, uniqueRowsThreshold?: number }} [options] - Optional parameters
+ * @param {{ onProgress?: progressCallback, enumMinimumRowCount?: number, enumAbsoluteLimit?: number, enumPercentThreshold?: number, nullableRowsThreshold?: number, uniqueRowsThreshold?: number, strictMatching?: boolean }} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
 function schemaBuilder (
-  name, input,
+  input,
   {
     onProgress = ({ totalRows, currentRow }) => {},
+    strictMatching = true,
     enumMinimumRowCount = 100, enumAbsoluteLimit = 10, enumPercentThreshold = 0.01,
     nullableRowsThreshold = 0.02,
     uniqueRowsThreshold = 1.0
   } = {
     onProgress: ({ totalRows, currentRow }) => {},
+    strictMatching: true,
     enumMinimumRowCount: 100,
     enumAbsoluteLimit: 10,
     enumPercentThreshold: 0.01,
@@ -90,8 +100,9 @@ function schemaBuilder (
     uniqueRowsThreshold: 1.0
   }
 ) {
-  if (typeof name !== 'string') throw Error('Argument `name` must be a String')
-  if (!Array.isArray(input)) throw Error('Input Data must be an Array of Objects')
+  if (!Array.isArray(input) || typeof input !== 'object') throw Error('Input Data must be an Array of Objects')
+  if (typeof input[0] !== 'object') throw Error('Input Data must be an Array of Objects')
+  if (input.length < 5) throw Error('Analysis requires at least 5 records. (Use 200+ for great results.)')
   const isEnumEnabled = input.length >= enumMinimumRowCount
 
   log('Starting')
@@ -159,9 +170,8 @@ function schemaBuilder (
     fieldNames.forEach((fieldName, index, array) => {
       if (index === 0) log(`Found ${array.length} Column(s)!`)
       const typeFingerprint = getFieldMetadata({
-        schema,
-        fieldName,
-        value: row[fieldName]
+        value: row[fieldName],
+        strictMatching
       })
       const typeNames = Object.keys(typeFingerprint)
       const isEnumType = typeNames.includes('Number') || typeNames.includes('String')
@@ -188,7 +198,6 @@ function condenseFieldData (schema) {
   const { fieldsData } = schema
   const fieldNames = Object.keys(fieldsData)
 
-  // console.log('condensefieldData', fieldNames)
   /** @type {Object.<string, FieldTypeSummary>} */
   const fieldSummary = {}
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
@@ -262,6 +271,10 @@ function condenseFieldSizes (pivotedDataByType) {
       if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length)
       if (pivotedDataByType[typeName].scale) aggregateSummary[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale)
       if (pivotedDataByType[typeName].precision) aggregateSummary[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision)
+      if (['Timestamp', 'Date'].indexOf(typeName) > -1) {
+        aggregateSummary[typeName].value = formatRangeStats(pivotedDataByType[typeName].value, parseDate)
+      }
+
     })
   log('Done condenseFieldSizes()...')
   return aggregateSummary
@@ -269,12 +282,10 @@ function condenseFieldSizes (pivotedDataByType) {
 
 function getFieldMetadata ({
   value,
-  fieldName,
-  schema, // eslint-disable-line
-  recursive = false
+  strictMatching
 }) {
   // Get initial pass at the data with the TYPE_* `.check()` methods.
-  const typeGuesses = detectTypes(value)
+  const typeGuesses = detectTypes(value, strictMatching)
 
   // Assign initial metadata for each matched type below
   return typeGuesses.reduce((analysis, typeGuess, rank) => {
@@ -294,9 +305,17 @@ function getFieldMetadata ({
         analysis[typeGuess] = { ...analysis[typeGuess], precision, scale }
       }
     }
-    if (typeGuess === 'Number' || typeGuess === 'Timestamp') {
+    if (typeGuess === 'Number') {
       value = Number(value)
       analysis[typeGuess] = { ...analysis[typeGuess], value }
+    }
+    if (typeGuess === 'Date' || typeGuess === 'Timestamp') {
+      value = value instanceof Date ? value : new Date(value)
+      if (isValidDate(value)) {
+        analysis[typeGuess] = { ...analysis[typeGuess], invalid: true }
+      } else {
+        analysis[typeGuess] = { ...analysis[typeGuess], value: value.getTime() }
+      }
     }
     if (typeGuess === 'String' || typeGuess === 'Email') {
       length = String(value).length
@@ -319,16 +338,37 @@ function getFieldMetadata ({
  */
 function getNumberRangeStats (numbers) {
   if (!numbers || numbers.length < 1) return undefined
-  numbers = numbers.slice().sort((a, b) => a < b ? -1 : a === b ? 0 : 1)
+  const sortedNumbers = numbers.slice().sort((a, b) => a < b ? -1 : a === b ? 0 : 1)
   const sum = numbers.reduce((a, b) => a + b, 0)
   return {
-    min: numbers[0],
+    // size: numbers.length,
+    min: sortedNumbers[0],
     mean: sum / numbers.length,
-    max: numbers[numbers.length - 1],
-    percentiles: [
-      numbers[parseInt(String(numbers.length * 0.3), 10)],
-      numbers[parseInt(String(numbers.length * 0.6), 10)],
-      numbers[parseInt(String(numbers.length * 0.9), 10)]
-    ]
+    max: sortedNumbers[numbers.length - 1],
+    p25: numbers[parseInt(String(numbers.length * 0.25), 10)],
+    p33: numbers[parseInt(String(numbers.length * 0.33), 10)],
+    p50: numbers[parseInt(String(numbers.length * 0.50), 10)],
+    p66: numbers[parseInt(String(numbers.length * 0.66), 10)],
+    p75: numbers[parseInt(String(numbers.length * 0.75), 10)],
+    p99: numbers[parseInt(String(numbers.length * 0.99), 10)]
+  }
+}
+
+/**
+ *
+ */
+function formatRangeStats (stats, formatter) {
+  if (!stats || !formatter) return undefined
+  return {
+    size: formatter(stats.size),
+    min: formatter(stats.min),
+    mean: formatter(stats.mean),
+    max: formatter(stats.max),
+    p25: formatter(stats.p25),
+    p33: formatter(stats.p33),
+    p50: formatter(stats.p50),
+    p66: formatter(stats.p66),
+    p75: formatter(stats.p75),
+    p99: formatter(stats.p99)
   }
 }

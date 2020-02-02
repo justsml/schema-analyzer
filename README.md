@@ -185,3 +185,21 @@ The following features require a certain minimum # of records:
 - `Not Null` detection.
   - where rowCount === field count
 
+### Full List of Detected Types
+
+```
+Unknown
+ObjectId
+UUID
+Boolean
+Date
+Timestamp
+Currency
+Float
+Number
+Email
+String
+Array
+Object
+Null
+```

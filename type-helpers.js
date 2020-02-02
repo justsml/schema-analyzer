@@ -16,7 +16,7 @@ import {
  * @param {any} value - input data
  * @returns {string[]}
  */
-function detectTypes (value) {
+function detectTypes (value, strictMatching = true) {
   const excludedTypes = []
   const matchedTypes = prioritizedTypes.reduce((types, typeHelper) => {
     if (typeHelper.check(value)) {
@@ -25,7 +25,7 @@ function detectTypes (value) {
     }
     return types
   }, [])
-  return matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
+  return !strictMatching ? matchedTypes : matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
 }
 
 /**
@@ -92,7 +92,7 @@ const MetaChecks = {
  */
 const TYPE_UNKNOWN = {
   type: 'Unknown',
-  check: value => value === '' || value === undefined || value === 'undefined'
+  check: value => value === undefined || value === 'undefined'
 }
 const TYPE_OBJECT_ID = {
   type: 'ObjectId',
@@ -132,6 +132,7 @@ const TYPE_FLOAT = {
 const TYPE_NUMBER = {
   type: 'Number',
   check: value => {
+    if (/^0+/.test(String(value))) return false
     return !!(value !== null && !Array.isArray(value) && (Number.isInteger(value) || isNumeric(value)))
   }
 }
