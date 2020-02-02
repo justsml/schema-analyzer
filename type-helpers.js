@@ -11,6 +11,8 @@ import {
   isUuid
 } from './utils/type-detectors.js'
 
+const hasLeadingZero = /^0+/
+
 /**
  * Returns an array of TypeName.
  * @param {any} value - input data
@@ -132,7 +134,7 @@ const TYPE_FLOAT = {
 const TYPE_NUMBER = {
   type: 'Number',
   check: value => {
-    if (/^0+/.test(String(value))) return false
+    if (hasLeadingZero.test(String(value))) return false
     return !!(value !== null && !Array.isArray(value) && (Number.isInteger(value) || isNumeric(value)))
   }
 }
