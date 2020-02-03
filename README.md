@@ -73,71 +73,81 @@ Details about each field can be found below.
 
 ```json
 {
+  "totalRows": 5,
   "fields": {
     "id": {
-      "unique": true,
-      "nullable": false,
       "types": {
         "Number": {
+          "rank": 8,
           "count": 5,
-          "value": {"min": 1, "mean": 3, "max": 5, "percentiles": [ 2, 4, 5 ] }
+          "value": { "min": 1, "mean": 3, "max": 5, "p25": 2, "p33": 2, "p50": 3, "p66": 4, "p75": 4, "p99": 5 }
         },
         "String": {
+          "rank": 12,
           "count": 5,
-          "length": {"min": 1, "mean": 1, "max": 1, "percentiles": [ 1, 1, 1 ] }
+          "length": { "min": 1, "mean": 1, "max": 1, "p25": 1, "p33": 1, "p50": 1, "p66": 1, "p75": 1, "p99": 1 }
         }
       }
     },
     "name": {
-      "unique": false,
-      "nullable": false,
       "types": {
         "String": {
+          "rank": 12,
           "count": 5,
-          "length": {"min": 3, "mean": 7.2, "max": 15, "percentiles": [ 3, 10, 15 ] }
+          "length": { "min": 3, "mean": 7.2, "max": 15, "p25": 3, "p33": 3, "p50": 5, "p66": 10, "p75": 10, "p99": 15 }
         }
       }
     },
     "role": {
-      "enum": ["admin", "user", "poweruser"],
-      "unique": false,
-      "nullable": true,
       "types": {
         "String": {
+          "rank": 12,
           "count": 5,
-          "length": {"min": 4, "mean": 5.4, "max": 9, "percentiles": [ 4, 5, 9 ] }
+          "length": { "min": 4, "mean": 5.4, "max": 9, "p25": 4, "p33": 4, "p50": 5, "p66": 5, "p75": 5, "p99": 9 }
         }
       }
     },
     "email": {
-      "unique": true,
-      "nullable": true,
       "types": {
         "Email": {
+          "rank": 11,
           "count": 5,
-          "length": {"min": 15, "mean": 19.4, "max": 26, "percentiles": [ 15, 23, 26 ] }
+          "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
         }
       }
     },
     "createdAt": {
-      "unique": false,
-      "nullable": false,
       "types": {
         "Date": {
-          "count": 5,
-          "length": {"min": 6, "mean": 9.2, "max": 10, "percentiles": [ 10, 10, 10 ] }
+          "rank": 4,
+          "count": 4,
+          "value": { "min": "2001-01-01T00:00:00.000Z", "mean": "2015-04-14T18:00:00.000Z", "max": "2020-02-02T00:00:00.000Z", "p25": "2020-02-02T00:00:00.000Z", "p33": "2020-02-02T00:00:00.000Z", "p50": "2019-12-31T00:00:00.000Z", "p66": "2019-12-31T00:00:00.000Z", "p75": "2001-01-01T00:00:00.000Z", "p99": "2001-01-01T00:00:00.000Z" }
+        },
+        "String": {
+          "rank": 12,
+          "count": 1,
+          "length": { "min": 6, "mean": 6, "max": 6, "p25": 6, "p33": 6, "p50": 6, "p66": 6, "p75": 6, "p99": 6 }
         }
       }
     },
     "accountConfirmed": {
-      "unique": false,
-      "nullable": false,
       "types": {
-        "Boolean": { "count": 5 }
+        "Unknown": {
+          "rank": -1,
+          "count": 1
+        },
+        "String": {
+          "rank": 12,
+          "count": 1,
+          "length": { "min": 9, "mean": 9, "max": 9, "p25": 9, "p33": 9, "p50": 9, "p66": 9, "p75": 9, "p99": 9 }
+        },
+        "Boolean": {
+          "rank": 3,
+          "count": 4
+        }
       }
     }
-  },
-  "totalRows": 5
+  }
 }
 ```
 
@@ -164,11 +174,11 @@ Numeric and String types include a summary of the observed field sizes:
 - `min` the minimum number or string length
 - `max` the maximum number or string length
 - `avg` the average number or string length
-- `percentiles[33th, 66th, 99th]` values from the `Nth` percentile number or string length
+- `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile number or string length
 
 ```js
 {
-  "min": 1, "avg": 1, "max": 1,
+ "min": 1, "avg": 1, "max": 1 ,
   "percentiles": [ 1, 1, 1 ]
 }
 ```

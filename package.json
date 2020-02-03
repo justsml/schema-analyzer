@@ -1,6 +1,6 @@
 {
   "name": "schema-analyzer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",

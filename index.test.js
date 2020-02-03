@@ -3,8 +3,9 @@ import path from 'path'
 import fs from 'fs'
 import csvParse from 'csv-parse'
 
-it('handles missing arguments', () => {
+const isCI = process.env.CI
 
+it('handles missing arguments', () => {
   expect(() => schemaBuilder([{}, {}])).toThrowError(/requires at least 5/)
   expect(() => schemaBuilder(['test'])).toThrowError(/must be an Array of Objects/)
   expect(() => schemaBuilder('test')).toThrowError(/must be an Array/)
@@ -37,13 +38,16 @@ it('can analyze schema w/ enum options', () => {
     .then(result => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
   const lowNullableLimit = schemaBuilder(properties, { nullableRowsThreshold: 0 })
     .then(result => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
+  const notStrict = schemaBuilder(properties, { strictMatching: false })
+    .then(result => expect(result).toMatchSnapshot('propertiesResult_notStrict'))
   return Promise.all([
     lowEnumLimitLoosePct,
     lowEnumLimitLoose,
     lowEnumLimit,
     highEnumLimit,
     highNullableLimit,
-    lowNullableLimit
+    lowNullableLimit,
+    notStrict
   ])
 })
 
@@ -52,7 +56,7 @@ it('can analyze schema for ./products.csv', () => {
   return productCsv.then(products => {
     return schemaBuilder(products)
       .then(result => {
-        console.log('products', JSON.stringify(result, null, 2))
+        // if (!isCI) console.log('products', JSON.stringify(result, null, 2))
         expect(result).toMatchSnapshot('productsResult')
       })
   })
@@ -60,7 +64,7 @@ it('can analyze schema for ./products.csv', () => {
 
 it('can analyze schema for inline csv', async () => {
   const sampleCsv = await parseCsv(`id,name,role,email,createdAt,accountConfirmed
-1,Eve,poweruser,eve@example.com,2020-01-20,false
+1,Eve,poweruser,eve@example.com,2020-01-20,undefined
 2,Alice,user,ali@example.com,2020-02-02,true
 3,Bob,user,robert@example.com,2019-12-31,true
 4,Elliot Alderson,admin,falkensmaze@protonmail.com,2001-01-01,false
@@ -68,7 +72,7 @@ it('can analyze schema for inline csv', async () => {
 
   return schemaBuilder(sampleCsv)
     .then(result => {
-      console.log(JSON.stringify(result, null, 2))
+      if (!isCI) console.log(JSON.stringify(result, null, 2))
       expect(result).toMatchSnapshot('accountsCsvResult')
     })
 })
@@ -76,7 +80,10 @@ it('can analyze schema for inline csv', async () => {
 it('can analyze schema for ./people.json', () => {
   const people = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/swapi-people.json'), 'utf8'))
   return schemaBuilder(people)
-    .then(result => expect(result).toMatchSnapshot('peopleResult'))
+    .then(result => {
+      if (!isCI) console.log('people', JSON.stringify(result, null, 2))
+      expect(result).toMatchSnapshot('peopleResult')
+    })
 })
 
 it('number range analysis handles invalid data', () => {

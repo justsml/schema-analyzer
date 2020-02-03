@@ -62,9 +62,9 @@ const MetaChecks = {
       if (types.Null) {
         nullishTypeCount += types.Null.count
       }
-      if (types.Unknown) {
-        nullishTypeCount += types.Unknown.count
-      }
+      // if (types.Unknown) {
+      //   nullishTypeCount += types.Unknown.count
+      // }
       const nullLimit = rowCount * nullableRowsThreshold
       const isNotNullable = nullishTypeCount <= nullLimit
       // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
@@ -145,7 +145,7 @@ const TYPE_EMAIL = {
 }
 const TYPE_STRING = {
   type: 'String',
-  check: value => typeof value === 'string' //&& value.length >= 1
+  check: value => typeof value === 'string' // && value.length >= 1
 }
 const TYPE_ARRAY = {
   type: 'Array',
