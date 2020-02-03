@@ -145,7 +145,7 @@ const TYPE_EMAIL = {
 }
 const TYPE_STRING = {
   type: 'String',
-  check: value => typeof value === 'string' && value.length >= 1
+  check: value => typeof value === 'string' //&& value.length >= 1
 }
 const TYPE_ARRAY = {
   type: 'Array',

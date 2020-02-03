@@ -67,7 +67,7 @@ const parseDate = date => {
  * Used to represent a number series of any size.
  * Includes the lowest (`min`), highest (`max`), mean/average (`mean`) and measurements at certain `percentiles`.
  * @typedef AggregateSummary
- * @type {{min: number, max: number, mean: number, p50: number, p33: number, p66: number, p99: number}}
+ * @type {{min: number, max: number, mean: number, p25: number, p33: number, p50: number, p66: number, p75: number, p99: number}}
  */
 
 /**
@@ -213,7 +213,7 @@ function condenseFieldData (schema) {
 }
 
 /**
- * @param {Object.<string, { value?, length?, scale?, precision? }>[]} typeSizeData - An object containing the
+ * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
  * @returns {Object.<string, FieldTypeData>}
  */
 function pivotFieldDataByType (typeSizeData) {
@@ -221,7 +221,7 @@ function pivotFieldDataByType (typeSizeData) {
   log(`Processing ${typeSizeData.length} type guesses`)
   return typeSizeData.reduce((pivotedData, currentTypeGuesses) => {
     Object.entries(currentTypeGuesses)
-      .map(([typeName, { value, length, scale, precision }]) => {
+      .map(([typeName, { value, length, scale, precision, invalid }]) => {
       // console.log(typeName, JSON.stringify({ length, scale, precision }))
         pivotedData[typeName] = pivotedData[typeName] || { typeName, count: 0 }
         // if (!pivotedData[typeName].count) pivotedData[typeName].count = 0
@@ -231,6 +231,7 @@ function pivotFieldDataByType (typeSizeData) {
         if (Number.isFinite(value) && !pivotedData[typeName].value) pivotedData[typeName].value = []
 
         pivotedData[typeName].count++
+        if (invalid != null) pivotedData[typeName].invalid++
         if (length) pivotedData[typeName].length.push(length)
         if (scale) pivotedData[typeName].scale.push(scale)
         if (precision) pivotedData[typeName].precision.push(precision)
@@ -271,8 +272,12 @@ function condenseFieldSizes (pivotedDataByType) {
       if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length)
       if (pivotedDataByType[typeName].scale) aggregateSummary[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale)
       if (pivotedDataByType[typeName].precision) aggregateSummary[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision)
-      if (['Timestamp', 'Date'].indexOf(typeName) > -1) {
-        aggregateSummary[typeName].value = formatRangeStats(pivotedDataByType[typeName].value, parseDate)
+
+      if (pivotedDataByType[typeName].invalid)
+        aggregateSummary[typeName].invalid = pivotedDataByType[typeName].invalid
+
+        if (['Timestamp', 'Date'].indexOf(typeName) > -1) {
+        aggregateSummary[typeName].value = formatRangeStats(aggregateSummary[typeName].value, parseDate)
       }
 
     })
@@ -310,11 +315,11 @@ function getFieldMetadata ({
       analysis[typeGuess] = { ...analysis[typeGuess], value }
     }
     if (typeGuess === 'Date' || typeGuess === 'Timestamp') {
-      value = value instanceof Date ? value : new Date(value)
-      if (isValidDate(value)) {
-        analysis[typeGuess] = { ...analysis[typeGuess], invalid: true }
+      const checkedDate = isValidDate(value)
+      if (checkedDate) {
+        analysis[typeGuess] = { ...analysis[typeGuess], value: checkedDate.getTime() }
       } else {
-        analysis[typeGuess] = { ...analysis[typeGuess], value: value.getTime() }
+        analysis[typeGuess] = { ...analysis[typeGuess], invalid: true, value: value }
       }
     }
     if (typeGuess === 'String' || typeGuess === 'Email') {
@@ -336,10 +341,11 @@ function getFieldMetadata ({
  * @param {number[]} numbers - sequence of unsorted data points
  * @returns {AggregateSummary}
  */
-function getNumberRangeStats (numbers) {
+function getNumberRangeStats (numbers, useSortedDataForPercentiles = false) {
   if (!numbers || numbers.length < 1) return undefined
   const sortedNumbers = numbers.slice().sort((a, b) => a < b ? -1 : a === b ? 0 : 1)
   const sum = numbers.reduce((a, b) => a + b, 0)
+  if (useSortedDataForPercentiles) numbers = sortedNumbers
   return {
     // size: numbers.length,
     min: sortedNumbers[0],
@@ -360,7 +366,7 @@ function getNumberRangeStats (numbers) {
 function formatRangeStats (stats, formatter) {
   if (!stats || !formatter) return undefined
   return {
-    size: formatter(stats.size),
+    // size: stats.size,
     min: formatter(stats.min),
     mean: formatter(stats.mean),
     max: formatter(stats.max),

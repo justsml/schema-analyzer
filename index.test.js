@@ -60,15 +60,15 @@ it('can analyze schema for ./products.csv', () => {
 
 it('can analyze schema for inline csv', async () => {
   const sampleCsv = await parseCsv(`id,name,role,email,createdAt,accountConfirmed
-1,Eve,poweruser,eve@example.com,01/20/2020,false
-2,Alice,user,ali@example.com,02/02/2020,true
-3,Bob,user,robert@example.com,12/31/2019,true
-4,Elliot Alderson,admin,falkensmaze@protonmail.com,01/01/2001,false
+1,Eve,poweruser,eve@example.com,2020-01-20,false
+2,Alice,user,ali@example.com,2020-02-02,true
+3,Bob,user,robert@example.com,2019-12-31,true
+4,Elliot Alderson,admin,falkensmaze@protonmail.com,2001-01-01,false
 5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`)
 
   return schemaBuilder(sampleCsv)
     .then(result => {
-      // console.log(JSON.stringify(result, null, 2))
+      console.log(JSON.stringify(result, null, 2))
       expect(result).toMatchSnapshot('accountsCsvResult')
     })
 })

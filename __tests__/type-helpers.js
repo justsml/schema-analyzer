@@ -17,9 +17,9 @@ import {
 } from '../type-helpers.js'
 
 describe('Multiple Type Matching', () => {
-  it('correctly handles ambiguous value', () => {
+  it('correctly handles ambiguous value(s)', () => {
     const matchResult = detectTypes('')
-    expect(matchResult).toContain('Unknown')
+    expect(matchResult).toContain('String')
     expect(matchResult.length).toBe(1)
   })
   it('correctly handles Object ID', () => {
@@ -105,7 +105,7 @@ describe('Multiple Type Matching', () => {
 
 describe('Type Detectors', () => {
   it('can detect ambiguous data', () => {
-    expect(TYPE_UNKNOWN.check('')).toBe(true)
+    expect(TYPE_UNKNOWN.check('')).toBe(false)
     expect(TYPE_UNKNOWN.check('undefined')).toBe(true)
     expect(TYPE_UNKNOWN.check(undefined)).toBe(true)
     expect(TYPE_UNKNOWN.check(null)).toBe(false)
@@ -192,7 +192,7 @@ describe('Type Detectors', () => {
     expect(TYPE_STRING.check('abc')).toBeTruthy()
     expect(TYPE_STRING.check('123')).toBeTruthy()
     expect(TYPE_STRING.check('TEST')).toBeTruthy()
-    expect(TYPE_STRING.check('')).toBeFalsy() // too little entropy data
+    expect(TYPE_STRING.check('')).toBeTruthy() // too little entropy data
     expect(TYPE_STRING.check(42)).toBeFalsy() // too little entropy data
   })
   it('can detect array', () => {
