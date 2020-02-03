@@ -130,7 +130,8 @@
       "listItemIndent": "mixed"
     },
     "plugins": [
-      "remark-stringify"
+      "remark-stringify",
+      ["remark-lint-list-item-indent", false]
     ]
   }
 }
