@@ -10,7 +10,7 @@ const log = debug('schema-builder:index')
 
 export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
-const isValidDate = date => {
+function isValidDate (date) {
   date = date instanceof Date ? date : new Date(date)
   return isNaN(date.getFullYear()) ? false : date
 }
