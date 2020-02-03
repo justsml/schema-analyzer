@@ -27,7 +27,7 @@ function detectTypes (value, strictMatching = true) {
     }
     return types
   }, [])
-  return !strictMatching ? matchedTypes : matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
+  return !strictMatching ? matchedTypes : matchedTypes.filter((type) => excludedTypes.indexOf(type) === -1)
 }
 
 /**
@@ -94,7 +94,7 @@ const MetaChecks = {
  */
 const TYPE_UNKNOWN = {
   type: 'Unknown',
-  check: value => value === undefined || value === 'undefined'
+  check: (value) => value === undefined || value === 'undefined'
 }
 const TYPE_OBJECT_ID = {
   type: 'ObjectId',
@@ -133,7 +133,7 @@ const TYPE_FLOAT = {
 }
 const TYPE_NUMBER = {
   type: 'Number',
-  check: value => {
+  check: (value) => {
     if (hasLeadingZero.test(String(value))) return false
     return !!(value !== null && !Array.isArray(value) && (Number.isInteger(value) || isNumeric(value)))
   }
@@ -145,17 +145,17 @@ const TYPE_EMAIL = {
 }
 const TYPE_STRING = {
   type: 'String',
-  check: value => typeof value === 'string' // && value.length >= 1
+  check: (value) => typeof value === 'string' // && value.length >= 1
 }
 const TYPE_ARRAY = {
   type: 'Array',
-  check: value => {
+  check: (value) => {
     return Array.isArray(value)
   }
 }
 const TYPE_OBJECT = {
   type: 'Object',
-  check: value => {
+  check: (value) => {
     return !Array.isArray(value) && value != null && typeof value === 'object'
   }
 }

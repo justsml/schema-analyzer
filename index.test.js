@@ -15,31 +15,31 @@ it('handles missing arguments', () => {
 it('can analyze schema for ./users.json', () => {
   const users = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/users.example.json'), 'utf8'))
   return schemaBuilder(users)
-    .then(result => expect(result).toMatchSnapshot('usersResult'))
+    .then((result) => expect(result).toMatchSnapshot('usersResult'))
 })
 
 it('can analyze schema for ./properties.json', () => {
   const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
   return schemaBuilder(properties)
-    .then(result => expect(result).toMatchSnapshot('propertiesResult'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult'))
 })
 
 it('can analyze schema w/ enum options', () => {
   const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
   const lowEnumLimitLoosePct = schemaBuilder(properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30, enumPercentThreshold: 0.2 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'))
   const lowEnumLimitLoose = schemaBuilder(properties, { enumMinimumRowCount: 10, enumAbsoluteLimit: 30 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoose'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoose'))
   const lowEnumLimit = schemaBuilder(properties, { enumMinimumRowCount: 10 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimit'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_lowEnumLimit'))
   const highEnumLimit = schemaBuilder(properties, { enumMinimumRowCount: 1000 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_highEnumLimit'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_highEnumLimit'))
   const highNullableLimit = schemaBuilder(properties, { nullableRowsThreshold: 0.25 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_highNullableLimit'))
   const lowNullableLimit = schemaBuilder(properties, { nullableRowsThreshold: 0 })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_lowNullableLimit'))
   const notStrict = schemaBuilder(properties, { strictMatching: false })
-    .then(result => expect(result).toMatchSnapshot('propertiesResult_notStrict'))
+    .then((result) => expect(result).toMatchSnapshot('propertiesResult_notStrict'))
   return Promise.all([
     lowEnumLimitLoosePct,
     lowEnumLimitLoose,
@@ -53,9 +53,9 @@ it('can analyze schema w/ enum options', () => {
 
 it('can analyze schema for ./products.csv', () => {
   const productCsv = parseCsv(fs.readFileSync(path.resolve(__dirname, './__tests__/products-3000.csv'), 'utf8'))
-  return productCsv.then(products => {
+  return productCsv.then((products) => {
     return schemaBuilder(products)
-      .then(result => {
+      .then((result) => {
         // if (!isCI) console.log('products', JSON.stringify(result, null, 2))
         expect(result).toMatchSnapshot('productsResult')
       })
@@ -71,7 +71,7 @@ it('can analyze schema for inline csv', async () => {
 5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`)
 
   return schemaBuilder(sampleCsv)
-    .then(result => {
+    .then((result) => {
       if (!isCI) console.log(JSON.stringify(result, null, 2))
       expect(result).toMatchSnapshot('accountsCsvResult')
     })
@@ -83,7 +83,7 @@ it('can analyze schema for ./people.json', () => {
   people[1].created = new Date('0000-01-01')
   people[2].created = new Date('x')
   return schemaBuilder(people)
-    .then(result => {
+    .then((result) => {
       if (!isCI) console.log('people', JSON.stringify(result, null, 2))
       expect(result).toMatchSnapshot('peopleResult')
     })

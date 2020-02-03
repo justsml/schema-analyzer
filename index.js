@@ -15,7 +15,7 @@ function isValidDate (date) {
   return isNaN(date.getFullYear()) ? false : date
 }
 
-const parseDate = date => {
+const parseDate = (date) => {
   date = isValidDate(date)
   return date && date.toISOString && date.toISOString()
 }
@@ -109,7 +109,7 @@ function schemaBuilder (
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
     .then(condenseFieldData)
-    .then(schema => {
+    .then((schema) => {
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
@@ -267,7 +267,7 @@ function condenseFieldSizes (pivotedDataByType) {
   const aggregateSummary = {}
   log('Starting condenseFieldSizes()')
   Object.keys(pivotedDataByType)
-    .map(typeName => {
+    .map((typeName) => {
       aggregateSummary[typeName] = {
         // typeName,
         rank: typeRankings[typeName],
