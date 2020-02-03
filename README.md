@@ -4,8 +4,9 @@
 [![GitHub stars](https://img.shields.io/github/stars/justsml/schema-analyzer.svg?label=Stars&style=flat)](https://github.com/justsml/schema-analyzer)
 [![Node.js CI](https://github.com/justsml/schema-analyzer/workflows/Node.js%20CI/badge.svg)](https://github.com/justsml/schema-analyzer/actions)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/schema-analyzer?color=green)
-<!-- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/justsml/schema-analyzer) -->
 ![npm downloads](https://img.shields.io/npm/dm/schema-analyzer?color=yellow&label=npm%20downloads&logo=npm)
+[![codecov](https://codecov.io/gh/justsml/schema-analyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/justsml/schema-analyzer)
+<!-- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/justsml/schema-analyzer) -->
 <!-- ![GitHub All Releases](https://img.shields.io/github/downloads/justsml/schema-analyzer/total?color=cyan&label=github%20release%20downloads) -->
 
 # Schema Analyzer
@@ -176,6 +177,7 @@ Numeric and String types include a summary of the observed field sizes:
 - `mean` the average number or string length
 - `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile number or string length
 
+Percentile is based on input data, as-is with out sorting.
 
 Range data for the `length` of a `String` field type:
 
