@@ -1,6 +1,6 @@
 {
   "name": "schema-analyzer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",
@@ -9,14 +9,15 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "NODE_ENV=production rollup -c && NODE_ENV=development rollup -c ",
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
     "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
     "test": "jest --coverage --maxWorkers 4",
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
     "pretest": "npm run build",
-    "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'"
+    "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'",
+    "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js"
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "jest": "^25.1.0",
     "rollup": "^1.30.1",
     "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-terser": "^5.2.0",
     "standard": "^14.3.1",
     "typescript": "^3.7.5"
   },
@@ -131,7 +133,10 @@
     },
     "plugins": [
       "remark-stringify",
-      ["remark-lint-list-item-indent", false]
+      [
+        "remark-lint-list-item-indent",
+        false
+      ]
     ]
   }
 }
