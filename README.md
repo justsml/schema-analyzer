@@ -66,7 +66,7 @@ schemaBuilder(schemaName: String, data: Array<Object>): TypeSummary
 It consists of 3 key top-level properties:
 
 - `totalRows` - # of rows analyzed.
-- `fields: FieldTypeSummary` - a map of field names with all detected types ([includes meta-data](#fieldtypesummary) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
+- `fields: FieldTypeSummary` - a map of field names with all detected types ([includes meta-data](#aggregatesummary) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
 
 #### Review the raw results below
 
@@ -156,7 +156,7 @@ Details about each field can be found below.
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|
-| 1  | Eve             | poweruser | `eve@example.com`            | 01/20/2020 | undefined            |
+| 1  | Eve             | poweruser | `eve@example.com`            | 01/20/2020 | undefined        |
 | 2  | Alice           | user      | `ali@example.com`            | 02/02/2020 | true             |
 | 3  | Bob             | user      | `robert@example.com`         | 12/31/2019 | true             |
 | 4  | Elliot Alderson | admin     | `falkensmaze@protonmail.com` | 01/01/2001 | false            |
@@ -179,9 +179,9 @@ Numeric and String types include a summary of the observed field sizes:
 
 Percentile is based on input data, as-is with out sorting.
 
-Range data for the `length` of a `String` field type:
+##### Length Range Data
 
-This is useful for defining strict length limits or minimums, for example as SQL servers often require..
+Range data for the `length` of a `String` field type:
 
 ```js
 {
@@ -190,6 +190,8 @@ This is useful for defining strict length limits or minimums, for example as SQL
   "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
 }
 ```
+
+This is useful for defining strict length limits or minimums, for example as SQL servers often require..
 
 Range data for a `Date` fields `value`:
 
@@ -216,19 +218,18 @@ The following features require a certain minimum # of records:
 
 ### Full List of Detected Types
 
-```
-Unknown
-ObjectId
-UUID
-Boolean
-Date
-Timestamp
-Currency
-Float
-Number
-Email
-String
-Array
-Object
-Null
-```
+- `Unknown`
+- `ObjectId`
+- `UUID`
+- `Boolean`
+- `Date`
+- `Timestamp`
+- `Currency`
+- `Float`
+- `Number`
+- `Email`
+- `String`
+- `Array`
+- `Object`
+- `Null`
+
