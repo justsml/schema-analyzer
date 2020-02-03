@@ -69,7 +69,7 @@ function isTimestamp (value) {
 function isCurrency (value) {
   if (value == null) return false
   value = String(value).trim()
-  const valueSymbol = currencies.find(curSymbol => value.indexOf(curSymbol) > -1)
+  const valueSymbol = currencies.find((curSymbol) => value.indexOf(curSymbol) > -1)
   if (!valueSymbol) return false
   value = value.replace(valueSymbol, '')
   return isNumeric(value)

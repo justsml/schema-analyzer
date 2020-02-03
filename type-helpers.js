@@ -11,12 +11,14 @@ import {
   isUuid
 } from './utils/type-detectors.js'
 
+const hasLeadingZero = /^0+/
+
 /**
  * Returns an array of TypeName.
  * @param {any} value - input data
  * @returns {string[]}
  */
-function detectTypes (value) {
+function detectTypes (value, strictMatching = true) {
   const excludedTypes = []
   const matchedTypes = prioritizedTypes.reduce((types, typeHelper) => {
     if (typeHelper.check(value)) {
@@ -25,7 +27,7 @@ function detectTypes (value) {
     }
     return types
   }, [])
-  return matchedTypes.filter(type => excludedTypes.indexOf(type) === -1)
+  return !strictMatching ? matchedTypes : matchedTypes.filter((type) => excludedTypes.indexOf(type) === -1)
 }
 
 /**
@@ -60,9 +62,9 @@ const MetaChecks = {
       if (types.Null) {
         nullishTypeCount += types.Null.count
       }
-      if (types.Unknown) {
-        nullishTypeCount += types.Unknown.count
-      }
+      // if (types.Unknown) {
+      //   nullishTypeCount += types.Unknown.count
+      // }
       const nullLimit = rowCount * nullableRowsThreshold
       const isNotNullable = nullishTypeCount <= nullLimit
       // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
@@ -92,7 +94,7 @@ const MetaChecks = {
  */
 const TYPE_UNKNOWN = {
   type: 'Unknown',
-  check: value => value === '' || value === undefined || value === 'undefined'
+  check: (value) => value === undefined || value === 'undefined'
 }
 const TYPE_OBJECT_ID = {
   type: 'ObjectId',
@@ -131,7 +133,8 @@ const TYPE_FLOAT = {
 }
 const TYPE_NUMBER = {
   type: 'Number',
-  check: value => {
+  check: (value) => {
+    if (hasLeadingZero.test(String(value))) return false
     return !!(value !== null && !Array.isArray(value) && (Number.isInteger(value) || isNumeric(value)))
   }
 }
@@ -142,17 +145,17 @@ const TYPE_EMAIL = {
 }
 const TYPE_STRING = {
   type: 'String',
-  check: value => typeof value === 'string' && value.length >= 1
+  check: (value) => typeof value === 'string' // && value.length >= 1
 }
 const TYPE_ARRAY = {
   type: 'Array',
-  check: value => {
+  check: (value) => {
     return Array.isArray(value)
   }
 }
 const TYPE_OBJECT = {
   type: 'Object',
-  check: value => {
+  check: (value) => {
     return !Array.isArray(value) && value != null && typeof value === 'object'
   }
 }

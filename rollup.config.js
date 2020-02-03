@@ -1,14 +1,17 @@
 // import globals from 'rollup-plugin-node-globals';
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import { terser } from "rollup-plugin-terser";
 import pkg from './package.json'
 
 const includePackages = {
   'lodash.isdate': 'isDate',
   debug: 'debug'
 }
-
-const envOptions = process.env.NODE_ENV === 'production' ? {
+const isProduction = process.env.NODE_ENV === 'production'
+const extraPlugins = isProduction ? [terser()] : []
+const fileExtension = isProduction ? `.min` : ``
+const envOptions = isProduction ? {
   compact: true, // DEV MODE
   sourcemap: false
 } : {
@@ -22,7 +25,7 @@ export default [
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.browser}`,
+      file: `${pkg.browser}`.replace(`.js`, `${fileExtension}.js`),
       format: 'umd',
       globals: includePackages,
       ...envOptions
@@ -38,14 +41,14 @@ export default [
         browser: true
       }), // so Rollup can find `ms`
       commonjs()
-    ]
+    ].concat(...extraPlugins)
   },
 
   {
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.main}`,
+      file: `${pkg.main}`.replace(`.js`, `${fileExtension}.js`),
       format: 'cjs',
       globals: includePackages,
       ...envOptions
@@ -61,14 +64,14 @@ export default [
         browser: true
       }), // so Rollup can find `ms`
       commonjs()
-    ]
+    ].concat(...extraPlugins)
   },
 
   {
     input: './index.js',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.module}`,
+      file: `${pkg.module}`.replace(`.js`, `${fileExtension}.js`),
       format: 'es',
       globals: includePackages,
       ...envOptions
@@ -84,7 +87,7 @@ export default [
         browser: true
       }), // so Rollup can find `ms`
       commonjs()
-    ]
+    ].concat(...extraPlugins)
   }
 
   // CommonJS (for Node) and ES module (for bundlers) build.
