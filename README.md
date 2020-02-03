@@ -13,7 +13,7 @@
 
 > An Open Source joint by [Dan Levy](https://danlevy.net/) ✨
 
-## Analyze column type & size summary from any input JSON array!
+## Analyze column type & size summary from any input JSON array
 
 Schema **Analyzer** is the core library behind Dan's [Schema **Generator**](https://github.com/justsml/schema-generator).
 
