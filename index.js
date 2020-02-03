@@ -8,7 +8,7 @@ const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
 
-export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats }
+export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
 const isValidDate = date => {
   date = date instanceof Date ? date : new Date(date)
@@ -115,11 +115,10 @@ function schemaBuilder (
 
       const fields = Object.keys(schema.fields)
         .reduce((fieldInfo, fieldName) => {
-        /** @type {FieldInfo} */
+          const types = schema.fields[fieldName]
+          /** @type {FieldInfo} */
           fieldInfo[fieldName] = {
-          // nullable: null,
-          // unique: null,
-            types: schema.fields[fieldName]
+            types
           }
           fieldInfo[fieldName] = MetaChecks.TYPE_ENUM.check(fieldInfo[fieldName],
             { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
@@ -130,6 +129,11 @@ function schemaBuilder (
           fieldInfo[fieldName] = MetaChecks.TYPE_UNIQUE.check(fieldInfo[fieldName],
             { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
             { uniqueRowsThreshold })
+
+          const isIdentity = (types.Number || types.UUID) && fieldInfo[fieldName].unique && /id$/i.test(fieldName)
+          if (isIdentity) {
+            fieldInfo[fieldName].identity = true
+          }
 
           if (schema.uniques && schema.uniques[fieldName]) {
             fieldInfo[fieldName].uniqueCount = schema.uniques[fieldName].length
@@ -175,6 +179,7 @@ function schemaBuilder (
       })
       const typeNames = Object.keys(typeFingerprint)
       const isEnumType = typeNames.includes('Number') || typeNames.includes('String')
+
       if (isEnumEnabled && isEnumType) {
         schema.uniques[fieldName] = schema.uniques[fieldName] || []
         if (!schema.uniques[fieldName].includes(row[fieldName])) schema.uniques[fieldName].push(row[fieldName])

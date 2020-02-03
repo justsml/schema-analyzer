@@ -155,7 +155,7 @@ Details about each field can be found below.
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|
-| 1  | Eve             | poweruser | `eve@example.com`            | 01/20/2020 | false            |
+| 1  | Eve             | poweruser | `eve@example.com`            | 01/20/2020 | undefined            |
 | 2  | Alice           | user      | `ali@example.com`            | 02/02/2020 | true             |
 | 3  | Bob             | user      | `robert@example.com`         | 12/31/2019 | true             |
 | 4  | Elliot Alderson | admin     | `falkensmaze@protonmail.com` | 01/01/2001 | false            |
@@ -173,15 +173,32 @@ Numeric and String types include a summary of the observed field sizes:
 
 - `min` the minimum number or string length
 - `max` the maximum number or string length
-- `avg` the average number or string length
+- `mean` the average number or string length
 - `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile number or string length
+
+
+Range data for the `length` of a `String` field type:
+
+This is useful for defining strict length limits or minimums, for example as SQL servers often require..
 
 ```js
 {
- "min": 1, "avg": 1, "max": 1 ,
-  "percentiles": [ 1, 1, 1 ]
+  "rank": 11,
+  "count": 5,
+  "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
 }
 ```
+
+Range data for a `Date` fields `value`:
+
+```js
+{
+  "rank": 4,
+  "count": 4,
+  "value": { "min": "2001-01-01T00:00:00.000Z", "mean": "2015-04-14T18:00:00.000Z", "max": "2020-02-02T00:00:00.000Z", "p25": "2020-02-02T00:00:00.000Z", "p33": "2020-02-02T00:00:00.000Z", "p50": "2019-12-31T00:00:00.000Z", "p66": "2019-12-31T00:00:00.000Z", "p75": "2001-01-01T00:00:00.000Z", "p99": "2001-01-01T00:00:00.000Z" }
+}
+```
+
 
 ## Notes
 

@@ -79,6 +79,9 @@ it('can analyze schema for inline csv', async () => {
 
 it('can analyze schema for ./people.json', () => {
   const people = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/swapi-people.json'), 'utf8'))
+  people[0].created = new Date(people[0].created)
+  people[1].created = new Date('0000-01-01')
+  people[2].created = new Date('x')
   return schemaBuilder(people)
     .then(result => {
       if (!isCI) console.log('people', JSON.stringify(result, null, 2))
