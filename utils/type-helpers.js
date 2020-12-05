@@ -1,4 +1,5 @@
-import { TypeAnalysis } from '../'
+// eslint-disable-next-line no-unused-vars
+// import { TypeAnalysis } from '../index'
 import {
   isBoolish,
   isCurrency,
@@ -111,14 +112,13 @@ const MetaChecks = {
  * Detect ambiguous field type.
  * Will not affect weighted field analysis.
  */
-const TYPE_UNKNOWN =
+const TYPE_UNKNOWN = {
   /**
    * @param {string} value
    */
-  {
-    check: (value) => value === undefined || value === 'undefined',
-    type: 'Unknown'
-  }
+  check: (value) => value === undefined || value === 'undefined',
+  type: 'Unknown'
+}
 const TYPE_OBJECT_ID = {
   check: isObjectId,
   type: 'ObjectId',

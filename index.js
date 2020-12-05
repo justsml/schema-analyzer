@@ -24,15 +24,36 @@ const parseDate = (date) => {
 }
 
 /**
+ * @typedef CondenseFieldDataArgs
+ * @type {{
+ *   fieldsData: IntermediateTypeMeasurements[],
+ *   uniques: Object.<string, any[]>,
+ *   totalRows: number
+ * }}
+ */
+
+/**
  * Analysis results.
  * @typedef TypeSummary
  * @type {{
- *  fields: TypeAnalysis,
- *  totalRows: number;
- * }}
- */
+  *  fields: Object.<string, FieldInfo>,
+  *  totalRows: number;
+  * }}
+  */
+
 /**
  * Analysis results.
+ * @typedef IntermediateTypeSummary
+ * @type {{
+  *  fields: Object.<string, FieldInfo>,
+  *  totalRows?: number;
+  *  uniques?: any[];
+  * }}
+  */
+
+/**
+ * Analysis results.
+ * @export
  * @typedef TypeAnalysis
  * @type {{
  *    Array?: FieldTypeStats,
@@ -50,11 +71,55 @@ const parseDate = (date) => {
  *    Unknown?: FieldTypeStats,
  *    UUID?: FieldTypeStats,
  *  }}
-*/
+ */
+
+/**
+ * Analysis tracking state.
+ * @export
+ * @typedef IntermediateTypeAnalysis
+ * @type {{
+ *    Array?: FieldTypeData,
+ *    Boolean?: FieldTypeData,
+ *    Currency?: FieldTypeData,
+ *    Date?: FieldTypeData,
+ *    Email?: FieldTypeData,
+ *    Float?: FieldTypeData,
+ *    Null?: FieldTypeData,
+ *    Number?: FieldTypeData,
+ *    Object?: FieldTypeData,
+ *    ObjectId?: FieldTypeData,
+ *    String?: FieldTypeData,
+ *    Timestamp?: FieldTypeData,
+ *    Unknown?: FieldTypeData,
+ *    UUID?: FieldTypeData,
+ *  }}
+ */
+
+/**
+ * Analysis tracking state.
+ * @export
+ * @typedef IntermediateTypeMeasurements
+ * @type {{
+  *    Array?: any,
+  *    Boolean?: any,
+  *    Currency?: any,
+  *    Date?: any,
+  *    Email?: any,
+  *    Float?: any,
+  *    Null?: any,
+  *    Number?: any,
+  *    Object?: any,
+  *    ObjectId?: any,
+  *    String?: any,
+  *    Timestamp?: any,
+  *    Unknown?: any,
+  *    UUID?: any,
+  *  }}
+  */
 
 /**
  * This is an internal intermediate structure.
- * It mirrors the `FieldSummary` type it will become.
+ * It mirrors the `FieldTypeStats` type it will become.
  * @private
  * @typedef FieldTypeData
  * @type {Object}
@@ -84,7 +149,7 @@ const parseDate = (date) => {
 /**
  * @typedef FieldInfo
  * @type {object}
- * @property {Object.<string, FieldTypeStats>} types - field stats organized by type
+ * @property {TypeAnalysis | IntermediateTypeAnalysis} types - field stats organized by type
  * @property {boolean} nullable - is the field nullable
  * @property {boolean} unique - is the field unique
  * @property {string[]|number[]} [enum] - enumeration detected, the values are listed on this property.
@@ -136,14 +201,16 @@ function schemaBuilder (
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
     .then(condenseFieldData)
+    /** @type {FieldSummary} */
     .then((schema) => {
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
       const fields = Object.keys(schema.fields)
         .reduce((fieldInfo, fieldName) => {
-          const types = schema.fields[fieldName]
+          // /** @type {TypeAnalysis} */
           /** @type {FieldInfo} */
+          const types = schema.fields[fieldName]
           fieldInfo[fieldName] = {
             types
           }
@@ -178,7 +245,7 @@ function schemaBuilder (
 
   /**
    * @param {object[]} docs
-   * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: FieldTypeData[]; }; }} schema
+   * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: FieldTypeData; }; }} schema
    */
   function pivotRowsGroupedByType (docs) {
     const detectedSchema = { uniques: isEnumEnabled ? {} : null, fieldsData: {}, totalRows: null }
@@ -223,20 +290,21 @@ function schemaBuilder (
 
 /**
  *
- * @param {{ fieldsData: Object.<string, FieldTypeData[]>, uniques: Object.<string, any[]>, totalRows: number}} schema
- * @returns {{fields: Object.<string, FieldInfo>, uniques: Object.<string, any[]>, totalRows: number}}
+ * @param {CondenseFieldDataArgs} schema
+ * @returns {{fields: Object.<string, IntermediateTypeMeasurements>, uniques: Object.<string, any[]>, totalRows: number}}
  */
 function condenseFieldData (schema) {
   const { fieldsData } = schema
   const fieldNames = Object.keys(fieldsData)
 
-  /** @type {Object.<string, FieldInfo>} */
+  /** @type {Object.<string, IntermediateTypeMeasurements>} */
   const fieldSummary = {}
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
   fieldNames
     .forEach((fieldName) => {
-      /** @type {Object.<string, FieldInfo>} */
-      const pivotedData = pivotFieldDataByType(fieldsData[fieldName])
+      const fldData = fieldsData[fieldName]
+      /** @type {IntermediateTypeAnalysis} */
+      const pivotedData = pivotFieldDataByType(fldData)
       fieldSummary[fieldName] = condenseFieldSizes(pivotedData)
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
@@ -249,15 +317,12 @@ function condenseFieldData (schema) {
 //  * @returns {Object.<string, FieldTypeData>}
 //  */
 /**
- * @param {any[]} typeSizeData
+ * @param {IntermediateTypeMeasurements[]} typeSizeData
+ * @returns {IntermediateTypeAnalysis}
  */
 function pivotFieldDataByType (typeSizeData) {
   // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
   log(`Processing ${typeSizeData.length} type guesses`)
-  /**
-   * @param {{ [x: string]: any; }} pivotedData
-   * @param {{ [s: string]: any; } | ArrayLike<any>} currentTypeGuesses
-   */
   /**
    * @param {{ [x: string]: any; }} pivotedData
    * @param {{ [s: string]: any; } | ArrayLike<any>} currentTypeGuesses
