@@ -1,0 +1,32 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "outDir": "types",
+    "jsx": "react",
+    "checkJs": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "listEmittedFiles": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "ES2016"
+  },
+  "files": [
+    "index.js",
+    "utils/type-helpers.js",
+    "utils/type-detectors.js"
+  ],
+  "exclude": [
+    "**/*.d.ts", "dist", "types", "node_modules"
+
+  ],
+  "typeAcquisition": {
+    "include": [
+      "jest"
+    ]
+  }
+}

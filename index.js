@@ -1,33 +1,125 @@
 import debug from 'debug'
-// import FP from 'functional-promises';
-// import { detectTypes } from './type-helpers.js'
-// import StatsMap from 'stats-map';
-// import mem from 'mem';
-import { detectTypes, MetaChecks, typeRankings } from './type-helpers.js'
+import { detectTypes, MetaChecks, typeRankings } from './utils/type-helpers.js'
 const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
 
 export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
+/**
+ * @param {string | number | Date | undefined | any} date
+ * @returns {Date | false}
+ */
 function isValidDate (date) {
   date = date instanceof Date ? date : new Date(date)
   return isNaN(date.getFullYear()) ? false : date
 }
 
+/**
+ * @param {string | number | boolean | Date} date
+ */
 const parseDate = (date) => {
   date = isValidDate(date)
   return date && date.toISOString && date.toISOString()
 }
+
 /**
- * Includes the results of input analysis.
- * @typedef TypeSummary
- * @type {{ fields: Object.<string, FieldTypeSummary>; totalRows: number; }}
+ * @typedef CondenseFieldDataArgs
+ * @type {{
+ *   fieldsData: IntermediateTypeMeasurements[],
+ *   uniques: Object.<string, any[]>,
+ *   totalRows: number
+ * }}
  */
 
 /**
+ * Analysis results.
+ * @typedef TypeSummary
+ * @type {{
+  *  fields: Object.<string, FieldInfo>,
+  *  totalRows: number;
+  * }}
+  */
+
+/**
+ * Analysis results.
+ * @typedef IntermediateTypeSummary
+ * @type {{
+  *  fields: Object.<string, FieldInfo>,
+  *  totalRows?: number;
+  *  uniques?: any[];
+  * }}
+  */
+
+/**
+ * Analysis results.
+ * @export
+ * @typedef TypeAnalysis
+ * @type {{
+ *    Array?: FieldTypeStats,
+ *    Boolean?: FieldTypeStats,
+ *    Currency?: FieldTypeStats,
+ *    Date?: FieldTypeStats,
+ *    Email?: FieldTypeStats,
+ *    Float?: FieldTypeStats,
+ *    Null?: FieldTypeStats,
+ *    Number?: FieldTypeStats,
+ *    Object?: FieldTypeStats,
+ *    ObjectId?: FieldTypeStats,
+ *    String?: FieldTypeStats,
+ *    Timestamp?: FieldTypeStats,
+ *    Unknown?: FieldTypeStats,
+ *    UUID?: FieldTypeStats,
+ *  }}
+ */
+
+/**
+ * Analysis tracking state.
+ * @export
+ * @typedef IntermediateTypeAnalysis
+ * @type {{
+ *    Array?: FieldTypeData,
+ *    Boolean?: FieldTypeData,
+ *    Currency?: FieldTypeData,
+ *    Date?: FieldTypeData,
+ *    Email?: FieldTypeData,
+ *    Float?: FieldTypeData,
+ *    Null?: FieldTypeData,
+ *    Number?: FieldTypeData,
+ *    Object?: FieldTypeData,
+ *    ObjectId?: FieldTypeData,
+ *    String?: FieldTypeData,
+ *    Timestamp?: FieldTypeData,
+ *    Unknown?: FieldTypeData,
+ *    UUID?: FieldTypeData,
+ *  }}
+ */
+
+/**
+ * Analysis tracking state.
+ * @export
+ * @typedef IntermediateTypeMeasurements
+ * @type {{
+  *    Array?: any,
+  *    Boolean?: any,
+  *    Currency?: any,
+  *    Date?: any,
+  *    Email?: any,
+  *    Float?: any,
+  *    Null?: any,
+  *    Number?: any,
+  *    Object?: any,
+  *    ObjectId?: any,
+  *    String?: any,
+  *    Timestamp?: any,
+  *    Unknown?: any,
+  *    UUID?: any,
+  *  }}
+  */
+
+/**
  * This is an internal intermediate structure.
- * It mirrors the `FieldSummary` type it will become.
+ * It mirrors the `FieldTypeStats` type it will become.
  * @private
  * @typedef FieldTypeData
  * @type {Object}
@@ -42,22 +134,22 @@ const parseDate = (date) => {
 
 /**
  *
- * @typedef FieldTypeSummary
+ * @typedef FieldTypeStats
  * @type {Object}
  * @property {AggregateSummary} [value] - summary of array of values, pre processing into an AggregateSummary
  * @property {AggregateSummary} [length] - summary of array of string (or decimal) sizes, pre processing into an AggregateSummary
  * @property {AggregateSummary} [precision] - only applies to Float types. Summary of array of sizes of the value both before and after the decimal.
  * @property {AggregateSummary} [scale] - only applies to Float types. Summary of array of sizes of the value after the decimal.
  * @property {string[]|number[]} [enum] - if enum rules were triggered will contain the detected unique values.
- * @property {number} count - number of times the type was matched
- * @property {number} rank - absolute priority of the detected TypeName, defined in the object `typeRankings`
+ * @property {number} [count=0] - number of times the type was matched
+ * @property {number} [rank=0] - absolute priority of the detected TypeName, defined in the object `typeRankings`
  *
  */
 
 /**
  * @typedef FieldInfo
  * @type {object}
- * @property {Object.<string, FieldTypeSummary>} types - field stats organized by type
+ * @property {TypeAnalysis | IntermediateTypeAnalysis} types - field stats organized by type
  * @property {boolean} nullable - is the field nullable
  * @property {boolean} unique - is the field unique
  * @property {string[]|number[]} [enum] - enumeration detected, the values are listed on this property.
@@ -109,14 +201,16 @@ function schemaBuilder (
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
     .then(condenseFieldData)
+    /** @type {FieldSummary} */
     .then((schema) => {
       log('Built summary from Field Type data.')
       // console.log('genSchema', JSON.stringify(genSchema, null, 2))
 
       const fields = Object.keys(schema.fields)
         .reduce((fieldInfo, fieldName) => {
-          const types = schema.fields[fieldName]
+          // /** @type {TypeAnalysis} */
           /** @type {FieldInfo} */
+          const types = schema.fields[fieldName]
           fieldInfo[fieldName] = {
             types
           }
@@ -151,7 +245,7 @@ function schemaBuilder (
 
   /**
    * @param {object[]} docs
-   * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: FieldTypeData[]; }; }} schema
+   * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: FieldTypeData; }; }} schema
    */
   function pivotRowsGroupedByType (docs) {
     const detectedSchema = { uniques: isEnumEnabled ? {} : null, fieldsData: {}, totalRows: null }
@@ -196,20 +290,21 @@ function schemaBuilder (
 
 /**
  *
- * @param {{ fieldsData: Object.<string, FieldTypeData[]>, uniques: Object.<string, any[]>, totalRows: number}} schema
- * @returns {{fields: Object.<string, FieldTypeSummary>, uniques: Object.<string, any[]>, totalRows: number}}
+ * @param {CondenseFieldDataArgs} schema
+ * @returns {{fields: Object.<string, IntermediateTypeMeasurements>, uniques: Object.<string, any[]>, totalRows: number}}
  */
 function condenseFieldData (schema) {
   const { fieldsData } = schema
   const fieldNames = Object.keys(fieldsData)
 
-  /** @type {Object.<string, FieldTypeSummary>} */
+  /** @type {Object.<string, IntermediateTypeMeasurements>} */
   const fieldSummary = {}
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
   fieldNames
     .forEach((fieldName) => {
-      /** @type {Object.<string, FieldTypeData>} */
-      const pivotedData = pivotFieldDataByType(fieldsData[fieldName])
+      const fldData = fieldsData[fieldName]
+      /** @type {IntermediateTypeAnalysis} */
+      const pivotedData = pivotFieldDataByType(fldData)
       fieldSummary[fieldName] = condenseFieldSizes(pivotedData)
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
@@ -217,13 +312,21 @@ function condenseFieldData (schema) {
   return { fields: fieldSummary, uniques: schema.uniques, totalRows: schema.totalRows }
 }
 
+// /**
+//  * @param {Object.<string, { typeName: string, count: number, value?: any[], length?: any[], scale?: any[], precision?: any[], invalid?: any }>[]} typeSizeData - An object containing the
+//  * @returns {Object.<string, FieldTypeData>}
+//  */
 /**
- * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
- * @returns {Object.<string, FieldTypeData>}
+ * @param {IntermediateTypeMeasurements[]} typeSizeData
+ * @returns {IntermediateTypeAnalysis}
  */
 function pivotFieldDataByType (typeSizeData) {
   // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
   log(`Processing ${typeSizeData.length} type guesses`)
+  /**
+   * @param {{ [x: string]: any; }} pivotedData
+   * @param {{ [s: string]: any; } | ArrayLike<any>} currentTypeGuesses
+   */
   return typeSizeData.reduce((pivotedData, currentTypeGuesses) => {
     Object.entries(currentTypeGuesses)
       .map(([typeName, { value, length, scale, precision }]) => {
@@ -260,10 +363,10 @@ function pivotFieldDataByType (typeSizeData) {
  * Internal function which analyzes and summarizes each columns data by type. Sort of a histogram of significant points.
  * @private
  * @param {Object.<string, FieldTypeData>} pivotedDataByType - a map organized by Type keys (`TypeName`), containing extracted data for the returned `FieldSummary`.
- * @returns {Object.<string, FieldTypeSummary>} - The final output, with histograms of significant points
+ * @returns {Object.<string, FieldTypeStats>} - The final output, with histograms of significant points
  */
 function condenseFieldSizes (pivotedDataByType) {
-  /** @type {Object.<string, FieldTypeSummary>} */
+  /** @type {Object.<string, FieldTypeStats>} */
   const aggregateSummary = {}
   log('Starting condenseFieldSizes()')
   Object.keys(pivotedDataByType)
@@ -296,6 +399,11 @@ function getFieldMetadata ({
   const typeGuesses = detectTypes(value, strictMatching)
 
   // Assign initial metadata for each matched type below
+  /**
+   * @param {{ [x: string]: any; }} analysis
+   * @param {string} typeGuess
+   * @param {number} rank
+   */
   return typeGuesses.reduce((analysis, typeGuess, rank) => {
     let length
     let precision
@@ -364,7 +472,8 @@ function getNumberRangeStats (numbers, useSortedDataForPercentiles = false) {
 }
 
 /**
- *
+ * @param {{ min: any; max: any; mean: any; p25: any; p33: any; p50: any; p66: any; p75: any; p99: any; }} stats
+ * @param {{ (date: any): any; (arg0: any): any; }} formatter
  */
 function formatRangeStats (stats, formatter) {
   // if (!stats || !formatter) return undefined
