@@ -9,7 +9,7 @@ import {
   isObjectId,
   isTimestamp,
   isUuid
-} from './utils/type-detectors.js'
+} from './type-detectors.js'
 
 const hasLeadingZero = /^0+/
 

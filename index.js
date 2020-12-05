@@ -10,11 +10,18 @@ const log = debug('schema-builder:index')
 
 export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
+/**
+ * @param {string | number | Date | undefined | any} date
+ * @returns {Date | false}
+ */
 function isValidDate (date) {
   date = date instanceof Date ? date : new Date(date)
   return isNaN(date.getFullYear()) ? false : date
 }
 
+/**
+ * @param {string | number | boolean | Date} date
+ */
 const parseDate = (date) => {
   date = isValidDate(date)
   return date && date.toISOString && date.toISOString()
@@ -218,7 +225,7 @@ function condenseFieldData (schema) {
 }
 
 /**
- * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
+ * @param {Object.<string, { value?: any[], length?: any[], scale?: any[], precision?: any[], invalid?: any }>[]} typeSizeData - An object containing the
  * @returns {Object.<string, FieldTypeData>}
  */
 function pivotFieldDataByType (typeSizeData) {
@@ -296,6 +303,11 @@ function getFieldMetadata ({
   const typeGuesses = detectTypes(value, strictMatching)
 
   // Assign initial metadata for each matched type below
+  /**
+   * @param {{ [x: string]: any; }} analysis
+   * @param {string} typeGuess
+   * @param {number} rank
+   */
   return typeGuesses.reduce((analysis, typeGuess, rank) => {
     let length
     let precision
@@ -364,7 +376,8 @@ function getNumberRangeStats (numbers, useSortedDataForPercentiles = false) {
 }
 
 /**
- *
+ * @param {{ min: any; max: any; mean: any; p25: any; p33: any; p50: any; p66: any; p75: any; p99: any; }} stats
+ * @param {{ (date: any): any; (arg0: any): any; }} formatter
  */
 function formatRangeStats (stats, formatter) {
   // if (!stats || !formatter) return undefined

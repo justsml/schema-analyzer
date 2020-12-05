@@ -35,24 +35,36 @@ const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
 const nullishPattern = /null/i
 // const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/igm
 
-function isBoolish (value, fieldName) {
+/**
+ * @param {string | any[]} value
+ */
+function isBoolish (value, _fieldName = null) {
   if (value == null) return false
   value = String(value).trim()
   return value.length <= 6 && boolishPattern.test(String(value))
 }
 
-function isUuid (value, fieldName) {
+/**
+ * @param {string | any[]} value
+ */
+function isUuid (value, _fieldName = null) {
   if (value == null) return false
   value = String(value).trim()
   return value.length < 40 && uuidPattern.test(value)
 }
-function isObjectId (value, fieldName) {
+/**
+ * @param {string | any[]} value
+ */
+function isObjectId (value, _fieldName = null) {
   if (value == null) return false
   value = String(value).trim()
   return value.length < 40 && objectIdPattern.test(value)
 }
 
-function isDateString (value, fieldName) {
+/**
+ * @param {string | any[]} value
+ */
+function isDateString (value, _fieldName = null) {
   // not bullet-proof, meant to sniff intention in the data
   if (value == null) return false
   if (isDate(value)) return true
@@ -60,12 +72,18 @@ function isDateString (value, fieldName) {
   return value.length < 30 && dateStringPattern.test(value)
 }
 
+/**
+ * @param {string} value
+ */
 function isTimestamp (value) {
   if (value == null) return false
   value = String(value).trim()
   return timestampPattern.test(value)
 }
 
+/**
+ * @param {string} value
+ */
 function isCurrency (value) {
   if (value == null) return false
   value = String(value).trim()
@@ -77,16 +95,25 @@ function isCurrency (value) {
   // return currencyPatternUS.test(value) || currencyPatternEU.test(value)
 }
 
-function isNumeric (value, fieldName) {
+/**
+ * @param {string | any[]} value
+ */
+function isNumeric (value, _fieldName = null) {
   // if (value == null) return false
   value = String(value).trim()
   return value.length < 30 && numberishPattern.test(value)
 }
 
+/**
+ * @param {unknown} value
+ */
 function isFloatish (value) {
   return !!(isNumeric(String(value)) && floatPattern.test(String(value)) && !Number.isInteger(value))
 }
 
+/**
+ * @param {string | string[]} value
+ */
 function isEmailShaped (value) {
   if (value == null) return false
   value = String(value).trim()
@@ -94,6 +121,9 @@ function isEmailShaped (value) {
   return value.length >= 5 && value.length < 80 && emailPattern.test(value)
 }
 
+/**
+ * @param {any} value
+ */
 function isNullish (value) {
   return value === null || nullishPattern.test(String(value).trim())
 }
