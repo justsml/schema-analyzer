@@ -1,13 +1,15 @@
 {
   "name": "schema-analyzer",
-  "version": "1.2.1",
+  "version": "1.5.0",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "main": "dist/schema-analyzer.cjs.js",
   "module": "dist/schema-analyzer.esm.js",
   "browser": "dist/schema-analyzer.umd.js",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "NODE_ENV=production rollup -c && NODE_ENV=development rollup -c ",
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
@@ -61,7 +63,7 @@
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-terser": "^5.2.0",
     "standard": "^14.3.1",
-    "typescript": "^3.7.5"
+    "typescript": "^4.1.2"
   },
   "prettier": {
     "endOfLine": "lf"

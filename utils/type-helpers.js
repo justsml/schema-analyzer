@@ -1,3 +1,4 @@
+import { TypeAnalysis } from '../'
 import {
   isBoolish,
   isCurrency,
@@ -27,7 +28,9 @@ function detectTypes (value, strictMatching = true) {
     }
     return types
   }, [])
-  return !strictMatching ? matchedTypes : matchedTypes.filter((type) => excludedTypes.indexOf(type) === -1)
+  return !strictMatching
+    ? matchedTypes
+    : matchedTypes.filter((type) => excludedTypes.indexOf(type) === -1)
 }
 
 /**
@@ -35,14 +38,24 @@ function detectTypes (value, strictMatching = true) {
  * They have access to all the data points before it is finally processed.
  */
 const MetaChecks = {
+  /**
+   * @param {any} typeInfo
+   */
   TYPE_ENUM: {
     type: 'enum',
     matchBasicTypes: ['String', 'Number'],
-    check: (typeInfo, { rowCount, uniques }, { enumAbsoluteLimit, enumPercentThreshold }) => {
+    check: (
+      typeInfo,
+      { rowCount, uniques },
+      { enumAbsoluteLimit, enumPercentThreshold }
+    ) => {
       if (!uniques || uniques.length === 0) return typeInfo
       // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
       // const uniqueness = rowCount / uniques.length
-      const relativeEnumLimit = Math.min(parseInt(String(rowCount * enumPercentThreshold), 10), enumAbsoluteLimit)
+      const relativeEnumLimit = Math.min(
+        parseInt(String(rowCount * enumPercentThreshold), 10),
+        enumAbsoluteLimit
+      )
       if (uniques.length > relativeEnumLimit) return typeInfo
       // const enumLimit = uniqueness < enumAbsoluteLimit && relativeEnumLimit < enumAbsoluteLimit
       //   ? enumAbsoluteLimit
@@ -52,6 +65,9 @@ const MetaChecks = {
       // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     }
   },
+  /**
+   * @param {TypeAnalysis} typeInfo
+   */
   TYPE_NULLABLE: {
     type: 'nullable',
     // matchBasicTypes: ['String', 'Number'],
@@ -75,10 +91,13 @@ const MetaChecks = {
   TYPE_UNIQUE: {
     type: 'unique',
     // matchBasicTypes: ['String', 'Number'],
+    /**
+    * @param {TypeAnalysis} typeInfo
+    */
     check: (typeInfo, { rowCount, uniques }, { uniqueRowsThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
       // const uniqueness = rowCount / uniques.length
-      const isUnique = uniques.length === (rowCount * uniqueRowsThreshold)
+      const isUnique = uniques.length === rowCount * uniqueRowsThreshold
       // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
       return { unique: isUnique, ...typeInfo }
       // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}
@@ -92,73 +111,94 @@ const MetaChecks = {
  * Detect ambiguous field type.
  * Will not affect weighted field analysis.
  */
-const TYPE_UNKNOWN = {
-  type: 'Unknown',
-  check: (value) => value === undefined || value === 'undefined'
-}
+const TYPE_UNKNOWN =
+  /**
+   * @param {string} value
+   */
+  {
+    check: (value) => value === undefined || value === 'undefined',
+    type: 'Unknown'
+  }
 const TYPE_OBJECT_ID = {
+  check: isObjectId,
   type: 'ObjectId',
-  supercedes: ['String'],
-  check: isObjectId
+  supercedes: ['String']
 }
 const TYPE_UUID = {
+  check: isUuid,
   type: 'UUID',
-  supercedes: ['String'],
-  check: isUuid
+  supercedes: ['String']
 }
 const TYPE_BOOLEAN = {
+  check: isBoolish,
   type: 'Boolean',
-  supercedes: ['String'],
-  check: isBoolish
+  supercedes: ['String']
 }
 const TYPE_DATE = {
+  check: isDateString,
   type: 'Date',
-  supercedes: ['String'],
-  check: isDateString
+  supercedes: ['String']
 }
 const TYPE_TIMESTAMP = {
-  type: 'Timestamp',
+  check: isTimestamp,
   supercedes: ['String', 'Number'],
-  check: isTimestamp
+  type: 'Timestamp'
 }
 const TYPE_CURRENCY = {
+  check: isCurrency,
   type: 'Currency',
-  supercedes: ['String', 'Number'],
-  check: isCurrency
+  supercedes: ['String', 'Number']
 }
 const TYPE_FLOAT = {
+  check: isFloatish,
   type: 'Float',
-  supercedes: ['String', 'Number'],
-  check: isFloatish
+  supercedes: ['String', 'Number']
 }
-const TYPE_NUMBER = {
-  type: 'Number',
-  check: (value) => {
-    if (hasLeadingZero.test(String(value))) return false
-    return !!(value !== null && !Array.isArray(value) && (Number.isInteger(value) || isNumeric(value)))
+const TYPE_NUMBER =
+  /**
+   * @param {unknown} value
+   */
+  {
+    check: (value) => {
+      if (hasLeadingZero.test(String(value))) return false
+      return !!(
+        value !== null &&
+        !Array.isArray(value) &&
+        (Number.isInteger(value) || isNumeric(value))
+      )
+    },
+    type: 'Number'
   }
-}
 const TYPE_EMAIL = {
+  check: isEmailShaped,
   type: 'Email',
-  supercedes: ['String'],
-  check: isEmailShaped
+  supercedes: ['String']
 }
-const TYPE_STRING = {
-  type: 'String',
-  check: (value) => typeof value === 'string' // && value.length >= 1
-}
-const TYPE_ARRAY = {
-  type: 'Array',
-  check: (value) => {
-    return Array.isArray(value)
+const TYPE_STRING =
+  /**
+   * @param {any} value
+   */
+  {
+    type: 'String',
+    check: (value) => typeof value === 'string' // && value.length >= 1
   }
-}
-const TYPE_OBJECT = {
-  type: 'Object',
-  check: (value) => {
-    return !Array.isArray(value) && value != null && typeof value === 'object'
+const TYPE_ARRAY =
+  /**
+   * @param {any} value
+   */
+  {
+    check: (value) => Array.isArray(value),
+    type: 'Array'
   }
-}
+const TYPE_OBJECT =
+  /**
+   * @param {any} value
+   */
+  {
+    check: (value) =>
+      !Array.isArray(value) && value != null && typeof value === 'object',
+    type: 'Object'
+  }
 const TYPE_NULL = {
   type: 'Null',
   check: isNullish

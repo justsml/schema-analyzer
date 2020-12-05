@@ -1,5 +1,7 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
+    "outDir": "types",
     "jsx": "react",
     "checkJs": true,
     "allowJs": true,
@@ -11,14 +13,16 @@
     "listEmittedFiles": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "overwrite": true,
     "target": "ES2016"
   },
   "files": [
     "index.js",
     "utils/type-helpers.js",
-    "utils/debug-log.js",
     "utils/type-detectors.js"
+  ],
+  "exclude": [
+    "**/*.d.ts", "dist", "types", "node_modules"
+
   ],
   "typeAcquisition": {
     "include": [

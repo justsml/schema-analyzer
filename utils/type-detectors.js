@@ -53,7 +53,7 @@ function isUuid (value, _fieldName = null) {
   return value.length < 40 && uuidPattern.test(value)
 }
 /**
- * @param {string | any[]} value
+ * @param {string | any[]=} value
  */
 function isObjectId (value, _fieldName = null) {
   if (value == null) return false
@@ -96,7 +96,7 @@ function isCurrency (value) {
 }
 
 /**
- * @param {string | any[]} value
+ * @param {string | any[]} [value] - raw input to validate
  */
 function isNumeric (value, _fieldName = null) {
   // if (value == null) return false
