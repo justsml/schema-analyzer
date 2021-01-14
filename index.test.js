@@ -9,30 +9,30 @@ const isCI = process.env.CI
 const getUsers = () => [
   {
     id: 1,
-    name: 'Dan', 
-    notes: [{id: 997, text: 'hello'}, {id: 998, text: 'hello'}, {id: 999, text: 'hello'}]
+    name: 'Dan',
+    notes: [{ id: 997, text: 'hello' }, { id: 998, text: 'hello' }, { id: 999, text: 'hello' }]
   },
   {
     id: 2,
-    name: 'Dan1', 
-    notes: [{id: 1997, text: 'hello'}, {id: 1998, text: 'hello'}, {id: 1999, text: 'hello'}]
+    name: 'Dan1',
+    notes: [{ id: 1997, text: 'hello' }, { id: 1998, text: 'hello' }, { id: 1999, text: 'hello' }]
   },
   {
     id: 3,
     name: 'Dan2',
-    notes: [{id: 2997, text: 'hello'}, {id: 2998, text: 'hello'}, {id: 2999, text: 'hello'}]
+    notes: [{ id: 2997, text: 'hello' }, { id: 2998, text: 'hello' }, { id: 2999, text: 'hello' }]
   },
   {
     id: 4,
-    name: 'Dan3', 
-    notes: [{id: 3997, text: 'hello'}, {id: 3998, text: 'hello'}, {id: 3999, text: 'hello'}]
+    name: 'Dan3',
+    notes: [{ id: 3997, text: 'hello' }, { id: 3998, text: 'hello' }, { id: 3999, text: 'hello' }]
   },
   {
     id: 5,
-    name: 'Dan4', 
-    notes: [{id: 4997, text: 'hello'}, {id: 4998, text: 'hello'}, {id: 4999, text: 'hello'}]
-  },
-];
+    name: 'Dan4',
+    notes: [{ id: 4997, text: 'hello' }, { id: 4998, text: 'hello' }, { id: 4999, text: 'hello' }]
+  }
+]
 
 it('handles missing arguments', () => {
   expect(() => schemaBuilder('test', [{}, {}])).toThrowError(/requires at least 5/)
@@ -55,23 +55,24 @@ it('can analyze schema for ./properties.json', () => {
 })
 
 it('can handle nested types', () => {
-  const users = getUsers();
+  const users = getUsers()
   return schemaBuilder('users', users)
     .then((result) => {
-      expect(result.fields.name).toBeDefined();
-      if (!isCI) console.log(`result.fields.id`, result.fields.id)
-      if (!isCI) console.log(`result.fields.name`, result.fields.name)
-      if (!isCI) console.log(`result.fields.notes`, result.fields.notes)
-      if (!isCI) console.log(`result.fields.notes.$ref`, result.fields.notes.$ref)
-      if (!isCI) console.log(`result.nestedTypes`, result.nestedTypes)
-      
-      expect(result.fields.name.nullable).toBeFalsy();
-      expect(result.fields.notes).toBeDefined();
-      expect(result.fields.notes.$ref).toBeDefined();
-      expect(result.fields.notes.$ref.typeAlias).toBe('users.notes');
-      expect(result.nestedTypes).toBeDefined();
-      expect(result.nestedTypes['users.notes']).toBeDefined();
-      expect(result.nestedTypes['users.notes'].fields.id.nullable).toBeFalsy();
+      expect(result.fields.name).toBeDefined()
+      if (!isCI) console.log('result.fields.id', result.fields.id)
+      if (!isCI) console.log('result.fields.name', result.fields.name)
+      if (!isCI) console.log('result.fields.notes', result.fields.notes)
+      if (!isCI) console.log('result.fields.notes.$ref', result.fields.notes.$ref)
+      if (!isCI) console.log('result.nestedTypes', result.nestedTypes)
+
+      expect(result.fields.name.nullable).toBeFalsy()
+      expect(result.fields.notes).toBeDefined()
+      expect(result.fields.notes.$ref).toBeDefined()
+      expect(result.fields.notes.$ref.typeAlias).toBe('users.notes')
+      expect(result.nestedTypes).toBeDefined()
+      expect(result.nestedTypes['users.notes']).toBeDefined()
+      expect(result.nestedTypes['users.notes'].fields.id.nullable).toBeFalsy()
+      expect(result).toMatchSnapshot('nestedData')
     })
 })
 

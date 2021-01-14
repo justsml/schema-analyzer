@@ -24,9 +24,9 @@ const parseDate = (date) => {
  * Includes the results of main top-level schema.
  * @typedef TypeSummary
  * @type {{
- *  fields: Object.<string, FieldInfo>; 
+ *  fields: Object.<string, FieldInfo>;
  *  totalRows: number;
- *  nestedTypes?: Object.<string, TypeSummary>; 
+ *  nestedTypes?: Object.<string, TypeSummary>;
  * }}
  */
 
@@ -38,11 +38,11 @@ const parseDate = (date) => {
  * @property {boolean} nullable - is the field nullable
  * @property {boolean} unique - is the field unique
  * @property {string[]|number[]} [enum] - enumeration detected, the values are listed on this property.
- */ 
+ */
 
 /**
  * Contains stats for a given field's (potential) type.
- * 
+ *
  * TODO: Add string property for the type name.
  *    We currently uses object key structure: {"String": FieldTypeSummary}
  * @typedef FieldTypeSummary
@@ -89,13 +89,13 @@ const parseDate = (date) => {
  * schemaBuilder() is the main function and where all the analysis & processing happens.
  * @param {string} schemaName The name, or name prefix to use when assembling results. Helpful with nested types (aka sub-types.)
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
- * @param {{ 
- *   onProgress?: progressCallback, 
- *   enumMinimumRowCount?: number, 
- *   enumAbsoluteLimit?: number, 
- *   enumPercentThreshold?: number, 
- *   nullableRowsThreshold?: number, 
- *   uniqueRowsThreshold?: number, 
+ * @param {{
+ *   onProgress?: progressCallback,
+ *   enumMinimumRowCount?: number,
+ *   enumAbsoluteLimit?: number,
+ *   enumPercentThreshold?: number,
+ *   nullableRowsThreshold?: number,
+ *   uniqueRowsThreshold?: number,
  *   strictMatching?: boolean,
  *   disableNestedTypes?: boolean
  * }} [options] - Optional parameters
@@ -125,7 +125,7 @@ function schemaBuilder (
     enumMinimumRowCount = 100, enumAbsoluteLimit = 10, enumPercentThreshold = 0.01,
     nullableRowsThreshold = 0.02,
     uniqueRowsThreshold = 1.0
-  } = options;
+  } = options
   const isEnumEnabled = input.length >= enumMinimumRowCount
   const nestedData = {}
 
@@ -140,7 +140,7 @@ function schemaBuilder (
       const fields = Object.keys(schema.fields)
         .reduce((fieldInfo, fieldName) => {
           const typesInfo = schema.fields[fieldName]
-          /*//* @type {FieldInfo} */
+          /* //* @type {FieldInfo} */
           fieldInfo[fieldName] = {
             ...typesInfo
           }
@@ -171,75 +171,74 @@ function schemaBuilder (
         nestedTypes: disableNestedTypes ? undefined : await nestedSchemaBuilder(nestedData)
       }
     })
-  
-    function nestedSchemaBuilder(nestedData) {
-      return Object.entries(nestedData)
-      .reduce(async (nestedTypeSummaries, [fullTypeName, data]) => {
-        const nameParts = fullTypeName.split('.');
-        // @ts-ignore
-        const nameSuffix = nameParts[nameParts.length - 1];
-        nestedTypeSummaries[fullTypeName] = await schemaBuilder(nameSuffix, data, options);
-        return nestedTypeSummaries;
-      }, {})
-    }
 
-    /**
+  function nestedSchemaBuilder (nestedData) {
+    return Object.entries(nestedData)
+      .reduce(async (nestedTypeSummaries, [fullTypeName, data]) => {
+        const nameParts = fullTypeName.split('.')
+        // @ts-ignore
+        const nameSuffix = nameParts[nameParts.length - 1]
+        nestedTypeSummaries[fullTypeName] = await schemaBuilder(nameSuffix, data, options)
+        return nestedTypeSummaries
+      }, {})
+  }
+
+  /**
      * @param {object[]} docs
      * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
      */
-    function pivotRowsGroupedByType (docs) {
-      const detectedSchema = { uniques: isEnumEnabled ? {} : null, fieldsData: {}, totalRows: null }
-      log(`  About to examine every row & cell. Found ${docs.length} records...`)
-      const pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema)
-      log('  Extracted data points from Field Type analysis')
-      return pivotedSchema
-    }
-  
-    /**
+  function pivotRowsGroupedByType (docs) {
+    const detectedSchema = { uniques: isEnumEnabled ? {} : null, fieldsData: {}, totalRows: null }
+    log(`  About to examine every row & cell. Found ${docs.length} records...`)
+    const pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema)
+    log('  Extracted data points from Field Type analysis')
+    return pivotedSchema
+  }
+
+  /**
      * @param {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
      * @param {{ [x: string]: any; }} row
      * @param {number} index
      * @param {any[]} array
      */
     function evaluateSchemaLevel (schema, row, index, array) { // eslint-disable-line
-      schema.totalRows = schema.totalRows || array.length
-      const fieldNames = Object.keys(row)
-      log(`Processing Row # ${index + 1}/${schema.totalRows}...`)
-      fieldNames.forEach((fieldName, index, array) => {
-        if (index === 0) log(`Found ${array.length} Column(s)!`)
-        const value = row[fieldName];
-        const typeFingerprint = getFieldMetadata({ value, strictMatching });
-        const typeNames = Object.keys(typeFingerprint)
-        const isPossibleEnumType = typeNames.includes('Number') || typeNames.includes('String')
-  
-        if (!disableNestedTypes) {
-          // TODO: Review hackey pattern here (buffers too much, better association of custom types, see `$ref`)
-          // Steps: 1. Check if Array of Objects, 2. Add to local `nestedData` to hold data for post-processing.
-          if (Array.isArray(value) && value.length >= 1 && typeof value[0] === 'object') {
-            nestedData[`${schemaName}.${fieldName}`] = nestedData[`${schemaName}.${fieldName}`] || [];
-            nestedData[`${schemaName}.${fieldName}`].push(...value);
-            typeFingerprint['$ref'] = `${schemaName}.${fieldName}`
-          }
-        }
+    schema.totalRows = schema.totalRows || array.length
+    const fieldNames = Object.keys(row)
+    log(`Processing Row # ${index + 1}/${schema.totalRows}...`)
+    fieldNames.forEach((fieldName, index, array) => {
+      if (index === 0) log(`Found ${array.length} Column(s)!`)
+      const value = row[fieldName]
+      const typeFingerprint = getFieldMetadata({ value, strictMatching })
+      const typeNames = Object.keys(typeFingerprint)
+      const isPossibleEnumType = typeNames.includes('Number') || typeNames.includes('String')
 
-        if (isEnumEnabled && isPossibleEnumType) {
-          schema.uniques[fieldName] = schema.uniques[fieldName] || []
-          if (!schema.uniques[fieldName].includes(value)) schema.uniques[fieldName].push(row[fieldName])
-          // } else {
-          //   schema.uniques[fieldName] = null
+      if (!disableNestedTypes) {
+        // TODO: Review hackey pattern here (buffers too much, better association of custom types, see `$ref`)
+        // Steps: 1. Check if Array of Objects, 2. Add to local `nestedData` to hold data for post-processing.
+        if (Array.isArray(value) && value.length >= 1 && typeof value[0] === 'object') {
+          nestedData[`${schemaName}.${fieldName}`] = nestedData[`${schemaName}.${fieldName}`] || []
+          nestedData[`${schemaName}.${fieldName}`].push(...value)
+          typeFingerprint.$ref = `${schemaName}.${fieldName}`
         }
-        schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || []
-        schema.fieldsData[fieldName].push(typeFingerprint)
-      })
-      onProgress({ totalRows: schema.totalRows, currentRow: index + 1 })
-      return schema
-    }
+      }
 
+      if (isEnumEnabled && isPossibleEnumType) {
+        schema.uniques[fieldName] = schema.uniques[fieldName] || []
+        if (!schema.uniques[fieldName].includes(value)) schema.uniques[fieldName].push(row[fieldName])
+        // } else {
+        //   schema.uniques[fieldName] = null
+      }
+      schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || []
+      schema.fieldsData[fieldName].push(typeFingerprint)
+    })
+    onProgress({ totalRows: schema.totalRows, currentRow: index + 1 })
+    return schema
+  }
 }
 
 /**
  * Returns a fieldName keyed-object with type detection summary data.
- *  
+ *
  * ### Example `fieldSummary`:
  * ```
  * {
@@ -266,9 +265,9 @@ function schemaBuilder (
  *  }
  * }
  * ```
- * 
+ *
  * @param {{ fieldsData: Object.<string, InternalFieldTypeData[]>, uniques: Object.<string, any[]>, totalRows: number}} schema
- * @returns {{ 
+ * @returns {{
  *  fields: Object.<string, Object.<string, FieldTypeSummary>>,
  *  uniques: Object.<string, any[]>,
  *  totalRows: number
@@ -285,14 +284,14 @@ function condenseFieldData (schema) {
     .forEach((fieldName) => {
       /** @type {Object.<string, InternalFieldTypeData>} */
       const pivotedData = pivotFieldDataByType(fieldsData[fieldName])
-      fieldSummary[fieldName] = condenseFieldSizes(pivotedData);
+      fieldSummary[fieldName] = condenseFieldSizes(pivotedData)
       if (pivotedData.$ref && pivotedData.$ref.count > 1) {
         // Prevent overriding the $ref type label
         // 1. Find the first $ref
         const refType = fieldsData[fieldName].find(typeRefs => typeRefs.$ref)
-        fieldSummary[fieldName].$ref.typeAlias = refType.$ref;
+        fieldSummary[fieldName].$ref.typeAlias = refType.$ref
       }
-      
+
       console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
@@ -300,7 +299,7 @@ function condenseFieldData (schema) {
   return { fields: fieldSummary, uniques: schema.uniques, totalRows: schema.totalRows }
 }
 
-/*//*
+/* //*
  * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
  * @returns {Object.<string, InternalFieldTypeData>}
  */
@@ -358,14 +357,13 @@ function condenseFieldSizes (pivotedDataByType) {
       }
       if (typeName === '$ref') {
         // console.log('pivotedDataByType.$ref', JSON.stringify(pivotedDataByType.$ref, null, 2));
-        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref ? 'true' : null;
+        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref ? 'true' : null
       } else {
         if (pivotedDataByType[typeName].value) aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
         if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length, true)
         if (pivotedDataByType[typeName].scale) aggregateSummary[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale, true)
         if (pivotedDataByType[typeName].precision) aggregateSummary[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision, true)
       }
-
 
       // if (pivotedDataByType[typeName].invalid) { aggregateSummary[typeName].invalid = pivotedDataByType[typeName].invalid }
 
@@ -379,7 +377,7 @@ function condenseFieldSizes (pivotedDataByType) {
 
 function getFieldMetadata ({
   value,
-  strictMatching,
+  strictMatching
 }) {
   // Get initial pass at the data with the TYPE_* `.check()` methods.
   const typeGuesses = detectTypes(value, strictMatching)
@@ -471,11 +469,11 @@ function formatRangeStats (stats, formatter) {
   }
 }
 
-export { 
+export {
   // pivotRowsGroupedByType as _pivotRowsGroupedByType,
   // evaluateSchemaLevel as _evaluateSchemaLevel,
   condenseFieldData as _condenseFieldData,
   pivotFieldDataByType as _pivotFieldDataByType,
   getNumberRangeStats as _getNumberRangeStats,
-  formatRangeStats as _formatRangeStats,
+  formatRangeStats as _formatRangeStats
 }
