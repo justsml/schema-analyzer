@@ -414,6 +414,7 @@ Object {
       },
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 40,
 }
 `;
@@ -1546,6 +1547,7 @@ Object {
       "uniqueCount": 1,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 3135,
 }
 `;
@@ -3607,6 +3609,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -3923,6 +3926,7 @@ Object {
       },
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 26,
 }
 `;
@@ -4083,6 +4087,7 @@ Object {
       },
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 5,
 }
 `;
@@ -5906,6 +5911,7 @@ Object {
       },
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -7967,6 +7973,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -10028,6 +10035,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -12089,6 +12097,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -14499,6 +14508,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -16560,6 +16570,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
@@ -18760,6 +18771,7 @@ Object {
       "uniqueCount": 100,
     },
   },
+  "nestedTypes": Object {},
   "totalRows": 100,
 }
 `;
