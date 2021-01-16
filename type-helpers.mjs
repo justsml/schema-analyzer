@@ -57,10 +57,11 @@ const MetaChecks = {
     // matchBasicTypes: ['String', 'Number'],
     check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
-      const { types } = typeInfo
       let nullishTypeCount = 0
-      if (types.Null) {
-        nullishTypeCount += types.Null.count
+      if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
+
+      if (typeInfo && typeInfo.Null) {
+        nullishTypeCount += typeInfo.Null.count
       }
       // if (types.Unknown) {
       //   nullishTypeCount += types.Unknown.count

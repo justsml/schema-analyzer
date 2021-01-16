@@ -22,7 +22,7 @@ const envOptions = isProduction ? {
 export default [
   // browser-friendly UMD build
   {
-    input: './index.js',
+    input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.browser}`.replace('.js', `${fileExtension}.js`),
@@ -45,7 +45,7 @@ export default [
   },
 
   {
-    input: './index.js',
+    input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.main}`.replace('.js', `${fileExtension}.js`),
@@ -68,7 +68,7 @@ export default [
   },
 
   {
-    input: './index.js',
+    input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.module}`.replace('.js', `${fileExtension}.js`),
@@ -97,7 +97,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   // {
-  //   input: './index.js',
+  //   input: './index.mjs',
   //   external: [],
   //   output: [
   //     {

@@ -1,4 +1,4 @@
-import { schemaBuilder, getNumberRangeStats } from './index.js'
+import { schemaBuilder, getNumberRangeStats } from './index.mjs'
 import path from 'path'
 import fs from 'fs'
 import csvParse from 'csv-parse'

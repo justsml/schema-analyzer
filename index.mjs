@@ -3,7 +3,7 @@ import debug from 'debug'
 // import { detectTypes } from './type-helpers.js'
 // import StatsMap from 'stats-map';
 // import mem from 'mem';
-import { detectTypes, MetaChecks, typeRankings } from './type-helpers.js'
+import { detectTypes, MetaChecks, typeRankings } from './type-helpers.mjs'
 const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
@@ -292,7 +292,7 @@ function condenseFieldData (schema) {
         fieldSummary[fieldName].$ref.typeAlias = refType.$ref
       }
 
-      console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
+      // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
     })
   log('Post-condenseFieldSizes(fields[fieldName])')
   log('Replaced fieldData with fieldSummary')
