@@ -7,7 +7,7 @@ jobs:
     env:
       CI: true
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
@@ -25,5 +25,4 @@ jobs:
           # file: ./coverage/coverage.xml #optional
           flags: unittests #optional
           name: schema-analyzer #optional
-          yml: ./codecov.yml #optional
-
+          # yml: ./codecov.yml #optional
