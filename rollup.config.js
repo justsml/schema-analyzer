@@ -16,8 +16,14 @@ const envOptions = isProduction ? {
   sourcemap: false
 } : {
   compact: true, // PRODUCTION MODE
-  sourcemap: 'inline'
+  sourcemap: true
 }
+
+/*
+READ MORE: https://medium.com/@martin_hotell/tree-shake-lodash-with-webpack-jest-and-typescript-2734fa13b5cd
+
+https://stackoverflow.com/questions/52852167/how-to-use-lodash-es-in-typescript-correctly
+*/
 
 export default [
   // browser-friendly UMD build
@@ -48,7 +54,7 @@ export default [
     input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.main.replace('.js', ``)}${fileExtension}.js`,
+      file: `${pkg.main.replace('.js', '')}${fileExtension}.js`,
       format: 'cjs',
       globals: includePackages,
       ...envOptions
@@ -71,9 +77,9 @@ export default [
     input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.module.replace('.js', ``)}${fileExtension}.js`,
+      file: `${pkg.module.replace('.js', '')}${fileExtension}.js`,
       format: 'es',
-      globals: includePackages,
+      globals: {}, //includePackages,
       ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
@@ -86,7 +92,7 @@ export default [
         },
         browser: true
       }), // so Rollup can find `ms`
-      commonjs()
+      // commonjs()
     ].concat(...extraPlugins)
   }
 

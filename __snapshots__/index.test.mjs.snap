@@ -3351,7 +3351,7 @@ Object {
       "uniqueCount": 100,
     },
   },
-  "nestedTypes": Object {},
+  "nestedTypes": undefined,
   "totalRows": 100,
 }
 `;

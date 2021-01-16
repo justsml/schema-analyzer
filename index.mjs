@@ -1,4 +1,4 @@
-import debug from 'debug'
+const debug = require('debug')
 // import FP from 'functional-promises';
 // import { detectTypes } from './type-helpers.js'
 // import StatsMap from 'stats-map';

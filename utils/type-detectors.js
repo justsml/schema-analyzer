@@ -1,4 +1,4 @@
-import isDate from 'lodash.isdate'
+import {isDate} from 'lodash-es'
 export {
   isBoolish,
   isCurrency,
