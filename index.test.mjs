@@ -50,7 +50,7 @@ it('can analyze schema for ./users.json', () => {
 
 it('can analyze schema for ./properties.json', () => {
   const properties = JSON.parse(fs.readFileSync(path.resolve(__dirname, './__tests__/real-estate.example.json'), 'utf8'))
-  return schemaBuilder('properties', properties)
+  return schemaBuilder('properties', properties, {disableNestedTypes: true})
     .then((result) => expect(result).toMatchSnapshot('propertiesResult'))
 })
 
@@ -59,11 +59,11 @@ it('can handle nested types', () => {
   return schemaBuilder('users', users)
     .then((result) => {
       expect(result.fields.name).toBeDefined()
-      if (!isCI) console.log('result.fields.id', result.fields.id)
-      if (!isCI) console.log('result.fields.name', result.fields.name)
-      if (!isCI) console.log('result.fields.notes', result.fields.notes)
-      if (!isCI) console.log('result.fields.notes.$ref', result.fields.notes.$ref)
-      if (!isCI) console.log('result.nestedTypes', result.nestedTypes)
+      // if (!isCI) console.log('result.fields.id', result.fields.id)
+      // if (!isCI) console.log('result.fields.name', result.fields.name)
+      // if (!isCI) console.log('result.fields.notes', result.fields.notes)
+      // if (!isCI) console.log('result.fields.notes.$ref', result.fields.notes.$ref)
+      // if (!isCI) console.log('result.nestedTypes', result.nestedTypes)
 
       expect(result.fields.name.nullable).toBeFalsy()
       expect(result.fields.notes).toBeDefined()

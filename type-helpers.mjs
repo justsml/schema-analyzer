@@ -58,7 +58,7 @@ const MetaChecks = {
     check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold }) => {
       if (!uniques || uniques.length === 0) return typeInfo
       let nullishTypeCount = 0
-      if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
+      // if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
 
       if (typeInfo && typeInfo.Null) {
         nullishTypeCount += typeInfo.Null.count

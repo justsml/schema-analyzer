@@ -357,7 +357,7 @@ function condenseFieldSizes (pivotedDataByType) {
       }
       if (typeName === '$ref') {
         // console.log('pivotedDataByType.$ref', JSON.stringify(pivotedDataByType.$ref, null, 2));
-        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref ? 'true' : null
+        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref;
       } else {
         if (pivotedDataByType[typeName].value) aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
         if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length, true)

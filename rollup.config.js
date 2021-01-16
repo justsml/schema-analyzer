@@ -48,7 +48,7 @@ export default [
     input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.main}`.replace('.js', `${fileExtension}.js`),
+      file: `${pkg.main.replace('.js', ``)}${fileExtension}.js`,
       format: 'cjs',
       globals: includePackages,
       ...envOptions
@@ -71,7 +71,7 @@ export default [
     input: './index.mjs',
     output: {
       name: 'schemaAnalyzer',
-      file: `${pkg.module}`.replace('.js', `${fileExtension}.js`),
+      file: `${pkg.module.replace('.js', ``)}${fileExtension}.js`,
       format: 'es',
       globals: includePackages,
       ...envOptions

@@ -3,8 +3,8 @@
   "version": "1.2.1",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "type": "module",
-  "main": "index",
-  "module": "dist/schema-analyzer.esm.js",
+  "main": "dist/schema-analyzer.esm.js",
+  "module": "dist/schema-analyzer.module.js",
   "browser": "dist/schema-analyzer.umd.js",
   "files": [
     "dist"
