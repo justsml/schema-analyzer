@@ -18,7 +18,7 @@
     "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
     "test": "jest --runTestsByPath --coverage --maxWorkers 4 ./index.test.ts ./utils/type-helpers.test.ts",
-    "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --runTestsByPath --maxWorkers 1 ./index.test.ts ./utils/type-helpers.test.ts",
+    "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --runTestsByPath ./index.test.ts ./utils/type-*.test.ts",
     "pretest": "npm run build",
     "format": "prettier -w index.ts utils/*.ts",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"

@@ -95,14 +95,14 @@ const TYPE_ENUM: IAdvancedTypeMatcher = {
     //   ? enumAbsoluteLimit
     //   : relativeEnumLimit
 
-    return { enum: uniques, ...typeInfo };
+    return {  ...typeInfo, enum: uniques };
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
   },
 };
 const TYPE_NULLABLE: IAdvancedTypeMatcher = {
   type: "nullable",
   // matchBasicTypes: ['String', 'Number'],
-  check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold = 0.9 }) => {
+  check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold = 0.99 }) => {
     if (!uniques || uniques.length === 0) return typeInfo;
     let nullishTypeCount = 0;
     // if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
@@ -110,15 +110,14 @@ const TYPE_NULLABLE: IAdvancedTypeMatcher = {
     if (typeInfo?.types.Null) {
       nullishTypeCount += typeInfo.types.Null.count;
     }
-    // if (types.Unknown) {
-    //   nullishTypeCount += types.Unknown.count
-    // }
+    // if (typeInfo?.types.Unknown) nullishTypeCount += typeInfo?.types?.Unknown?.count || 0
+
     const nullLimit = nullableRowsThreshold
       ? rowCount * nullableRowsThreshold
       : 0;
     const isNullable = nullishTypeCount >= nullLimit;
     // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-    return { nullable: isNullable, ...typeInfo };
+    return { ...typeInfo, nullable: isNullable, nullCount: nullishTypeCount };
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
   },
 };
@@ -130,7 +129,7 @@ const TYPE_UNIQUE: IAdvancedTypeMatcher = {
     // const uniqueness = rowCount / uniques.length
     const isUnique = uniques.length >= rowCount * uniqueRowsThreshold;
     // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-    return { unique: isUnique, ...typeInfo };
+    return { ...typeInfo, unique: isUnique, uniqueCount: uniques.length };
     // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
   },

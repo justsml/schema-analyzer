@@ -9,10 +9,10 @@ function isValidDate(date: string | Date | any): false | Date {
   return isNaN(date.getFullYear()) ? false : date;
 }
 
-const parseDate = (date: string | Date | any): string | null => {
+export const parseDate = (date: string | Date | any): string | void => {
   date = isValidDate(date);
-  return date instanceof Date ? date.toISOString() : null;
-};
+  if (date instanceof Date) return date.toISOString()
+}
 
 export type TypeDescriptorName = "enum" | "nullable" | "unique";
 export type TypeNameString =
@@ -86,6 +86,7 @@ export type FieldInfo = {
   types: TypedFieldObject<FieldTypeSummary>;
   /** is the field nullable */
   nullable?: boolean;
+  nullCount?: number;
   /** is the field unique */
   unique?: boolean;
   /** enumeration detected, the values are listed on this property. */
@@ -197,11 +198,11 @@ function schemaAnalyzer(
     onProgress: ({ totalRows, currentRow }) => {},
     strictMatching: true,
     disableNestedTypes: false,
-    enumMinimumRowCount: 100,
+    enumMinimumRowCount: 25,
     enumAbsoluteLimit: 10,
     enumPercentThreshold: 0.01,
     nullableRowsThreshold: 0.02,
-    uniqueRowsThreshold: 1.0,
+    uniqueRowsThreshold: 0.99,
     bogusSizeThreshold: 0.1,
   }
 ) {
@@ -217,11 +218,11 @@ function schemaAnalyzer(
     onProgress = ({ totalRows, currentRow }) => {},
     strictMatching = true,
     disableNestedTypes = false,
-    enumMinimumRowCount = 100,
+    enumMinimumRowCount = 25,
     enumAbsoluteLimit = 10,
     enumPercentThreshold = 0.01,
     nullableRowsThreshold = 0.02,
-    uniqueRowsThreshold = 1.0,
+    uniqueRowsThreshold = 0.99,
   } = options;
   const isEnumEnabled = input.length >= enumMinimumRowCount;
   const nestedData = {};
@@ -234,11 +235,11 @@ function schemaAnalyzer(
     .then(condenseFieldData)
     .then(async (schema) => {
       log("Built summary from Field Type data.");
-      // console.log('genSchema', JSON.stringify(genSchema, null, 2))
+      // console.log('Schema', JSON.stringify(schema, null, 2))
 
       const fields = Object.keys(schema.fields).reduce(
         (fieldInfo, fieldName) => {
-          const typesInfo = schema.fields[fieldName];
+          const typesInfo = schema.fields[fieldName]!.types;
           /* //* @type {FieldInfo} */
           fieldInfo[fieldName] = {
             types: typesInfo!,
@@ -247,7 +248,7 @@ function schemaAnalyzer(
             fieldInfo[fieldName]!,
             {
               rowCount: input.length,
-              uniques: schema?.uniques[fieldName] ?? [],
+              uniques: schema.uniques[fieldName] ?? [],
             },
             { enumAbsoluteLimit, enumPercentThreshold }
           );
@@ -255,7 +256,7 @@ function schemaAnalyzer(
             fieldInfo[fieldName]!,
             {
               rowCount: input.length,
-              uniques: schema?.uniques[fieldName] ?? [],
+              uniques: schema.uniques[fieldName] ?? []
             },
             { nullableRowsThreshold }
           );
@@ -263,15 +264,16 @@ function schemaAnalyzer(
             fieldInfo[fieldName]!,
             {
               rowCount: input.length,
-              uniques: schema?.uniques[fieldName] ?? [],
+              uniques: schema.uniques[fieldName] ?? []
             },
             { uniqueRowsThreshold }
           );
-          // typesInfo.$ref
+          // typesInfo = fieldInfo[fieldName]?.types
+          // fieldInfo[fieldName]?.unique &&
+          // fieldInfo[fieldName]?.unique &&
           const isIdentity =
-            (typesInfo?.Number || typesInfo?.UUID) &&
-            fieldInfo[fieldName]?.unique &&
-            /id$/i.test(fieldName);
+            (typesInfo.Number || typesInfo.UUID) &&
+            /^(gu|uu|_)?id/i.test(fieldName);
           if (isIdentity) {
             fieldInfo[fieldName]!.identity = true;
           }
@@ -283,7 +285,7 @@ function schemaAnalyzer(
           }
           return fieldInfo;
         },
-        {} as { [k: string]: FieldInfo }
+        {} as { [fieldName: string]: FieldInfo }
       );
 
       return {
@@ -291,11 +293,11 @@ function schemaAnalyzer(
         totalRows: schema.totalRows,
         nestedTypes: disableNestedTypes
           ? undefined
-          : await nestedschemaAnalyzer(nestedData),
+          : await nestedSchemaAnalyzer(nestedData),
       };
     });
 
-  function nestedschemaAnalyzer(nestedData) {
+  function nestedSchemaAnalyzer(nestedData) {
     return Object.entries(nestedData).reduce(
       async (nestedTypeSummaries, [fullTypeName, data]) => {
         const nameParts = fullTypeName.split(".");
@@ -356,8 +358,8 @@ function schemaAnalyzer(
       const value = row[fieldName];
       const typeFingerprint = getFieldMetadata({ value, strictMatching });
       const typeNames = Object.keys(typeFingerprint) as TypeNameString[];
-      const isPossibleEnumType =
-        typeNames.includes("Number") || typeNames.includes("String");
+      const isPossibleEnumOrUniqueType =
+        typeNames.includes("Number") || typeNames.includes("String") || typeNames.includes("UUID") || typeNames.includes("ObjectId");
 
       if (!disableNestedTypes) {
         // TODO: Review hackey pattern here (buffers too much, better association of custom types, see `$ref`)
@@ -370,13 +372,12 @@ function schemaAnalyzer(
           const keyPath = `${schemaName}.${fieldName}`;
           nestedData[keyPath] = nestedData[keyPath] || [];
           nestedData[keyPath].push(...value);
-          if (!typeFingerprint.$ref)
-            typeFingerprint.$ref = { rank: -12, count: index };
+          typeFingerprint.$ref = typeFingerprint.$ref || { rank: -12, count: index };
           typeFingerprint.$ref.typeAlias = keyPath;
         }
       }
 
-      if (isEnumEnabled && isPossibleEnumType) {
+      if (isEnumEnabled && isPossibleEnumOrUniqueType) {
         schema.uniques[fieldName] = schema.uniques[fieldName] || [];
         if (!schema.uniques[fieldName]!.includes(value))
           schema.uniques[fieldName]!.push(row[fieldName]);
@@ -386,7 +387,18 @@ function schemaAnalyzer(
       schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || [];
       schema.fieldsData[fieldName]!.push(typeFingerprint);
     });
-    onProgress({ totalRows: schema.totalRows, currentRow: index + 1 });
+    
+    const totalRows = schema.totalRows
+    const isDone = index + 1 === totalRows
+    const progressFrequencyModulo = totalRows >= 2500 ? 50 : totalRows >= 1000 ? 25 : 10;
+    const showProgress = (isDone || (index % progressFrequencyModulo === 0))
+
+    if (onProgress && showProgress) {
+      console.log('FIRE.onProgress:', totalRows, index + 1);
+      // setImmediate(() => {
+      onProgress({ totalRows: totalRows, currentRow: index + 1, nestedTypes: nestedData && Object.keys(nestedData) })
+      // });
+    }
     return schema;
   }
 /**
@@ -431,18 +443,22 @@ function condenseFieldData(schema: {
   const { fieldsData } = schema;
   const fieldNames = Object.keys(fieldsData);
 
-  const fieldSummary = {};
+  const fieldSummary: { [key: string]: FieldInfo } = {};
   log(
     `Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`
   );
   fieldNames.forEach((fieldName) => {
     const pivotedData = pivotFieldDataByType(fieldsData[fieldName]!);
-    fieldSummary[fieldName] = condenseFieldSizes(pivotedData);
-    if (pivotedData?.$ref?.count ?? 0 > 1) {
+    fieldSummary[fieldName] = fieldSummary[fieldName] || {types: {}};
+    fieldSummary[fieldName]!.types = condenseFieldSizes(pivotedData);
+    if (pivotedData.$ref?.count ?? 0 > 1) {
       // Prevent overriding the $ref type label
       // 1. Find the first $ref
-      const refType = fieldsData[fieldName]?.find((typeRefs) => typeRefs.$ref);
-      fieldSummary[fieldName].$ref.typeAlias = refType?.$ref;
+      const refType = fieldsData[fieldName]!.find((typeRefs) => typeRefs.$ref);
+      // if (!fieldSummary[fieldName]?.types?.$ref) {
+      //   throw new Error(`Invalid nested type $ref: fieldSummary[${fieldName}].types.$ref`)
+      // }
+      fieldSummary[fieldName]!.types.$ref!.typeAlias = refType!.$ref!.typeAlias;
     }
 
     // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
@@ -451,7 +467,7 @@ function condenseFieldData(schema: {
   log("Replaced fieldData with fieldSummary");
   return {
     fields: fieldSummary,
-    uniques: schema.uniques,
+    uniques: schema.uniques || {},
     totalRows: schema.totalRows,
   };
 }
@@ -528,35 +544,35 @@ function condenseFieldSizes(
     aggregateSummary[typeName] = {
       // typeName,
       rank: typeRankings[typeName] || -42,
-      count: pivotedDataByType[typeName]!.count || -1,
+      count: pivotedDataByType[typeName]!.count,
     };
     if (aggregateSummary[typeName]) {
       if (typeName === "$ref" && aggregateSummary[typeName]) {
-        console.log(
-          "pivotedDataByType.$ref",
-          JSON.stringify(pivotedDataByType.$ref, null, 2)
-        );
+        // console.log(
+        //   "pivotedDataByType.$ref",
+        //   JSON.stringify(pivotedDataByType.$ref, null, 2)
+        // );
         aggregateSummary[
           typeName
         ]!.typeAlias = pivotedDataByType.$ref!.typeAlias;
       } else {
         if (pivotedDataByType[typeName]!.value)
           aggregateSummary[typeName]!.value = getNumberRangeStats(
-            pivotedDataByType[typeName]?.value || []
+            pivotedDataByType[typeName].value,
           );
         if (pivotedDataByType[typeName]!.length)
           aggregateSummary[typeName]!.length = getNumberRangeStats(
-            pivotedDataByType[typeName]?.length || [],
+            pivotedDataByType[typeName].length,
             true
           );
         if (pivotedDataByType[typeName]!.scale)
           aggregateSummary[typeName]!.scale = getNumberRangeStats(
-            pivotedDataByType[typeName]?.scale || [],
+            pivotedDataByType[typeName].scale,
             true
           );
         if (pivotedDataByType[typeName]!.precision)
           aggregateSummary[typeName]!.precision = getNumberRangeStats(
-            pivotedDataByType[typeName]?.precision || [],
+            pivotedDataByType[typeName].precision,
             true
           );
       }
@@ -567,7 +583,6 @@ function condenseFieldSizes(
         aggregateSummary[typeName] &&
         ["Timestamp", "Date"].indexOf(typeName) > -1
       ) {
-        // @ts-ignore
         aggregateSummary[typeName].value! = formatRangeStats(
           <any>aggregateSummary[typeName]!.value! || {},
           parseDate
@@ -580,8 +595,8 @@ function condenseFieldSizes(
 }
 
 function getFieldMetadata({
-  value = null,
-  strictMatching = false,
+  value,
+  strictMatching,
 }: {
   value: any;
   strictMatching: boolean;
@@ -610,7 +625,7 @@ function getFieldMetadata({
         const significandAndMantissa = String(value).split(".");
         if (significandAndMantissa.length === 2) {
           precision = significandAndMantissa.join("").length; // total # of numeric positions before & after decimal
-          scale = significandAndMantissa[1]?.length ?? 0;
+          scale = significandAndMantissa[1]!.length ?? 0;
           analysis[typeGuess] = {
             ...analysis[typeGuess],
             rank,

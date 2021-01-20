@@ -9,8 +9,22 @@ const isCI = process.env.CI
 /** example structured data */
 const getUsers = () => UserNotes
 
+it('onProgress callback', () => {
+  const onProgress = jest.fn();
+
+  const users = getUsers()
+  return schemaAnalyzer('users', users, {onProgress})
+    .then((result) => {
+      // const progMock = onProgress.mock.calls
+      const mockRunCount = onProgress.mock.instances.length
+      // const lastCall = progMock[progMock.length - 1]
+      expect(result.fields.name).toBeDefined()
+      expect(mockRunCount).toBeGreaterThan(1)
+    })
+})
+
 it('handles missing arguments', () => {
-  expect(() => schemaAnalyzer('test', [{}, {}])).toThrowError(/requires at least 5/)
+  expect(() => schemaAnalyzer('test', [{}, {}], { })).toThrowError(/requires at least 5/)
   expect(() => schemaAnalyzer('test', ['test'])).toThrowError(/must be an Array of Objects/)
   // @ts-ignore
   expect(() => schemaAnalyzer('test', 'test')).toThrowError(/must be an Array/)
@@ -44,9 +58,9 @@ it('can handle nested types', () => {
       expect(result.fields.name?.nullable).toBeFalsy()
       expect(result.fields.notes).toBeDefined()
       // @ts-ignore
-      expect(result.fields?.notes?.$ref).toBeDefined()
+      expect(result.fields?.notes?.types.$ref).toBeDefined()
       // @ts-ignore
-      expect(result.fields?.notes?.$ref.typeAlias).toBe('users.notes')
+      expect(result.fields?.notes?.types.$ref.typeAlias).toBe('users.notes')
       expect(result.nestedTypes).toBeDefined()
       // @ts-ignore
       expect(result.nestedTypes['users.notes']).toBeDefined()
