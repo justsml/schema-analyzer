@@ -17,10 +17,10 @@
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
     "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
-    "test": "ts-jest --coverage --maxWorkers 4 ./index.test.ts ./__tests__/type-helpers.ts",
-    "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
+    "test": "jest --runTestsByPath --coverage --maxWorkers 4 ./index.test.ts ./utils/type-helpers.test.ts",
+    "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --runTestsByPath --maxWorkers 1 ./index.test.ts ./utils/type-helpers.test.ts",
     "pretest": "npm run build",
-    "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'",
+    "format": "prettier -w index.ts utils/*.ts",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"
   },
   "types": "./index.ts",
@@ -47,9 +47,11 @@
     "@babel/helper-compilation-targets": "~7.12.5",
     "@babel/plugin-transform-runtime": "~7.8.3",
     "@babel/preset-env": "~7.8.3",
+    "@babel/preset-typescript": "^7.12.7",
     "@babel/runtime-corejs3": "~7.8.3",
     "@rollup/plugin-commonjs": "~11.0.1",
     "@rollup/plugin-node-resolve": "~7.0.0",
+    "@rollup/plugin-typescript": "^8.1.0",
     "@types/jest": "~25.1.0",
     "@types/lodash-es": "^4.17.4",
     "babel-eslint": "~10.0.3",
@@ -71,23 +73,17 @@
     "rollup-plugin-terser": "~5.2.0",
     "standard": "16.0.3",
     "ts-jest": "^26.4.4",
+    "tslib": "^2.1.0",
     "typescript": "^4.1.3"
   },
   "prettier": {
     "endOfLine": "lf"
   },
   "jest": {
-    "transform": {
-      "^.+\\.js$": "babel-jest",
-      "^.+\\.ts$": "babel-jest"
-    },
     "moduleFileExtensions": [
+      "ts",
       "js",
       "mjs"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*.ts",
-      "**/?(*.)+(spec|test).ts"
     ],
     "preset": "ts-jest",
     "moduleNameMapper": {
@@ -117,7 +113,8 @@
             ]
           }
         }
-      ]
+      ],
+      "@babel/preset-typescript"
     ]
   },
   "standard": {

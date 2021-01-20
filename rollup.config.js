@@ -1,8 +1,12 @@
 // import globals from 'rollup-plugin-node-globals';
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+// https://github.com/rollup/plugins/tree/master/packages/typescript
+import typescript from '@rollup/plugin-typescript'
+
 import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
+import { ModuleKind } from 'typescript'
 
 const includePackages = {
   'lodash.isdate': 'isDate',
@@ -11,13 +15,15 @@ const includePackages = {
 const isProduction = process.env.NODE_ENV === 'production'
 const extraPlugins = isProduction ? [terser()] : []
 const fileExtension = isProduction ? '.min' : ''
-const envOptions = isProduction ? {
-  compact: true, // DEV MODE
-  sourcemap: false
-} : {
-  compact: true, // PRODUCTION MODE
-  sourcemap: true
-}
+const envOptions = isProduction
+  ? {
+    compact: true, // DEV MODE
+    sourcemap: false
+  }
+  : {
+    compact: true, // PRODUCTION MODE
+    sourcemap: true
+  }
 
 /*
 READ MORE: https://medium.com/@martin_hotell/tree-shake-lodash-with-webpack-jest-and-typescript-2734fa13b5cd
@@ -28,7 +34,7 @@ https://stackoverflow.com/questions/52852167/how-to-use-lodash-es-in-typescript-
 export default [
   // browser-friendly UMD build
   {
-    input: './index.mjs',
+    input: './index.ts',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.browser}`.replace('.js', `${fileExtension}.js`),
@@ -38,6 +44,7 @@ export default [
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
+      typescript(),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
@@ -46,12 +53,12 @@ export default [
         },
         browser: true
       }), // so Rollup can find `ms`
-      commonjs()
+      commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
 
   {
-    input: './index.mjs',
+    input: './index.ts',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.main.replace('.js', '')}${fileExtension}.js`,
@@ -61,6 +68,7 @@ export default [
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
+      typescript(),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
@@ -69,21 +77,22 @@ export default [
         },
         browser: true
       }), // so Rollup can find `ms`
-      commonjs()
+      commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
 
   {
-    input: './index.mjs',
+    input: './index.ts',
     output: {
       name: 'schemaAnalyzer',
       file: `${pkg.module.replace('.js', '')}${fileExtension}.js`,
       format: 'es',
-      globals: {}, //includePackages,
+      globals: {}, // includePackages,
       ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
+      typescript({ module: ModuleKind.ES2020 }),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
@@ -91,8 +100,8 @@ export default [
           moduleDirectory: 'node_modules'
         },
         browser: true
-      }), // so Rollup can find `ms`
-      // commonjs()
+      }) // so Rollup can find `ms`
+      // commonjs({extensions: ['.js', '.ts']})
     ].concat(...extraPlugins)
   }
 
@@ -103,7 +112,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   // {
-  //   input: './index.mjs',
+  //   input: './index.ts',
   //   external: [],
   //   output: [
   //     {
@@ -117,7 +126,7 @@ export default [
   //           },
   //           browser: true
   //         }), // so Rollup can find `ms`
-  //         commonjs()
+  //         commonjs({extensions: ['.js', '.ts']})
   //       ]
   //     },
   //     {
@@ -131,7 +140,7 @@ export default [
   //           },
   //           browser: true
   //         }), // so Rollup can find `ms`
-  //         commonjs()
+  //         commonjs({extensions: ['.js', '.ts']})
   //       ]
   //     }
   //   ]

@@ -1,4 +1,4 @@
-import { schemaAnalyzer, getNumberRangeStats } from './index'
+import { schemaAnalyzer, _getNumberRangeStats, _condenseFieldData, _pivotFieldDataByType} from './index'
 import path from 'path'
 import fs from 'fs'
 import csvParse from 'csv-parse'
@@ -14,6 +14,7 @@ it('handles missing arguments', () => {
   expect(() => schemaAnalyzer('test', ['test'])).toThrowError(/must be an Array of Objects/)
   // @ts-ignore
   expect(() => schemaAnalyzer('test', 'test')).toThrowError(/must be an Array/)
+  // @ts-ignore
   expect(() => schemaAnalyzer('test', null)).toThrowError(/must be an Array/)
 })
 
@@ -40,12 +41,16 @@ it('can handle nested types', () => {
       // if (!isCI) console.log('result.fields.notes.$ref', result.fields.notes.$ref)
       // if (!isCI) console.log('result.nestedTypes', result.nestedTypes)
 
-      expect(result.fields.name.nullable).toBeFalsy()
+      expect(result.fields.name?.nullable).toBeFalsy()
       expect(result.fields.notes).toBeDefined()
-      expect(result.fields.notes.$ref).toBeDefined()
-      expect(result.fields.notes.$ref.typeAlias).toBe('users.notes')
+      // @ts-ignore
+      expect(result.fields?.notes?.$ref).toBeDefined()
+      // @ts-ignore
+      expect(result.fields?.notes?.$ref.typeAlias).toBe('users.notes')
       expect(result.nestedTypes).toBeDefined()
+      // @ts-ignore
       expect(result.nestedTypes['users.notes']).toBeDefined()
+      // @ts-ignore
       expect(result.nestedTypes['users.notes'].fields.id.nullable).toBeFalsy()
       expect(result).toMatchSnapshot('nestedData')
     })
@@ -80,7 +85,7 @@ it('can analyze schema w/ enum options', () => {
 
 it('can analyze schema for ./products.csv', () => {
   const productCsv = parseCsv(fs.readFileSync(path.resolve(__dirname, './__tests__/products-3000.csv'), 'utf8'))
-  return productCsv.then((products) => {
+  return productCsv.then((products: any) => {
     return schemaAnalyzer('products', products)
       .then((result) => {
         // if (!isCI) console.log('products', JSON.stringify(result, null, 2))
@@ -97,7 +102,7 @@ it('can analyze schema for inline csv', async () => {
 4,Elliot Alderson,admin,falkensmaze@protonmail.com,2001-01-01,false
 5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`)
 
-  return schemaAnalyzer('sampleCsv', sampleCsv)
+  return schemaAnalyzer('sampleCsv', sampleCsv as any[])
     .then((result) => {
       // if (!isCI) console.log(JSON.stringify(result, null, 2))
       expect(result).toMatchSnapshot('accountsCsvResult')
@@ -117,7 +122,8 @@ it('can analyze schema for ./people.json', () => {
 })
 
 it('number range analysis handles invalid data', () => {
-  expect(getNumberRangeStats(null)).toBeUndefined()
+  // @ts-ignore
+  expect(_getNumberRangeStats(null)).toBeUndefined()
 })
 
 function parseCsv (content) {
