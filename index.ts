@@ -55,27 +55,37 @@ export type TypeSummary = {
         [x: string]: TypeSummary;
     } | undefined;
 };
+
+export type TypedFieldObject<T> = {
+    $ref?: T | undefined,
+    Unknown?: T | undefined,
+    ObjectId?: T | undefined,
+    UUID?: T | undefined,
+    Boolean?: T | undefined,
+    Date?: T | undefined,
+    Timestamp?: T | undefined,
+    Currency?: T | undefined,
+    Float?: T | undefined,
+    Number?: T | undefined,
+    Email?: T | undefined,
+    String?: T | undefined,
+    Array?: T | undefined,
+    Object?: T | undefined,
+    Null?: T | undefined,
+}
 /**
  * Describes one or more potential types discovered for a field. The `types` object will have a `$ref` key if any nested structures were found.
  */
 export type FieldInfo = {
-    /**
-     * - field stats organized by type
-     */
-    types: {
-        [x: TypeNameString]: FieldTypeSummary;
-    };
-    /**
-     * - is the field nullable
-     */
-    nullable: boolean;
-    /**
-     * - is the field unique
-     */
-    unique: boolean;
-    /**
-     * - enumeration detected, the values are listed on this property.
-     */
+    identity?: boolean,
+    uniqueCount?: number,
+    /** field stats organized by type */
+    types: TypedFieldObject<FieldTypeSummary>;
+    /** is the field nullable */
+    nullable?: boolean;
+    /** is the field unique */
+    unique?: boolean;
+    /** enumeration detected, the values are listed on this property. */
     enum?: string[] | number[] | undefined;
 };
 /**
@@ -85,37 +95,21 @@ export type FieldInfo = {
  *    We currently uses object key structure: {"String": FieldTypeSummary}
  */
 export type FieldTypeSummary = {
-    /**
-     * - for nested type support.
-     */
+    /** for nested type support. */
     typeAlias?: string | undefined;
-    /**
-     * - extracted field values, placed into an array. This simplifies (at expense of memory) type analysis and summarization when creating the `AggregateSummary`.
-     */
+    /** extracted field values, placed into an array. This simplifies (at expense of memory) type analysis and summarization when creating the `AggregateSummary`. */
     value?: AggregateSummary | undefined;
-    /**
-     * - summary of array of string (or decimal) sizes, pre processing into an AggregateSummary
-     */
+    /** summary of array of string (or decimal) sizes, pre processing into an AggregateSummary */
     length?: AggregateSummary | undefined;
-    /**
-     * - only applies to Float types. Summary of array of sizes of the value both before and after the decimal.
-     */
+    /** only applies to Float types. Summary of array of sizes of the value both before and after the decimal. */
     precision?: AggregateSummary | undefined;
-    /**
-     * - only applies to Float types. Summary of array of sizes of the value after the decimal.
-     */
+    /** only applies to Float types. Summary of array of sizes of the value after the decimal. */
     scale?: AggregateSummary | undefined;
-    /**
-     * - if enum rules were triggered will contain the detected unique values.
-     */
+    /** if enum rules were triggered will contain the detected unique values. */
     enum?: string[] | number[] | undefined;
-    /**
-     * - number of times the type was matched
-     */
+    /** number of times the type was matched */
     count: number;
-    /**
-     * - absolute priority of the detected TypeName, defined in the object `typeRankings`
-     */
+    /** absolute priority of the detected TypeName, defined in the object `typeRankings` */
     rank: number;
 };
 /**
@@ -123,45 +117,33 @@ export type FieldTypeSummary = {
  * It mirrors the `FieldSummary` type it will become.
  */
 export type InternalFieldTypeData = {
-    /**
-     * - array of values, pre processing into an AggregateSummary
-     */
+    /** array of values, pre processing into an AggregateSummary */
     value?: any[] | undefined;
-    /**
-     * - array of string (or decimal) sizes, pre processing into an AggregateSummary
-     */
+    /** array of string (or decimal) sizes, pre processing into an AggregateSummary */
     length?: number[] | undefined;
-    /**
-     * - only applies to Float types. Array of sizes of the value both before and after the decimal.
-     */
+    /** only applies to Float types. Array of sizes of the value both before and after the decimal. */
     precision?: number[] | undefined;
-    /**
-     * - only applies to Float types. Array of sizes of the value after the decimal.
-     */
+    /** only applies to Float types. Array of sizes of the value after the decimal. */
     scale?: number[] | undefined;
-    /**
-     * - number of times the type was matched
-     */
+    /** number of times the type was matched */
     count?: number | undefined;
-    /**
-     * - absolute priority of the detected TypeName, defined in the object `typeRankings`
-     */
+    /** absolute priority of the detected TypeName, defined in the object `typeRankings` */
     rank?: number | undefined;
 };
 /**
  * Used to represent a number series of any size.
  * Includes the lowest (`min`), highest (`max`), mean/average (`mean`) and measurements at certain `percentiles`.
  */
-export type AggregateSummary = {
-    min: number;
-    max: number;
-    mean: number;
-    p25: number;
-    p33: number;
-    p50: number;
-    p66: number;
-    p75: number;
-    p99: number;
+export type AggregateSummary<T = number> = {
+    min: T;
+    max: T;
+    mean: T;
+    p25: T;
+    p33: T;
+    p50: T;
+    p66: T;
+    p75: T;
+    p99: T;
 };
 /**
  * This callback is displayed as a global member.
@@ -246,7 +228,7 @@ function schemaAnalyzer (
           const typesInfo = schema.fields[fieldName]
           /* //* @type {FieldInfo} */
           fieldInfo[fieldName] = {
-            ...typesInfo
+            types: typesInfo
           }
           fieldInfo[fieldName] = MetaChecks.TYPE_ENUM.check(fieldInfo[fieldName],
             { rowCount: input.length, uniques: schema.uniques && schema.uniques[fieldName] },
@@ -267,7 +249,7 @@ function schemaAnalyzer (
             fieldInfo[fieldName].uniqueCount = schema.uniques[fieldName].length
           }
           return fieldInfo
-        }, {})
+        }, {} as { [k: string]: FieldInfo })
 
       return {
         fields,
@@ -369,13 +351,6 @@ function schemaAnalyzer (
  *  }
  * }
  * ```
- *
- * @param {{ fieldsData: Object.<string, InternalFieldTypeData[]>, uniques: Object.<string, any[]>, totalRows: number}} schema
- * @returns {{
- *  fields: Object.<string, Object.<string, FieldTypeSummary>>,
- *  uniques: Object.<string, any[]>,
- *  totalRows: number
- * }}
  */
 function condenseFieldData (schema: {
   fieldsData: {
@@ -387,24 +362,20 @@ function condenseFieldData (schema: {
   totalRows: number;
 }): {
   fields: {
-      [x: string]: {
-          [x: TypeNameString]: FieldTypeSummary;
-      };
+    [x: string]: TypedFieldObject<FieldTypeSummary>;
   };
   uniques: {
-      [x: string]: any[];
+    [x: string]: any[];
   };
   totalRows: number;
 } {
   const { fieldsData } = schema
   const fieldNames = Object.keys(fieldsData)
 
-  /** @type {Object.<string, Object.<string, FieldTypeSummary>>} */
   const fieldSummary = {}
   log(`Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`)
   fieldNames
     .forEach((fieldName) => {
-      /** @type {Object.<string, InternalFieldTypeData>} */
       const pivotedData = pivotFieldDataByType(fieldsData[fieldName])
       fieldSummary[fieldName] = condenseFieldSizes(pivotedData)
       if (pivotedData.$ref && pivotedData.$ref.count > 1) {
@@ -425,7 +396,7 @@ function condenseFieldData (schema: {
  * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
  * @returns {Object.<string, InternalFieldTypeData>}
  */
-function pivotFieldDataByType (typeSizeData) {
+function pivotFieldDataByType (typeSizeData: InternalFieldTypeData[]) {
   // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
   log(`Processing ${typeSizeData.length} type guesses`)
   return typeSizeData.reduce((pivotedData, currentTypeGuesses) => {
@@ -463,15 +434,15 @@ function pivotFieldDataByType (typeSizeData) {
 /**
  * Internal function which analyzes and summarizes each columns data by type. Sort of a histogram of significant points.
  * @private
- * @param {Object.<string, InternalFieldTypeData>} pivotedDataByType - a map organized by Type keys (`TypeName`), containing extracted data for the returned `FieldSummary`.
- * @returns {Object.<string, FieldTypeSummary>} - The final output, with histograms of significant points
+ * 
+ * @//param {Object.<string, InternalFieldTypeData>} pivotedDataByType - a map organized by Type keys (`TypeName`), containing extracted data for the returned `FieldSummary`.
+ * @//returns {Object.<string, FieldTypeSummary>} - The final output, with histograms of significant points
  */
-function condenseFieldSizes (pivotedDataByType) {
-  /** @type {Object.<string, FieldTypeSummary>} */
-  const aggregateSummary = {}
+function condenseFieldSizes (pivotedDataByType: { [k in TypeNameString]: InternalFieldTypeData }) {
+  const aggregateSummary: TypedFieldObject<FieldTypeSummary> = {}
   log('Starting condenseFieldSizes()')
   Object.keys(pivotedDataByType)
-    .map((typeName) => {
+    .map((typeName: TypeNameString) => {
       aggregateSummary[typeName] = {
         // typeName,
         rank: typeRankings[typeName] || -42,
@@ -505,7 +476,7 @@ function getFieldMetadata ({
   const typeGuesses = detectTypes(value, strictMatching)
 
   // Assign initial metadata for each matched type below
-  return typeGuesses.reduce((analysis, typeGuess, rank) => {
+  return typeGuesses.reduce((analysis: TypedFieldObject<any>, typeGuess, rank) => {
     let length
     let precision
     let scale
