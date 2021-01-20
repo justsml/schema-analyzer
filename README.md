@@ -54,9 +54,9 @@ npm install schema-analyzer
 ```
 
 ```js
-import { schemaBuilder } from 'schema-builder'
+import { schemaAnalyzer } from 'schema-analyzer'
 
-schemaBuilder(schemaName: String, data: Array<Object>): TypeSummary
+schemaAnalyzer(schemaName: String, data: Array<Object>): TypeSummary
 ```
 
 ### Preview Analysis Results
@@ -175,7 +175,7 @@ Numeric and String types include a summary of the observed field sizes:
 - `min` the minimum number or string length
 - `max` the maximum number or string length
 - `mean` the average number or string length
-- `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile number or string length
+- `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile (number or string length)
 
 Percentile is based on input data, as-is with out sorting.
 
@@ -211,10 +211,10 @@ We recommend you provide at least 100+ rows. Accuracy increases greatly with 1,0
 The following features require a certain minimum # of records:
 
 - Enumeration detection.
-  - 100+ Rows Required.
+  - Requires at least 100 rows, with 10 or fewer unique values.
   - Number of unique values must not exceed 20 or 5% of the total number of records. (100 records will identify as Enum w/ 5 values. Up to 20 are possible given 400 or 1,000+.)
 - `Not Null` detection.
-  - where rowCount === field count
+  - where `emptyRowCount < (total rows - threshold)`
 
 ### Full List of Detected Types
 
@@ -233,3 +233,8 @@ The following features require a certain minimum # of records:
 - `Object`
 - `Null`
 
+## Similar/Alternative Projects
+
+- https://github.com/quicktype/quicktype
+- https://github.com/SweetIQ/schemats
+- https://github.com/vojtechhabarta/typescript-generator

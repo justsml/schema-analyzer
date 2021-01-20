@@ -539,7 +539,7 @@ const parseDate = (date) => {
  */
 
 /**
- * schemaBuilder() is the main function and where all the analysis & processing happens.
+ * schemaAnalyzer() is the main function and where all the analysis & processing happens.
  * @param {string} schemaName The name, or name prefix to use when assembling results. Helpful with nested types (aka sub-types.)
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
  * @param {{
@@ -554,7 +554,7 @@ const parseDate = (date) => {
  * }} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
-function schemaBuilder (
+function schemaAnalyzer (
   schemaName,
   input,
   options = {
@@ -621,17 +621,17 @@ function schemaBuilder (
       return {
         fields,
         totalRows: schema.totalRows,
-        nestedTypes: disableNestedTypes ? undefined : await nestedSchemaBuilder(nestedData)
+        nestedTypes: disableNestedTypes ? undefined : await nestedschemaAnalyzer(nestedData)
       }
     })
 
-  function nestedSchemaBuilder (nestedData) {
+  function nestedschemaAnalyzer (nestedData) {
     return Object.entries(nestedData)
       .reduce(async (nestedTypeSummaries, [fullTypeName, data]) => {
         const nameParts = fullTypeName.split('.');
         // @ts-ignore
         const nameSuffix = nameParts[nameParts.length - 1];
-        nestedTypeSummaries[fullTypeName] = await schemaBuilder(nameSuffix, data, options);
+        nestedTypeSummaries[fullTypeName] = await schemaAnalyzer(nameSuffix, data, options);
         return nestedTypeSummaries
       }, {})
   }
@@ -920,4 +920,4 @@ function formatRangeStats (stats, formatter) {
     p75: formatter(stats.p75),
     p99: formatter(stats.p99)
   }
-}export{condenseFieldData as _condenseFieldData,formatRangeStats as _formatRangeStats,getNumberRangeStats as _getNumberRangeStats,pivotFieldDataByType as _pivotFieldDataByType,getNumberRangeStats,isValidDate,pivotFieldDataByType,schemaBuilder};//# sourceMappingURL=schema-analyzer.module.js.map
+}export{condenseFieldData as _condenseFieldData,formatRangeStats as _formatRangeStats,getNumberRangeStats as _getNumberRangeStats,pivotFieldDataByType as _pivotFieldDataByType,getNumberRangeStats,isValidDate,pivotFieldDataByType,schemaAnalyzer};//# sourceMappingURL=schema-analyzer.module.js.map

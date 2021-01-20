@@ -8,7 +8,7 @@ const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
 
-export { schemaBuilder, pivotFieldDataByType, getNumberRangeStats, isValidDate }
+export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
 function isValidDate (date) {
   date = date instanceof Date ? date : new Date(date)
@@ -86,7 +86,7 @@ const parseDate = (date) => {
  */
 
 /**
- * schemaBuilder() is the main function and where all the analysis & processing happens.
+ * schemaAnalyzer() is the main function and where all the analysis & processing happens.
  * @param {string} schemaName The name, or name prefix to use when assembling results. Helpful with nested types (aka sub-types.)
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
  * @param {{
@@ -101,7 +101,7 @@ const parseDate = (date) => {
  * }} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
-function schemaBuilder (
+function schemaAnalyzer (
   schemaName,
   input,
   options = {
@@ -168,17 +168,17 @@ function schemaBuilder (
       return {
         fields,
         totalRows: schema.totalRows,
-        nestedTypes: disableNestedTypes ? undefined : await nestedSchemaBuilder(nestedData)
+        nestedTypes: disableNestedTypes ? undefined : await nestedschemaAnalyzer(nestedData)
       }
     })
 
-  function nestedSchemaBuilder (nestedData) {
+  function nestedschemaAnalyzer (nestedData) {
     return Object.entries(nestedData)
       .reduce(async (nestedTypeSummaries, [fullTypeName, data]) => {
         const nameParts = fullTypeName.split('.')
         // @ts-ignore
         const nameSuffix = nameParts[nameParts.length - 1]
-        nestedTypeSummaries[fullTypeName] = await schemaBuilder(nameSuffix, data, options)
+        nestedTypeSummaries[fullTypeName] = await schemaAnalyzer(nameSuffix, data, options)
         return nestedTypeSummaries
       }, {})
   }
