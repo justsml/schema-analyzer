@@ -14,7 +14,7 @@ import {
   TYPE_STRING,
   TYPE_ARRAY,
   TYPE_OBJECT
-} from '../type-helpers.mjs'
+} from './type-helpers'
 
 describe('Multiple Type Matching', () => {
   it('correctly handles ambiguous value(s)', () => {

@@ -7,7 +7,9 @@
   "module": "dist/schema-analyzer.module.js",
   "browser": "dist/schema-analyzer.umd.js",
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts",
+    "index.ts"
   ],
   "scripts": {
     "prebuild": "rm -rf dist/*",
@@ -15,13 +17,13 @@
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
     "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
-    "test": "jest --coverage --maxWorkers 4 ./index.test.mjs ./__tests__/type-helpers.mjs",
+    "test": "ts-jest --coverage --maxWorkers 4 ./index.test.ts ./__tests__/type-helpers.ts",
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --coverage",
     "pretest": "npm run build",
     "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"
   },
-  "types": "./index.d.ts",
+  "types": "./index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/justsml/schema-analyzer.git"
@@ -37,7 +39,8 @@
   },
   "homepage": "https://github.com/justsml/schema-analyzer#readme",
   "dependencies": {
-    "debug": "^4.3.1"
+    "debug": "^4.3.1",
+    "ts-node": "^9.1.1"
   },
   "devDependencies": {
     "@babel/core": "~7.8.3",
@@ -76,15 +79,15 @@
   "jest": {
     "transform": {
       "^.+\\.js$": "babel-jest",
-      "^.+\\.mjs$": "babel-jest"
+      "^.+\\.ts$": "babel-jest"
     },
     "moduleFileExtensions": [
       "js",
       "mjs"
     ],
     "testMatch": [
-      "**/__tests__/**/*.mjs",
-      "**/?(*.)+(spec|test).mjs"
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
     ],
     "preset": "ts-jest",
     "moduleNameMapper": {

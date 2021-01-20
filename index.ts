@@ -4,14 +4,14 @@ const log = debug('schema-builder:index')
 
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
-function isValidDate (date: string | Date | any): boolean {
+function isValidDate (date: string | Date | any): false | Date {
   date = date instanceof Date ? date : new Date(date)
   return isNaN(date.getFullYear()) ? false : date
 }
 
-const parseDate = (date) => {
+const parseDate = (date: string | Date | any): string | null => {
   date = isValidDate(date)
-  return date && date.toISOString && date.toISOString()
+  return date instanceof Date ? date.toISOString() : null;
 }
 
 export type TypeDescriptorName = 'enum' | 'nullable' | 'unique';
@@ -96,17 +96,17 @@ export type FieldInfo = {
  */
 export type FieldTypeSummary = {
     /** for nested type support. */
-    typeAlias?: string | undefined;
+    typeAlias?: string;
     /** extracted field values, placed into an array. This simplifies (at expense of memory) type analysis and summarization when creating the `AggregateSummary`. */
-    value?: AggregateSummary | undefined;
+    value?: AggregateSummary;
     /** summary of array of string (or decimal) sizes, pre processing into an AggregateSummary */
-    length?: AggregateSummary | undefined;
+    length?: AggregateSummary;
     /** only applies to Float types. Summary of array of sizes of the value both before and after the decimal. */
-    precision?: AggregateSummary | undefined;
+    precision?: AggregateSummary;
     /** only applies to Float types. Summary of array of sizes of the value after the decimal. */
-    scale?: AggregateSummary | undefined;
+    scale?: AggregateSummary;
     /** if enum rules were triggered will contain the detected unique values. */
-    enum?: string[] | number[] | undefined;
+    enum?: string[] | number[];
     /** number of times the type was matched */
     count: number;
     /** absolute priority of the detected TypeName, defined in the object `typeRankings` */
@@ -117,6 +117,8 @@ export type FieldTypeSummary = {
  * It mirrors the `FieldSummary` type it will become.
  */
 export type InternalFieldTypeData = {
+    /** for nested type support. */
+    typeAlias?: string | undefined;
     /** array of values, pre processing into an AggregateSummary */
     value?: any[] | undefined;
     /** array of string (or decimal) sizes, pre processing into an AggregateSummary */
@@ -135,15 +137,15 @@ export type InternalFieldTypeData = {
  * Includes the lowest (`min`), highest (`max`), mean/average (`mean`) and measurements at certain `percentiles`.
  */
 export type AggregateSummary<T = number> = {
-    min: T;
-    max: T;
-    mean: T;
-    p25: T;
-    p33: T;
-    p50: T;
-    p66: T;
-    p75: T;
-    p99: T;
+    min: T | undefined;
+    max: T | undefined;
+    mean: T | undefined;
+    p25: T | undefined;
+    p33: T | undefined;
+    p50: T | undefined;
+    p66: T | undefined;
+    p75: T | undefined;
+    p99: T | undefined;
 };
 /**
  * This callback is displayed as a global member.
@@ -401,7 +403,7 @@ function pivotFieldDataByType (typeSizeData: InternalFieldTypeData[]) {
   log(`Processing ${typeSizeData.length} type guesses`)
   return typeSizeData.reduce((pivotedData, currentTypeGuesses) => {
     Object.entries(currentTypeGuesses)
-      .map(([typeName, { value, length, scale, precision }]) => {
+      .map(([typeName, { value, length, scale, precision }]: [typeName: string, data: InternalFieldTypeData]) => {
       // console.log(typeName, JSON.stringify({ length, scale, precision }))
         pivotedData[typeName] = pivotedData[typeName] || { typeName, count: 0 }
         // if (!pivotedData[typeName].count) pivotedData[typeName].count = 0
@@ -420,7 +422,7 @@ function pivotFieldDataByType (typeSizeData: InternalFieldTypeData[]) {
         return pivotedData[typeName]
       })
     return pivotedData
-  }, {})
+  }, {} as TypedFieldObject<InternalFieldTypeData>)
   /*
   > Example of sumCounts at this point
   {
@@ -438,30 +440,34 @@ function pivotFieldDataByType (typeSizeData: InternalFieldTypeData[]) {
  * @//param {Object.<string, InternalFieldTypeData>} pivotedDataByType - a map organized by Type keys (`TypeName`), containing extracted data for the returned `FieldSummary`.
  * @//returns {Object.<string, FieldTypeSummary>} - The final output, with histograms of significant points
  */
-function condenseFieldSizes (pivotedDataByType: { [k in TypeNameString]: InternalFieldTypeData }) {
-  const aggregateSummary: TypedFieldObject<FieldTypeSummary> = {}
+function condenseFieldSizes (pivotedDataByType: { [k in TypeNameString]?: InternalFieldTypeData }) {
+  const aggregateSummary: { [k in TypeNameString]?: FieldTypeSummary } = {}
   log('Starting condenseFieldSizes()')
   Object.keys(pivotedDataByType)
     .map((typeName: TypeNameString) => {
       aggregateSummary[typeName] = {
         // typeName,
         rank: typeRankings[typeName] || -42,
-        count: pivotedDataByType[typeName].count
+        count: pivotedDataByType[typeName]!.count || -1
       }
-      if (typeName === '$ref') {
-        // console.log('pivotedDataByType.$ref', JSON.stringify(pivotedDataByType.$ref, null, 2));
-        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref
-      } else {
-        if (pivotedDataByType[typeName].value) aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
-        if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length, true)
-        if (pivotedDataByType[typeName].scale) aggregateSummary[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale, true)
-        if (pivotedDataByType[typeName].precision) aggregateSummary[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision, true)
-      }
+      if (aggregateSummary[typeName]) {
+          
+        if (typeName === '$ref' && aggregateSummary[typeName]) {
+          console.log('pivotedDataByType.$ref', JSON.stringify(pivotedDataByType.$ref, null, 2));
+          aggregateSummary[typeName]!.typeAlias = pivotedDataByType.$ref!.typeAlias
+        } else {
+          if (pivotedDataByType[typeName]!.value) aggregateSummary[typeName]!.value = getNumberRangeStats(pivotedDataByType[typeName]?.value || [])
+          if (pivotedDataByType[typeName]!.length) aggregateSummary[typeName]!.length = getNumberRangeStats(pivotedDataByType[typeName]?.length || [], true)
+          if (pivotedDataByType[typeName]!.scale) aggregateSummary[typeName]!.scale = getNumberRangeStats(pivotedDataByType[typeName]?.scale || [], true)
+          if (pivotedDataByType[typeName]!.precision) aggregateSummary[typeName]!.precision = getNumberRangeStats(pivotedDataByType[typeName]?.precision || [], true)
+        }
 
-      // if (pivotedDataByType[typeName].invalid) { aggregateSummary[typeName].invalid = pivotedDataByType[typeName].invalid }
+        // if (pivotedDataByType[typeName].invalid) { aggregateSummary[typeName]!.invalid = pivotedDataByType[typeName].invalid }
 
-      if (['Timestamp', 'Date'].indexOf(typeName) > -1) {
-        aggregateSummary[typeName].value = formatRangeStats(aggregateSummary[typeName].value, parseDate)
+        if (aggregateSummary[typeName] && ['Timestamp', 'Date'].indexOf(typeName) > -1) {
+          // @ts-ignore
+          aggregateSummary[typeName].value! = formatRangeStats(<any>aggregateSummary[typeName]!.value! || {}, parseDate)
+        }
       }
     })
   log('Done condenseFieldSizes()...')
@@ -469,31 +475,34 @@ function condenseFieldSizes (pivotedDataByType: { [k in TypeNameString]: Interna
 }
 
 function getFieldMetadata ({
-  value,
-  strictMatching
+  value = null,
+  strictMatching = false
+}: {
+  value: any,
+  strictMatching: boolean
 }) {
   // Get initial pass at the data with the TYPE_* `.check()` methods.
   const typeGuesses = detectTypes(value, strictMatching)
 
   // Assign initial metadata for each matched type below
-  return typeGuesses.reduce((analysis: TypedFieldObject<any>, typeGuess, rank) => {
+  return typeGuesses.reduce((analysis: TypedFieldObject<FieldTypeSummary>, typeGuess, rank) => {
     let length
     let precision
     let scale
 
-    analysis[typeGuess] = { rank: rank + 1 }
+    analysis[typeGuess] = { rank: rank + 1, count: 1 }
 
     if (typeGuess === 'Array') {
       length = value.length
       analysis[typeGuess] = { ...analysis[typeGuess], length }
     }
     if (typeGuess === 'Float') {
-      value = parseFloat(value)
+      value = parseFloat(String(value))
       analysis[typeGuess] = { ...analysis[typeGuess], value }
       const significandAndMantissa = String(value).split('.')
       if (significandAndMantissa.length === 2) {
         precision = significandAndMantissa.join('').length // total # of numeric positions before & after decimal
-        scale = significandAndMantissa[1].length
+        scale = significandAndMantissa[1]?.length ?? 0
         analysis[typeGuess] = { ...analysis[typeGuess], precision, scale }
       }
     }
@@ -522,7 +531,6 @@ function getFieldMetadata ({
  *  the range & spread of points in the set.
  *
  * @param {number[]} numbers - sequence of unsorted data points
- * @returns {AggregateSummary}
  */
 function getNumberRangeStats (numbers: number[], useSortedDataForPercentiles = false) {
   if (!numbers || numbers.length < 1) return undefined
@@ -546,8 +554,7 @@ function getNumberRangeStats (numbers: number[], useSortedDataForPercentiles = f
 /**
  *
  */
-function formatRangeStats (stats, formatter) {
-  // if (!stats || !formatter) return undefined
+function formatRangeStats<T, TFormatReturn>(stats: AggregateSummary<T>, formatter: (n?: T) => TFormatReturn) {
   return {
     // size: stats.size,
     min: formatter(stats.min),
