@@ -524,7 +524,7 @@ function condenseFieldSizes(
 ) {
   const aggregateSummary: { [k in TypeNameString]?: FieldTypeSummary } = {};
   log("Starting condenseFieldSizes()");
-  Object.keys(pivotedDataByType).map((typeName: TypeNameString as const, idx: number, arr: any[]) => {
+  Object.keys(pivotedDataByType).map((typeName: string, idx: number, arr: any[]) => {
     aggregateSummary[typeName] = {
       // typeName,
       rank: typeRankings[typeName] || -42,
