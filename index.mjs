@@ -1,9 +1,9 @@
+import { detectTypes, MetaChecks, typeRankings } from './utils/type-helpers.mjs'
 const debug = require('debug')
 // import FP from 'functional-promises';
 // import { detectTypes } from './type-helpers.js'
 // import StatsMap from 'stats-map';
 // import mem from 'mem';
-import { detectTypes, MetaChecks, typeRankings } from './type-helpers.mjs'
 const log = debug('schema-builder:index')
 // const cache = new StatsMap();
 // const detectTypesCached = mem(_detectTypes, { cache, maxAge: 1000 * 600 }) // keep cache up to 10 minutes
@@ -97,7 +97,8 @@ const parseDate = (date) => {
  *   nullableRowsThreshold?: number,
  *   uniqueRowsThreshold?: number,
  *   strictMatching?: boolean,
- *   disableNestedTypes?: boolean
+ *   disableNestedTypes?: boolean,
+ *   bogusSizeThreshold?: number,
  * }} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
@@ -112,7 +113,8 @@ function schemaAnalyzer (
     enumAbsoluteLimit: 10,
     enumPercentThreshold: 0.01,
     nullableRowsThreshold: 0.02,
-    uniqueRowsThreshold: 1.0
+    uniqueRowsThreshold: 1.0,
+    bogusSizeThreshold: 0.1
   }
 ) {
   if (!Array.isArray(input) || typeof input !== 'object') throw Error('Input Data must be an Array of Objects')
@@ -357,7 +359,7 @@ function condenseFieldSizes (pivotedDataByType) {
       }
       if (typeName === '$ref') {
         // console.log('pivotedDataByType.$ref', JSON.stringify(pivotedDataByType.$ref, null, 2));
-        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref;
+        aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref
       } else {
         if (pivotedDataByType[typeName].value) aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value)
         if (pivotedDataByType[typeName].length) aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length, true)

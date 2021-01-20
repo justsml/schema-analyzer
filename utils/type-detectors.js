@@ -1,4 +1,4 @@
-import {isDate} from 'lodash-es'
+import { isDate } from 'lodash-es'
 export {
   isBoolish,
   isCurrency,
@@ -35,23 +35,39 @@ const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
 const nullishPattern = /null/i
 // const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/igm
 
+/**
+ * @param {string | any[] | null} value
+ * @param {any} fieldName
+ */
 function isBoolish (value, fieldName) {
   if (value == null) return false
   value = String(value).trim()
   return value.length <= 6 && boolishPattern.test(String(value))
 }
 
+/**
+ * @param {string | any[] | null} value
+ * @param {any} fieldName
+ */
 function isUuid (value, fieldName) {
   if (value == null) return false
   value = String(value).trim()
   return value.length < 40 && uuidPattern.test(value)
 }
+/**
+ * @param {string | any[] | null} value
+ * @param {any} fieldName
+ */
 function isObjectId (value, fieldName) {
   if (value == null) return false
   value = String(value).trim()
   return value.length < 40 && objectIdPattern.test(value)
 }
 
+/**
+ * @param {string | any[] | null} value
+ * @param {any} fieldName
+ */
 function isDateString (value, fieldName) {
   // not bullet-proof, meant to sniff intention in the data
   if (value == null) return false
@@ -60,16 +76,22 @@ function isDateString (value, fieldName) {
   return value.length < 30 && dateStringPattern.test(value)
 }
 
+/**
+ * @param {string | null} value
+ */
 function isTimestamp (value) {
   if (value == null) return false
   value = String(value).trim()
   return timestampPattern.test(value)
 }
 
+/**
+ * @param {string | null} value
+ */
 function isCurrency (value) {
   if (value == null) return false
   value = String(value).trim()
-  const valueSymbol = currencies.find((curSymbol) => value.indexOf(curSymbol) > -1)
+  const valueSymbol = currencies.find((curSymbol) => value && value.indexOf(curSymbol) > -1)
   if (!valueSymbol) return false
   value = value.replace(valueSymbol, '')
   return isNumeric(value)
@@ -77,16 +99,26 @@ function isCurrency (value) {
   // return currencyPatternUS.test(value) || currencyPatternEU.test(value)
 }
 
+/**
+ * @param {string | any[]} value
+ * @param {undefined} [fieldName]
+ */
 function isNumeric (value, fieldName) {
   // if (value == null) return false
   value = String(value).trim()
   return value.length < 30 && numberishPattern.test(value)
 }
 
+/**
+ * @param {unknown} value
+ */
 function isFloatish (value) {
   return !!(isNumeric(String(value)) && floatPattern.test(String(value)) && !Number.isInteger(value))
 }
 
+/**
+ * @param {string | string[] | null} value
+ */
 function isEmailShaped (value) {
   if (value == null) return false
   value = String(value).trim()
@@ -94,6 +126,9 @@ function isEmailShaped (value) {
   return value.length >= 5 && value.length < 80 && emailPattern.test(value)
 }
 
+/**
+ * @param {null} value
+ */
 function isNullish (value) {
   return value === null || nullishPattern.test(String(value).trim())
 }

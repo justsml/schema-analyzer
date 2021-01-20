@@ -21,6 +21,7 @@
     "format": "eslint --fix './*.js' '__tests__/*.js' 'utils/*.js'",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"
   },
+  "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/justsml/schema-analyzer.git"

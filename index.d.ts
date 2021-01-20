@@ -1,3 +1,32 @@
+export type TypeDescriptorName = 'enum' | 'nullable' | 'unique';
+export type TypeNameString = '$ref' |
+    'Unknown' |
+    'ObjectId' |
+    'UUID' |
+    'Boolean' |
+    'Date' |
+    'Timestamp' |
+    'Currency' |
+    'Float' |
+    'Number' |
+    'Email' |
+    'String' |
+    'Array' |
+    'Object' |
+    'Null'
+
+export interface ISchemaAnalyzerOptions {
+    onProgress?: progressCallback | undefined;
+    enumMinimumRowCount?: number | undefined;
+    enumAbsoluteLimit?: number | undefined;
+    enumPercentThreshold?: number | undefined;
+    nullableRowsThreshold?: number | undefined;
+    uniqueRowsThreshold?: number | undefined;
+    strictMatching?: boolean | undefined;
+    disableNestedTypes?: boolean | undefined;
+    bogusSizeThreshold?: number | undefined,
+}
+
 /**
  * Includes the results of main top-level schema.
  */
@@ -18,7 +47,7 @@ export type FieldInfo = {
      * - field stats organized by type
      */
     types: {
-        [x: string]: string | FieldTypeSummary;
+        [x: TypeNameString]: FieldTypeSummary;
     };
     /**
      * - is the field nullable
@@ -188,28 +217,11 @@ export type progressCallback = (progress: {
  * schemaAnalyzer() is the main function and where all the analysis & processing happens.
  * @param {string} schemaName The name, or name prefix to use when assembling results. Helpful with nested types (aka sub-types.)
  * @param {Array<Object>} input - The input data to analyze. Must be an array of objects.
- * @param {{
- *   onProgress?: progressCallback,
- *   enumMinimumRowCount?: number,
- *   enumAbsoluteLimit?: number,
- *   enumPercentThreshold?: number,
- *   nullableRowsThreshold?: number,
- *   uniqueRowsThreshold?: number,
- *   strictMatching?: boolean,
- *   disableNestedTypes?: boolean
- * }} [options] - Optional parameters
+ * @param {ISchemaAnalyzerOptions} [options] - Optional parameters
  * @returns {Promise<TypeSummary>} Returns and
  */
-export function schemaAnalyzer(schemaName: string, input: Array<Object>, options?: {
-    onProgress?: progressCallback | undefined;
-    enumMinimumRowCount?: number | undefined;
-    enumAbsoluteLimit?: number | undefined;
-    enumPercentThreshold?: number | undefined;
-    nullableRowsThreshold?: number | undefined;
-    uniqueRowsThreshold?: number | undefined;
-    strictMatching?: boolean | undefined;
-    disableNestedTypes?: boolean | undefined;
-} | undefined): Promise<TypeSummary>;
+export function schemaAnalyzer(schemaName: string, input: Array<Object>, options?: ISchemaAnalyzerOptions | undefined): Promise<TypeSummary>;
+
 export function pivotFieldDataByType(typeSizeData: any): any;
 /**
  * Accepts an array of numbers and returns summary data about
@@ -268,7 +280,7 @@ declare function condenseFieldData(schema: {
 }): {
     fields: {
         [x: string]: {
-            [x: string]: FieldTypeSummary;
+            [x: TypeNameString]: FieldTypeSummary;
         };
     };
     uniques: {
