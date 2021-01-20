@@ -101,7 +101,7 @@ export type FieldTypeSummary = {
   /** for nested type support. */
   typeAlias?: string;
   /** extracted field values, placed into an array. This simplifies (at expense of memory) type analysis and summarization when creating the `AggregateSummary`. */
-  value?: AggregateSummary;
+  value?: AggregateSummary | number;
   /** summary of array of string (or decimal) sizes, pre processing into an AggregateSummary */
   length?: AggregateSummary;
   /** only applies to Float types. Summary of array of sizes of the value both before and after the decimal. */
@@ -226,6 +226,8 @@ function schemaAnalyzer(
   const isEnumEnabled = input.length >= enumMinimumRowCount;
   const nestedData = {};
 
+  const pivotRowsGroupedByType = _pivotRowsGroupedByType({schemaName, isEnumEnabled, disableNestedTypes, nestedData, strictMatching, onProgress});
+
   log("Starting");
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
@@ -275,7 +277,9 @@ function schemaAnalyzer(
           }
 
           if (schema.uniques && schema.uniques[fieldName]) {
-            fieldInfo[fieldName]!.uniqueCount = schema.uniques[fieldName]!.length;
+            fieldInfo[fieldName]!.uniqueCount = schema.uniques[
+              fieldName
+            ]!.length;
           }
           return fieldInfo;
         },
@@ -295,7 +299,10 @@ function schemaAnalyzer(
     return Object.entries(nestedData).reduce(
       async (nestedTypeSummaries, [fullTypeName, data]) => {
         const nameParts = fullTypeName.split(".");
-        const nameSuffix = nameParts.length >= 1 ? nameParts[nameParts.length - 1] : nameParts.join('');
+        const nameSuffix =
+          nameParts.length >= 1
+            ? nameParts[nameParts.length - 1]
+            : nameParts.join("");
         nestedTypeSummaries[fullTypeName] = await schemaAnalyzer(
           nameSuffix!,
           data as any[],
@@ -307,17 +314,20 @@ function schemaAnalyzer(
     );
   }
 
+}
+
+
   /**
-   * @param {object[]} docs
-   * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
+   * @//returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
    */
-  function pivotRowsGroupedByType(docs: any[]) {
+  const _pivotRowsGroupedByType = ({schemaName, isEnumEnabled, disableNestedTypes, nestedData, strictMatching, onProgress}) => function pivotRowsGroupedByType(docs: any[]) {
     const detectedSchema = {
       uniques: isEnumEnabled ? {} : null,
       fieldsData: {},
       totalRows: null,
     };
     log(`  About to examine every row & cell. Found ${docs.length} records...`);
+    const evaluateSchemaLevel = _evaluateSchemaLevel({schemaName, isEnumEnabled, disableNestedTypes, nestedData, strictMatching, onProgress})
     const pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema);
     log("  Extracted data points from Field Type analysis");
     return pivotedSchema;
@@ -327,7 +337,7 @@ function schemaAnalyzer(
    * internal
    * @private
    */
-  function evaluateSchemaLevel(
+  const _evaluateSchemaLevel = ({schemaName, isEnumEnabled, disableNestedTypes, nestedData, strictMatching, onProgress}) => function evaluateSchemaLevel(
     schema: {
       totalRows: any;
       uniques: { [x: string]: any[] };
@@ -357,29 +367,28 @@ function schemaAnalyzer(
           value.length >= 1 &&
           typeof value[0] === "object"
         ) {
-          const keyPath = `${schemaName}.${fieldName}`
-          nestedData[keyPath] =
-            nestedData[keyPath] || [];
+          const keyPath = `${schemaName}.${fieldName}`;
+          nestedData[keyPath] = nestedData[keyPath] || [];
           nestedData[keyPath].push(...value);
-          typeFingerprint.$ref = keyPath;
+          if (!typeFingerprint.$ref)
+            typeFingerprint.$ref = { rank: -12, count: index };
+          typeFingerprint.$ref.typeAlias = keyPath;
         }
       }
 
       if (isEnumEnabled && isPossibleEnumType) {
         schema.uniques[fieldName] = schema.uniques[fieldName] || [];
-        if (!schema.uniques[fieldName].includes(value))
-          schema.uniques[fieldName].push(row[fieldName]);
+        if (!schema.uniques[fieldName]!.includes(value))
+          schema.uniques[fieldName]!.push(row[fieldName]);
         // } else {
         //   schema.uniques[fieldName] = null
       }
       schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || [];
-      schema.fieldsData[fieldName].push(typeFingerprint);
+      schema.fieldsData[fieldName]!.push(typeFingerprint);
     });
     onProgress({ totalRows: schema.totalRows, currentRow: index + 1 });
     return schema;
   }
-}
-
 /**
  * Returns a fieldName keyed-object with type detection summary data.
  *
@@ -412,21 +421,13 @@ function schemaAnalyzer(
  */
 function condenseFieldData(schema: {
   fieldsData: {
-    [x: string]: InternalFieldTypeData[];
+    [x: string]: TypedFieldObject<InternalFieldTypeData>[];
   };
   uniques: {
     [x: string]: any[];
   };
   totalRows: number;
-}): {
-  fields: {
-    [x: string]: TypedFieldObject<FieldTypeSummary>;
-  };
-  uniques: {
-    [x: string]: any[];
-  };
-  totalRows: number;
-} {
+}) {
   const { fieldsData } = schema;
   const fieldNames = Object.keys(fieldsData);
 
@@ -435,13 +436,13 @@ function condenseFieldData(schema: {
     `Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`
   );
   fieldNames.forEach((fieldName) => {
-    const pivotedData = pivotFieldDataByType(fieldsData[fieldName]);
+    const pivotedData = pivotFieldDataByType(fieldsData[fieldName]!);
     fieldSummary[fieldName] = condenseFieldSizes(pivotedData);
-    if (pivotedData.$ref && pivotedData.$ref.count > 1) {
+    if (pivotedData?.$ref?.count ?? 0 > 1) {
       // Prevent overriding the $ref type label
       // 1. Find the first $ref
-      const refType = fieldsData[fieldName].find((typeRefs) => typeRefs.$ref);
-      fieldSummary[fieldName].$ref.typeAlias = refType.$ref;
+      const refType = fieldsData[fieldName]?.find((typeRefs) => typeRefs.$ref);
+      fieldSummary[fieldName].$ref.typeAlias = refType?.$ref;
     }
 
     // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
@@ -468,14 +469,14 @@ interface IPivotData {
  * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
  * @returns {Object.<string, InternalFieldTypeData>}
  */
-function pivotFieldDataByType(typeSizeData: InternalFieldTypeData[]) {
+function pivotFieldDataByType(typeSizeData: TypedFieldObject<InternalFieldTypeData>[]) {
   // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
   log(`Processing ${typeSizeData.length} type guesses`);
   return typeSizeData.reduce((pivotedData, currentTypeGuesses) => {
     Object.entries(currentTypeGuesses).map(
       ([typeName, { value, length, scale, precision }]: [
         typeName: string,
-        data: InternalFieldTypeData
+        data: any
       ]) => {
         // console.log(typeName, JSON.stringify({ length, scale, precision }))
         pivotedData[typeName] = pivotedData[typeName] || { typeName, count: 0 };
@@ -523,7 +524,7 @@ function condenseFieldSizes(
 ) {
   const aggregateSummary: { [k in TypeNameString]?: FieldTypeSummary } = {};
   log("Starting condenseFieldSizes()");
-  Object.keys(pivotedDataByType).map((typeName: TypeNameString) => {
+  Object.keys(pivotedDataByType).map((typeName: TypeNameString as const, idx: number, arr: any[]) => {
     aggregateSummary[typeName] = {
       // typeName,
       rank: typeRankings[typeName] || -42,
@@ -610,7 +611,13 @@ function getFieldMetadata({
         if (significandAndMantissa.length === 2) {
           precision = significandAndMantissa.join("").length; // total # of numeric positions before & after decimal
           scale = significandAndMantissa[1]?.length ?? 0;
-          analysis[typeGuess] = { ...analysis[typeGuess], rank, count, precision, scale };
+          analysis[typeGuess] = {
+            ...analysis[typeGuess],
+            rank,
+            count,
+            precision,
+            scale,
+          };
         }
       }
       if (typeGuess === "Number") {
@@ -622,7 +629,8 @@ function getFieldMetadata({
         if (checkedDate) {
           analysis[typeGuess] = {
             ...analysis[typeGuess],
-            rank, count, 
+            rank,
+            count,
             value: checkedDate.getTime(),
           };
           // } else {
@@ -691,7 +699,6 @@ function formatRangeStats<T, TFormatReturn>(
 }
 
 export {
-  // pivotRowsGroupedByType as _pivotRowsGroupedByType,
   // evaluateSchemaLevel as _evaluateSchemaLevel,
   schemaAnalyzer,
   condenseFieldData as _condenseFieldData,
