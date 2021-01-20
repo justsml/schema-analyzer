@@ -44,7 +44,7 @@ export default [
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
-      typescript(),
+      typescript({ sourceMap: !isProduction }),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
@@ -68,7 +68,7 @@ export default [
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
-      typescript(),
+      typescript({ sourceMap: !isProduction }),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
@@ -92,7 +92,7 @@ export default [
     },
     // external: [/lodash.*/, 'debug'],
     plugins: [
-      typescript({ module: ModuleKind.ES2020 }),
+      typescript({ sourceMap: !isProduction, module: ModuleKind.ES2020 }),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin

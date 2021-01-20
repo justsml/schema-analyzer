@@ -8,11 +8,11 @@
   "browser": "dist/schema-analyzer.umd.js",
   "files": [
     "dist",
-    "index.d.ts",
+    "build/index.d.ts",
     "index.ts"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist/*",
+    "prebuild": "rm -rf dist/* && tsc",
     "build": "NODE_ENV=production rollup -c && NODE_ENV=development rollup -c && npm run compress",
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
     "postcoverage": "codecov --token=$CODECOV_TOKEN",

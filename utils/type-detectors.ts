@@ -124,7 +124,10 @@ function isObjectId(value: string | any[] | null, fieldName?: string): boolean {
  * @param {string | any[] | null} value
  * @param {any} fieldName
  */
-function isDateString(value: string | any[] | null, fieldName?: string): boolean {
+function isDateString(
+  value: string | any[] | null,
+  fieldName?: string
+): boolean {
   // not bullet-proof, meant to sniff intention in the data
   if (value == null) return false;
   if (isDate(value)) return true;
@@ -161,7 +164,10 @@ function isCurrency(value: string | null): boolean {
  * @param {string | any[]} value
  * @param {undefined} [fieldName]
  */
-function isNumeric(value: string | any[], fieldName?: string | undefined): boolean {
+function isNumeric(
+  value: string | any[],
+  fieldName?: string | undefined
+): boolean {
   // if (value == null) return false
   value = String(value).trim();
   return value.length < 30 && numberishPattern.test(value);

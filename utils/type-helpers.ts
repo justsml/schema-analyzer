@@ -78,36 +78,42 @@ function detectTypes(value: any, strictMatching = true) {
 const TYPE_ENUM: IAdvancedTypeMatcher = {
   type: "enum",
   matchBasicTypes: ["String", "Number"],
+  /**
+   *
+   * @param typeInfo
+   * @param {IProcessState} jobState
+   * @param {IAdvancedMatcherOptions} matcherOptions Defaults: `enumAbsoluteLimit = 20` `enumPercentThreshold = 0.9`
+   */
   check: (
     typeInfo,
     { rowCount, uniques },
-    { enumAbsoluteLimit = 20, enumPercentThreshold = 0.9 }
+    { enumAbsoluteLimit, enumPercentThreshold }
   ) => {
     if (!uniques || uniques.length === 0) return typeInfo;
     // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
     // const uniqueness = rowCount / uniques.length
     const relativeEnumLimit = Math.min(
-      parseInt(String(rowCount * enumPercentThreshold), 10),
-      enumAbsoluteLimit
+      parseInt(String(rowCount * enumPercentThreshold!), 10),
+      enumAbsoluteLimit!
     );
     if (uniques.length > relativeEnumLimit) return typeInfo;
     // const enumLimit = uniqueness < enumAbsoluteLimit && relativeEnumLimit < enumAbsoluteLimit
     //   ? enumAbsoluteLimit
     //   : relativeEnumLimit
 
-    return {  ...typeInfo, enum: uniques };
+    return { ...typeInfo, enum: uniques };
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
   },
 };
 const TYPE_NULLABLE: IAdvancedTypeMatcher = {
   type: "nullable",
   // matchBasicTypes: ['String', 'Number'],
-  check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold = 0.99 }) => {
+  check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold }) => {
     if (!uniques || uniques.length === 0) return typeInfo;
     let nullishTypeCount = 0;
     // if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
 
-    if (typeInfo?.types.Null) {
+    if (typeInfo.types.Null) {
       nullishTypeCount += typeInfo.types.Null.count;
     }
     // if (typeInfo?.types.Unknown) nullishTypeCount += typeInfo?.types?.Unknown?.count || 0
@@ -124,10 +130,10 @@ const TYPE_NULLABLE: IAdvancedTypeMatcher = {
 const TYPE_UNIQUE: IAdvancedTypeMatcher = {
   type: "unique",
   // matchBasicTypes: ['String', 'Number'],
-  check: (typeInfo, { rowCount, uniques }, { uniqueRowsThreshold = 0.9 }) => {
+  check: (typeInfo, { rowCount, uniques }, { uniqueRowsThreshold }) => {
     if (!uniques || uniques.length === 0) return typeInfo;
     // const uniqueness = rowCount / uniques.length
-    const isUnique = uniques.length >= rowCount * uniqueRowsThreshold;
+    const isUnique = uniques.length >= rowCount * uniqueRowsThreshold!;
     // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
     return { ...typeInfo, unique: isUnique, uniqueCount: uniques.length };
     // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}

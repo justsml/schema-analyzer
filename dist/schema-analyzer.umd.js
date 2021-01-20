@@ -17208,9 +17208,15 @@ exports.detectTypes = detectTypes;
 var TYPE_ENUM = {
     type: "enum",
     matchBasicTypes: ["String", "Number"],
+    /**
+     *
+     * @param typeInfo
+     * @param {IProcessState} jobState
+     * @param {IAdvancedMatcherOptions} matcherOptions Defaults: `enumAbsoluteLimit = 20` `enumPercentThreshold = 0.9`
+     */
     check: function (typeInfo, _a, _b) {
         var rowCount = _a.rowCount, uniques = _a.uniques;
-        var _c = _b.enumAbsoluteLimit, enumAbsoluteLimit = _c === void 0 ? 20 : _c, _d = _b.enumPercentThreshold, enumPercentThreshold = _d === void 0 ? 0.9 : _d;
+        var enumAbsoluteLimit = _b.enumAbsoluteLimit, enumPercentThreshold = _b.enumPercentThreshold;
         if (!uniques || uniques.length === 0)
             return typeInfo;
         // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
@@ -17221,7 +17227,7 @@ var TYPE_ENUM = {
         // const enumLimit = uniqueness < enumAbsoluteLimit && relativeEnumLimit < enumAbsoluteLimit
         //   ? enumAbsoluteLimit
         //   : relativeEnumLimit
-        return tslib_es6.__assign({ enum: uniques }, typeInfo);
+        return tslib_es6.__assign(tslib_es6.__assign({}, typeInfo), { enum: uniques });
         // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     },
 };
@@ -17230,23 +17236,21 @@ var TYPE_NULLABLE = {
     // matchBasicTypes: ['String', 'Number'],
     check: function (typeInfo, _a, _b) {
         var rowCount = _a.rowCount, uniques = _a.uniques;
-        var _c = _b.nullableRowsThreshold, nullableRowsThreshold = _c === void 0 ? 0.9 : _c;
+        var nullableRowsThreshold = _b.nullableRowsThreshold;
         if (!uniques || uniques.length === 0)
             return typeInfo;
         var nullishTypeCount = 0;
         // if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
-        if (typeInfo === null || typeInfo === void 0 ? void 0 : typeInfo.types.Null) {
+        if (typeInfo.types.Null) {
             nullishTypeCount += typeInfo.types.Null.count;
         }
-        // if (types.Unknown) {
-        //   nullishTypeCount += types.Unknown.count
-        // }
+        // if (typeInfo?.types.Unknown) nullishTypeCount += typeInfo?.types?.Unknown?.count || 0
         var nullLimit = nullableRowsThreshold
             ? rowCount * nullableRowsThreshold
             : 0;
         var isNullable = nullishTypeCount >= nullLimit;
         // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-        return tslib_es6.__assign({ nullable: isNullable }, typeInfo);
+        return tslib_es6.__assign(tslib_es6.__assign({}, typeInfo), { nullable: isNullable, nullCount: nullishTypeCount });
         // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     },
 };
@@ -17255,13 +17259,13 @@ var TYPE_UNIQUE = {
     // matchBasicTypes: ['String', 'Number'],
     check: function (typeInfo, _a, _b) {
         var rowCount = _a.rowCount, uniques = _a.uniques;
-        var _c = _b.uniqueRowsThreshold, uniqueRowsThreshold = _c === void 0 ? 0.9 : _c;
+        var uniqueRowsThreshold = _b.uniqueRowsThreshold;
         if (!uniques || uniques.length === 0)
             return typeInfo;
         // const uniqueness = rowCount / uniques.length
         var isUnique = uniques.length >= rowCount * uniqueRowsThreshold;
         // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
-        return tslib_es6.__assign({ unique: isUnique }, typeInfo);
+        return tslib_es6.__assign(tslib_es6.__assign({}, typeInfo), { unique: isUnique, uniqueCount: uniques.length });
         // return {unique: uniqueness >= uniqueRowsThreshold, ...typeInfo}
         // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
     },
@@ -18552,7 +18556,7 @@ if (typeof process === 'undefined' || process.type === 'renderer' || process.bro
 }
 });var schemaDetector = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._isValidDate = exports.schemaAnalyzer = exports._formatRangeStats = exports._getNumberRangeStats = exports._pivotFieldDataByType = exports._condenseFieldData = void 0;
+exports._isValidDate = exports._getFieldMetadata = exports._formatRangeStats = exports._getNumberRangeStats = exports._pivotFieldDataByType = exports._condenseFieldData = exports.schemaAnalyzer = exports.parseDate = void 0;
 
 
 
@@ -18565,10 +18569,12 @@ function isValidDate(date) {
 exports._isValidDate = isValidDate;
 var parseDate = function (date) {
     date = isValidDate(date);
-    return date instanceof Date ? date.toISOString() : null;
+    if (date instanceof Date)
+        return date.toISOString();
+    return null;
 };
-// export function getNumberRangeStats(numbers: number[], useSortedDataForPercentiles?: boolean): AggregateSummary;
-// export function isValidDate(date: any): any;
+exports.parseDate = parseDate;
+var TYPE_ENUM = typeHelpers.MetaChecks.TYPE_ENUM, TYPE_NULLABLE = typeHelpers.MetaChecks.TYPE_NULLABLE, TYPE_UNIQUE = typeHelpers.MetaChecks.TYPE_UNIQUE;
 /**
  * Returns a fieldName keyed-object with type detection summary data.
  *
@@ -18607,11 +18613,11 @@ function schemaAnalyzer(schemaName, input, options) {
         },
         strictMatching: true,
         disableNestedTypes: false,
-        enumMinimumRowCount: 100,
+        enumMinimumRowCount: 25,
         enumAbsoluteLimit: 10,
         enumPercentThreshold: 0.01,
         nullableRowsThreshold: 0.02,
-        uniqueRowsThreshold: 1.0,
+        uniqueRowsThreshold: 0.99,
         bogusSizeThreshold: 0.1,
     }; }
     if (!Array.isArray(input) || typeof input !== "object")
@@ -18622,9 +18628,17 @@ function schemaAnalyzer(schemaName, input, options) {
         throw Error("Analysis requires at least 5 records. (Use 200+ for great results.)");
     var _a = options.onProgress, onProgress = _a === void 0 ? function (_a) {
         var totalRows = _a.totalRows, currentRow = _a.currentRow;
-    } : _a, _b = options.strictMatching, strictMatching = _b === void 0 ? true : _b, _c = options.disableNestedTypes, disableNestedTypes = _c === void 0 ? false : _c, _d = options.enumMinimumRowCount, enumMinimumRowCount = _d === void 0 ? 100 : _d, _e = options.enumAbsoluteLimit, enumAbsoluteLimit = _e === void 0 ? 10 : _e, _f = options.enumPercentThreshold, enumPercentThreshold = _f === void 0 ? 0.01 : _f, _g = options.nullableRowsThreshold, nullableRowsThreshold = _g === void 0 ? 0.02 : _g, _h = options.uniqueRowsThreshold, uniqueRowsThreshold = _h === void 0 ? 1.0 : _h;
+    } : _a, _b = options.strictMatching, strictMatching = _b === void 0 ? true : _b, _c = options.disableNestedTypes, disableNestedTypes = _c === void 0 ? false : _c, _d = options.enumMinimumRowCount, enumMinimumRowCount = _d === void 0 ? 25 : _d, _e = options.enumAbsoluteLimit, _f = options.enumPercentThreshold, _g = options.nullableRowsThreshold, _h = options.uniqueRowsThreshold;
     var isEnumEnabled = input.length >= enumMinimumRowCount;
     var nestedData = {};
+    var pivotRowsGroupedByType = _pivotRowsGroupedByType({
+        schemaName: schemaName,
+        isEnumEnabled: isEnumEnabled,
+        disableNestedTypes: disableNestedTypes,
+        nestedData: nestedData,
+        strictMatching: strictMatching,
+        onProgress: onProgress,
+    });
     log("Starting");
     return Promise.resolve(input)
         .then(pivotRowsGroupedByType)
@@ -18637,30 +18651,21 @@ function schemaAnalyzer(schemaName, input, options) {
                 case 0:
                     log("Built summary from Field Type data.");
                     fields = Object.keys(schema.fields).reduce(function (fieldInfo, fieldName) {
-                        var typesInfo = schema.fields[fieldName];
-                        /* //* @type {FieldInfo} */
-                        fieldInfo[fieldName] = {
-                            types: typesInfo,
+                        var _a;
+                        var typesInfo = schema.fields[fieldName].types;
+                        var jobState = {
+                            rowCount: input.length,
+                            uniques: (_a = schema.uniques[fieldName]) !== null && _a !== void 0 ? _a : [],
                         };
-                        fieldInfo[fieldName] = typeHelpers.MetaChecks.TYPE_ENUM.check(fieldInfo[fieldName], {
-                            rowCount: input.length,
-                            uniques: schema.uniques && schema.uniques[fieldName],
-                        }, { enumAbsoluteLimit: enumAbsoluteLimit, enumPercentThreshold: enumPercentThreshold });
-                        fieldInfo[fieldName] = typeHelpers.MetaChecks.TYPE_NULLABLE.check(fieldInfo[fieldName], {
-                            rowCount: input.length,
-                            uniques: schema.uniques && schema.uniques[fieldName],
-                        }, { nullableRowsThreshold: nullableRowsThreshold });
-                        fieldInfo[fieldName] = typeHelpers.MetaChecks.TYPE_UNIQUE.check(fieldInfo[fieldName], {
-                            rowCount: input.length,
-                            uniques: schema.uniques && schema.uniques[fieldName],
-                        }, { uniqueRowsThreshold: uniqueRowsThreshold });
-                        // typesInfo.$ref
-                        var isIdentity = (typesInfo.Number || typesInfo.UUID) &&
-                            fieldInfo[fieldName].unique &&
-                            /id$/i.test(fieldName);
-                        if (isIdentity) {
+                        fieldInfo[fieldName] = { types: typesInfo };
+                        var fInfo = fieldInfo[fieldName];
+                        fieldInfo[fieldName] = TYPE_ENUM.check(fInfo, jobState, options);
+                        fieldInfo[fieldName] = TYPE_NULLABLE.check(fInfo, jobState, options);
+                        fieldInfo[fieldName] = TYPE_UNIQUE.check(fInfo, jobState, options);
+                        var isIdentity = (typesInfo.Number || typesInfo.UUID || typesInfo.ObjectId) &&
+                            /^(gu|uu|_)?id/i.test(fieldName);
+                        if (isIdentity)
                             fieldInfo[fieldName].identity = true;
-                        }
                         if (schema.uniques && schema.uniques[fieldName]) {
                             fieldInfo[fieldName].uniqueCount = schema.uniques[fieldName].length;
                         }
@@ -18673,7 +18678,7 @@ function schemaAnalyzer(schemaName, input, options) {
                     if (!disableNestedTypes) return [3 /*break*/, 1];
                     _a = undefined;
                     return [3 /*break*/, 3];
-                case 1: return [4 /*yield*/, nestedschemaAnalyzer(nestedData)];
+                case 1: return [4 /*yield*/, nestedSchemaAnalyzer(nestedData)];
                 case 2:
                     _a = _c.sent();
                     _c.label = 3;
@@ -18682,7 +18687,7 @@ function schemaAnalyzer(schemaName, input, options) {
             }
         });
     }); });
-    function nestedschemaAnalyzer(nestedData) {
+    function nestedSchemaAnalyzer(nestedData) {
         var _this = this;
         return Object.entries(nestedData).reduce(function (nestedTypeSummaries, _a) {
             var fullTypeName = _a[0], data = _a[1];
@@ -18704,28 +18709,40 @@ function schemaAnalyzer(schemaName, input, options) {
             });
         }, {});
     }
-    /**
-     * @param {object[]} docs
-     * @returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
-     */
-    function pivotRowsGroupedByType(docs) {
+}
+exports.schemaAnalyzer = schemaAnalyzer;
+/**
+ * @//returns {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
+ */
+var _pivotRowsGroupedByType = function (_a) {
+    var schemaName = _a.schemaName, isEnumEnabled = _a.isEnumEnabled, disableNestedTypes = _a.disableNestedTypes, nestedData = _a.nestedData, strictMatching = _a.strictMatching, onProgress = _a.onProgress;
+    return function pivotRowsGroupedByType(docs) {
         var detectedSchema = {
             uniques: isEnumEnabled ? {} : null,
             fieldsData: {},
             totalRows: null,
         };
         log("  About to examine every row & cell. Found " + docs.length + " records...");
+        var evaluateSchemaLevel = _evaluateSchemaLevel({
+            schemaName: schemaName,
+            isEnumEnabled: isEnumEnabled,
+            disableNestedTypes: disableNestedTypes,
+            nestedData: nestedData,
+            strictMatching: strictMatching,
+            onProgress: onProgress,
+        });
         var pivotedSchema = docs.reduce(evaluateSchemaLevel, detectedSchema);
         log("  Extracted data points from Field Type analysis");
         return pivotedSchema;
-    }
-    /**
-     * @param {{ totalRows: number; uniques: { [x: string]: any[]; }; fieldsData: { [x: string]: InternalFieldTypeData[]; }; }} schema
-     * @param {{ [x: string]: any; }} row
-     * @param {number} index
-     * @param {any[]} array
-     */
-    function evaluateSchemaLevel(schema, row, index, array) {
+    };
+};
+/**
+ * internal
+ * @private
+ */
+var _evaluateSchemaLevel = function (_a) {
+    var schemaName = _a.schemaName, isEnumEnabled = _a.isEnumEnabled, disableNestedTypes = _a.disableNestedTypes, nestedData = _a.nestedData, strictMatching = _a.strictMatching, onProgress = _a.onProgress;
+    return function evaluateSchemaLevel(schema, row, index, array) {
         // eslint-disable-line
         schema.totalRows = schema.totalRows || array.length;
         var fieldNames = Object.keys(row);
@@ -18737,20 +18754,27 @@ function schemaAnalyzer(schemaName, input, options) {
             var value = row[fieldName];
             var typeFingerprint = getFieldMetadata({ value: value, strictMatching: strictMatching });
             var typeNames = Object.keys(typeFingerprint);
-            var isPossibleEnumType = typeNames.includes("Number") || typeNames.includes("String");
+            var isPossibleEnumOrUniqueType = typeNames.includes("Number") ||
+                typeNames.includes("String") ||
+                typeNames.includes("UUID") ||
+                typeNames.includes("ObjectId");
             if (!disableNestedTypes) {
                 // TODO: Review hackey pattern here (buffers too much, better association of custom types, see `$ref`)
                 // Steps: 1. Check if Array of Objects, 2. Add to local `nestedData` to hold data for post-processing.
                 if (Array.isArray(value) &&
                     value.length >= 1 &&
                     typeof value[0] === "object") {
-                    nestedData[schemaName + "." + fieldName] =
-                        nestedData[schemaName + "." + fieldName] || [];
-                    (_a = nestedData[schemaName + "." + fieldName]).push.apply(_a, value);
-                    typeFingerprint.$ref = schemaName + "." + fieldName;
+                    var keyPath = schemaName + "." + fieldName;
+                    nestedData[keyPath] = nestedData[keyPath] || [];
+                    (_a = nestedData[keyPath]).push.apply(_a, value);
+                    typeFingerprint.$ref = typeFingerprint.$ref || {
+                        rank: -12,
+                        count: index,
+                    };
+                    typeFingerprint.$ref.typeAlias = keyPath;
                 }
             }
-            if (isEnumEnabled && isPossibleEnumType) {
+            if (isEnumEnabled && isPossibleEnumOrUniqueType) {
                 schema.uniques[fieldName] = schema.uniques[fieldName] || [];
                 if (!schema.uniques[fieldName].includes(value))
                     schema.uniques[fieldName].push(row[fieldName]);
@@ -18760,11 +18784,23 @@ function schemaAnalyzer(schemaName, input, options) {
             schema.fieldsData[fieldName] = schema.fieldsData[fieldName] || [];
             schema.fieldsData[fieldName].push(typeFingerprint);
         });
-        onProgress({ totalRows: schema.totalRows, currentRow: index + 1 });
+        var totalRows = schema.totalRows;
+        var isDone = index + 1 === totalRows;
+        var progressFrequencyModulo = totalRows >= 2500 ? 50 : totalRows >= 1000 ? 25 : 10;
+        var showProgress = isDone || index % progressFrequencyModulo === 0;
+        if (onProgress && showProgress) {
+            // console.log("FIRE.onProgress:", totalRows, index + 1);
+            // setImmediate(() => {
+            onProgress({
+                totalRows: totalRows,
+                currentRow: index + 1,
+                nestedTypes: nestedData && Object.keys(nestedData),
+            });
+            // });
+        }
         return schema;
-    }
-}
-exports.schemaAnalyzer = schemaAnalyzer;
+    };
+};
 /**
  * Returns a fieldName keyed-object with type detection summary data.
  *
@@ -18801,13 +18837,18 @@ function condenseFieldData(schema) {
     var fieldSummary = {};
     log("Pre-condenseFieldSizes(fields[fieldName]) for " + fieldNames.length + " columns");
     fieldNames.forEach(function (fieldName) {
+        var _a, _b;
         var pivotedData = pivotFieldDataByType(fieldsData[fieldName]);
-        fieldSummary[fieldName] = condenseFieldSizes(pivotedData);
-        if (pivotedData.$ref && pivotedData.$ref.count > 1) {
+        fieldSummary[fieldName] = fieldSummary[fieldName] || { types: {} };
+        fieldSummary[fieldName].types = condenseFieldSizes(pivotedData);
+        if ((_b = (_a = pivotedData.$ref) === null || _a === void 0 ? void 0 : _a.count) !== null && _b !== void 0 ? _b : 0 > 1) {
             // Prevent overriding the $ref type label
             // 1. Find the first $ref
             var refType = fieldsData[fieldName].find(function (typeRefs) { return typeRefs.$ref; });
-            fieldSummary[fieldName].$ref.typeAlias = refType.$ref;
+            // if (!fieldSummary[fieldName]?.types?.$ref) {
+            //   throw new Error(`Invalid nested type $ref: fieldSummary[${fieldName}].types.$ref`)
+            // }
+            fieldSummary[fieldName].types.$ref.typeAlias = refType.$ref.typeAlias;
         }
         // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
     });
@@ -18815,15 +18856,11 @@ function condenseFieldData(schema) {
     log("Replaced fieldData with fieldSummary");
     return {
         fields: fieldSummary,
-        uniques: schema.uniques,
+        uniques: schema.uniques || {},
         totalRows: schema.totalRows,
     };
 }
 exports._condenseFieldData = condenseFieldData;
-/* //*
- * @param {Object.<string, { value?, length?, scale?, precision?, invalid? }>[]} typeSizeData - An object containing the
- * @returns {Object.<string, InternalFieldTypeData>}
- */
 function pivotFieldDataByType(typeSizeData) {
     // const blankTypeSums = () => ({ length: 0, scale: 0, precision: 0 })
     log("Processing " + typeSizeData.length + " type guesses");
@@ -18868,91 +18905,91 @@ function pivotFieldDataByType(typeSizeData) {
 exports._pivotFieldDataByType = pivotFieldDataByType;
 /**
  * Internal function which analyzes and summarizes each columns data by type. Sort of a histogram of significant points.
- * @private
- *
- * @//param {Object.<string, InternalFieldTypeData>} pivotedDataByType - a map organized by Type keys (`TypeName`), containing extracted data for the returned `FieldSummary`.
- * @//returns {Object.<string, FieldTypeSummary>} - The final output, with histograms of significant points
  */
 function condenseFieldSizes(pivotedDataByType) {
     var aggregateSummary = {};
     log("Starting condenseFieldSizes()");
-    Object.keys(pivotedDataByType).map(function (typeName) {
-        var _a, _b, _c, _d;
+    Object.keys(pivotedDataByType).map(function (typeName, idx, arr) {
         aggregateSummary[typeName] = {
             // typeName,
             rank: typeHelpers.typeRankings[typeName] || -42,
-            count: pivotedDataByType[typeName].count || -1,
+            count: pivotedDataByType[typeName].count,
         };
-        if (aggregateSummary[typeName]) {
-            if (typeName === "$ref" && aggregateSummary[typeName]) {
-                console.log("pivotedDataByType.$ref", JSON.stringify(pivotedDataByType.$ref, null, 2));
-                aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref.typeAlias;
-            }
-            else {
-                if (pivotedDataByType[typeName].value)
-                    aggregateSummary[typeName].value = getNumberRangeStats(((_a = pivotedDataByType[typeName]) === null || _a === void 0 ? void 0 : _a.value) || []);
-                if (pivotedDataByType[typeName].length)
-                    aggregateSummary[typeName].length = getNumberRangeStats(((_b = pivotedDataByType[typeName]) === null || _b === void 0 ? void 0 : _b.length) || [], true);
-                if (pivotedDataByType[typeName].scale)
-                    aggregateSummary[typeName].scale = getNumberRangeStats(((_c = pivotedDataByType[typeName]) === null || _c === void 0 ? void 0 : _c.scale) || [], true);
-                if (pivotedDataByType[typeName].precision)
-                    aggregateSummary[typeName].precision = getNumberRangeStats(((_d = pivotedDataByType[typeName]) === null || _d === void 0 ? void 0 : _d.precision) || [], true);
-            }
-            // if (pivotedDataByType[typeName].invalid) { aggregateSummary[typeName]!.invalid = pivotedDataByType[typeName].invalid }
-            if (aggregateSummary[typeName] &&
-                ["Timestamp", "Date"].indexOf(typeName) > -1) {
-                // @ts-ignore
-                aggregateSummary[typeName].value = formatRangeStats(aggregateSummary[typeName].value || {}, parseDate);
-            }
+        if (typeName === "$ref" && aggregateSummary[typeName]) {
+            // console.log(
+            //   "pivotedDataByType.$ref",
+            //   JSON.stringify(pivotedDataByType.$ref, null, 2)
+            // );
+            aggregateSummary[typeName].typeAlias = pivotedDataByType.$ref.typeAlias;
+        }
+        else {
+            if (pivotedDataByType[typeName].value)
+                aggregateSummary[typeName].value = getNumberRangeStats(pivotedDataByType[typeName].value);
+            if (pivotedDataByType[typeName].length)
+                aggregateSummary[typeName].length = getNumberRangeStats(pivotedDataByType[typeName].length, true);
+            if (pivotedDataByType[typeName].scale)
+                aggregateSummary[typeName].scale = getNumberRangeStats(pivotedDataByType[typeName].scale, true);
+            if (pivotedDataByType[typeName].precision)
+                aggregateSummary[typeName].precision = getNumberRangeStats(pivotedDataByType[typeName].precision, true);
+        }
+        if (aggregateSummary[typeName] &&
+            ["Timestamp", "Date"].indexOf(typeName) > -1) {
+            aggregateSummary[typeName].value = formatRangeStats(aggregateSummary[typeName].value, exports.parseDate);
         }
     });
     log("Done condenseFieldSizes()...");
     return aggregateSummary;
 }
 function getFieldMetadata(_a) {
-    var _b = _a.value, value = _b === void 0 ? null : _b, _c = _a.strictMatching, strictMatching = _c === void 0 ? false : _c;
+    var value = _a.value, strictMatching = _a.strictMatching;
     // Get initial pass at the data with the TYPE_* `.check()` methods.
     var typeGuesses = typeHelpers.detectTypes(value, strictMatching);
     // Assign initial metadata for each matched type below
-    return typeGuesses.reduce(function (analysis, typeGuess, rank) {
-        var _a, _b;
+    return typeGuesses.reduce(function (analysis, typeGuess, index) {
         var length;
         var precision;
         var scale;
-        analysis[typeGuess] = { rank: rank + 1, count: 1 };
+        var rank = index + 1;
+        var count = 1;
+        analysis[typeGuess] = { rank: rank, count: count };
         if (typeGuess === "Array") {
             length = value.length;
-            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { length: length });
+            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank, count: count, length: length });
         }
         if (typeGuess === "Float") {
             value = parseFloat(String(value));
-            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { value: value });
+            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank, count: count, value: value });
             var significandAndMantissa = String(value).split(".");
             if (significandAndMantissa.length === 2) {
                 precision = significandAndMantissa.join("").length; // total # of numeric positions before & after decimal
-                scale = (_b = (_a = significandAndMantissa[1]) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0;
-                analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { precision: precision, scale: scale });
+                scale = significandAndMantissa[1].length;
+                analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank,
+                    count: count,
+                    precision: precision,
+                    scale: scale });
             }
         }
         if (typeGuess === "Number") {
             value = Number(value);
-            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { value: value });
+            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank, count: count, value: value });
         }
         if (typeGuess === "Date" || typeGuess === "Timestamp") {
             var checkedDate = isValidDate(value);
             if (checkedDate) {
-                analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { value: checkedDate.getTime() });
+                analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank,
+                    count: count, value: checkedDate.getTime() });
                 // } else {
                 //   analysis[typeGuess] = { ...analysis[typeGuess], invalid: true, value: value }
             }
         }
         if (typeGuess === "String" || typeGuess === "Email") {
             length = String(value).length;
-            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { length: length });
+            analysis[typeGuess] = tslib_es6.__assign(tslib_es6.__assign({}, analysis[typeGuess]), { rank: rank, count: count, length: length });
         }
         return analysis;
     }, {});
 }
+exports._getFieldMetadata = getFieldMetadata;
 /**
  * Accepts an array of numbers and returns summary data about
  *  the range & spread of points in the set.
@@ -19006,8 +19043,10 @@ exports._formatRangeStats = formatRangeStats;
 
 var index = unwrapExports(schemaDetector);
 var schemaDetector_1 = schemaDetector._isValidDate;
-var schemaDetector_2 = schemaDetector.schemaAnalyzer;
+var schemaDetector_2 = schemaDetector._getFieldMetadata;
 var schemaDetector_3 = schemaDetector._formatRangeStats;
 var schemaDetector_4 = schemaDetector._getNumberRangeStats;
 var schemaDetector_5 = schemaDetector._pivotFieldDataByType;
-var schemaDetector_6 = schemaDetector._condenseFieldData;exports._condenseFieldData=schemaDetector_6;exports._formatRangeStats=schemaDetector_3;exports._getNumberRangeStats=schemaDetector_4;exports._isValidDate=schemaDetector_1;exports._pivotFieldDataByType=schemaDetector_5;exports.default=index;exports.schemaAnalyzer=schemaDetector_2;Object.defineProperty(exports,'__esModule',{value:true});})));//# sourceMappingURL=schema-analyzer.umd.js.map
+var schemaDetector_6 = schemaDetector._condenseFieldData;
+var schemaDetector_7 = schemaDetector.schemaAnalyzer;
+var schemaDetector_8 = schemaDetector.parseDate;exports._condenseFieldData=schemaDetector_6;exports._formatRangeStats=schemaDetector_3;exports._getFieldMetadata=schemaDetector_2;exports._getNumberRangeStats=schemaDetector_4;exports._isValidDate=schemaDetector_1;exports._pivotFieldDataByType=schemaDetector_5;exports.default=index;exports.parseDate=schemaDetector_8;exports.schemaAnalyzer=schemaDetector_7;Object.defineProperty(exports,'__esModule',{value:true});})));//# sourceMappingURL=schema-analyzer.umd.js.map
