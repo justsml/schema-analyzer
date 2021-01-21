@@ -8,7 +8,12 @@ import {
 import path from "path";
 import fs from "fs";
 import csvParse from "csv-parse";
-import UserNotes from "./__tests__/user-notes.json";
+
+import userNotes from "./__tests__/user-notes.json";
+import properties from "./__tests__/real-estate.example.json";
+import people from "./__tests__/swapi-people.json";
+import users from "./__tests__/users.example.json";
+import { flattenTypes } from "./utils/helpers";
 
 const productCsv: Promise<any[]> = parseCsv(
   fs.readFileSync(
@@ -36,13 +41,10 @@ function parseCsv(content): Promise<any[]> {
 
 const isCI = process.env.CI;
 
-/** example structured data */
-const getUsers = () => UserNotes;
-
 describe("handles invalid usage", () => {
   it("handles missing arguments", () => {
-    expect(() => schemaAnalyzer("test", [{}, {}], {})).toThrowError(
-      /requires at least 5/
+    expect(() => schemaAnalyzer("test", [])).toThrowError(
+      /record required/
     );
     expect(() => schemaAnalyzer("test", ["test"])).toThrowError(
       /must be an Array of Objects/
@@ -58,24 +60,12 @@ describe("handles invalid usage", () => {
 
 describe("primary use-cases", () => {
   it("analyze users.json", () => {
-    const users = JSON.parse(
-      fs.readFileSync(
-        path.resolve(__dirname, "./__tests__/users.example.json"),
-        "utf8"
-      )
-    );
     return schemaAnalyzer("users", users).then((result) =>
       expect(result).toMatchSnapshot("usersResult")
     );
   });
 
   it("analyze properties.json", () => {
-    const properties = JSON.parse(
-      fs.readFileSync(
-        path.resolve(__dirname, "./__tests__/real-estate.example.json"),
-        "utf8"
-      )
-    );
     return schemaAnalyzer("properties", properties, {
       disableNestedTypes: true,
     }).then((result) => expect(result).toMatchSnapshot("propertiesResult"));
@@ -117,14 +107,11 @@ describe("primary use-cases", () => {
   });
 
   it("analyze people.json", () => {
-    const people = JSON.parse(
-      fs.readFileSync(
-        path.resolve(__dirname, "./__tests__/swapi-people.json"),
-        "utf8"
-      )
-    );
+    // @ts-ignore
     people[0].created = new Date(people[0].created);
+    // @ts-ignore
     people[1].created = new Date("0000-01-01");
+    // @ts-ignore
     people[2].created = new Date("x");
     return schemaAnalyzer("people", people).then((result) => {
       // if (!isCI) console.log('people', JSON.stringify(result, null, 2))
@@ -133,8 +120,7 @@ describe("primary use-cases", () => {
   });
 
   it("can handle nested types", () => {
-    const users = getUsers();
-    return schemaAnalyzer("users", users).then((result) => {
+    return schemaAnalyzer("users", userNotes).then((result) => {
       expect(result.fields.name).toBeDefined();
       // if (!isCI) console.log('result.fields.id', result.fields.id)
       // if (!isCI) console.log('result.fields.name', result.fields.name)
@@ -158,12 +144,6 @@ describe("primary use-cases", () => {
   });
 
   it("can analyze schema w/ enum options", () => {
-    const properties = JSON.parse(
-      fs.readFileSync(
-        path.resolve(__dirname, "./__tests__/real-estate.example.json"),
-        "utf8"
-      )
-    );
     const lowEnumLimitLoosePct = schemaAnalyzer("properties", properties, {
       enumMinimumRowCount: 10,
       enumAbsoluteLimit: 30,
@@ -214,16 +194,34 @@ describe("primary use-cases", () => {
   });
 });
 
-describe("behavior verification", () => {
+describe("progress api", () => {
   it("can run onProgress callback, until done", () => {
     const onProgress = jest.fn();
-    const users = getUsers();
-    return schemaAnalyzer("users", users, { onProgress }).then((result) => {
+    return schemaAnalyzer("users", userNotes, { onProgress })
+    .then((result) => {
       // const progMock = onProgress.mock.calls
       const mockRunCount = onProgress.mock.instances.length;
       // const lastCall = progMock[progMock.length - 1]
       expect(result.fields.name).toBeDefined();
       expect(mockRunCount).toBeGreaterThan(1);
+    });
+  });
+});
+
+describe("helper methods", () => {
+  it("can flatten types", () => {
+    return schemaAnalyzer("users", userNotes).then((analysis) => {
+      const result = flattenTypes(analysis);
+      expect(result.fields.name?.nullable).toBeFalsy();
+      expect(result.fields.name?.type).toBe('String')
+      expect(result.fields.notes).toBeDefined();
+      expect(result.fields?.notes?.typeRef).toBe("users.notes");
+      expect(result.nestedTypes).toBeDefined();
+      // @ts-ignore
+      expect(result.nestedTypes["users.notes"]).toBeDefined();
+      // @ts-ignore
+      expect(result.nestedTypes["users.notes"].fields.id.identity).toBeTruthy();
+      expect(result).toMatchSnapshot("flattenedTypeInfo");
     });
   });
 });

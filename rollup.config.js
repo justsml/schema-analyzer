@@ -5,6 +5,8 @@ import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 
 import { terser } from 'rollup-plugin-terser'
+import builtins from 'rollup-plugin-node-builtins'
+import globals from 'rollup-plugin-node-globals'
 import pkg from './package.json'
 import { ModuleKind } from 'typescript'
 
@@ -40,6 +42,7 @@ export default [
       file: `${pkg.browser}`.replace('.js', `${fileExtension}.js`),
       format: 'umd',
       globals: includePackages,
+      exports: 'named',
       ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
@@ -53,6 +56,8 @@ export default [
         },
         browser: true
       }), // so Rollup can find `ms`
+      globals(),
+      builtins(),
       commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
@@ -64,6 +69,7 @@ export default [
       file: `${pkg.main.replace('.js', '')}${fileExtension}.js`,
       format: 'cjs',
       globals: includePackages,
+      exports: 'named',
       ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
@@ -77,6 +83,8 @@ export default [
         },
         browser: true
       }), // so Rollup can find `ms`
+      globals(),
+      builtins(),
       commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
@@ -88,6 +96,7 @@ export default [
       file: `${pkg.module.replace('.js', '')}${fileExtension}.js`,
       format: 'es',
       globals: {}, // includePackages,
+      exports: 'named',
       ...envOptions
     },
     // external: [/lodash.*/, 'debug'],
@@ -100,7 +109,9 @@ export default [
           moduleDirectory: 'node_modules'
         },
         browser: true
-      }) // so Rollup can find `ms`
+      }), // so Rollup can find `ms`
+      globals(),
+      builtins()
       // commonjs({extensions: ['.js', '.ts']})
     ].concat(...extraPlugins)
   }

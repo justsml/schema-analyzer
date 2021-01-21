@@ -1,5 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`helper methods can flatten types: flattenedTypeInfo 1`] = `
+Object {
+  "fields": Object {
+    "id": Object {
+      "enum": undefined,
+      "identity": true,
+      "nullable": undefined,
+      "type": "Number",
+      "typeRef": undefined,
+      "unique": undefined,
+    },
+    "name": Object {
+      "enum": undefined,
+      "identity": undefined,
+      "nullable": undefined,
+      "type": "String",
+      "typeRef": undefined,
+      "unique": undefined,
+    },
+    "notes": Object {
+      "enum": undefined,
+      "identity": undefined,
+      "nullable": undefined,
+      "type": "Array",
+      "typeRef": "users.notes",
+      "unique": undefined,
+    },
+  },
+  "nestedTypes": Object {
+    "users.notes": Object {
+      "fields": Object {
+        "id": Object {
+          "enum": undefined,
+          "identity": true,
+          "nullable": undefined,
+          "type": "Number",
+          "typeRef": undefined,
+          "unique": undefined,
+        },
+        "text": Object {
+          "enum": undefined,
+          "identity": undefined,
+          "nullable": undefined,
+          "type": "String",
+          "typeRef": undefined,
+          "unique": undefined,
+        },
+      },
+      "nestedTypes": Object {},
+      "schemaName": "notes",
+      "totalRows": 6,
+    },
+  },
+  "schemaName": "users",
+  "totalRows": 5,
+}
+`;
+
 exports[`primary use-cases analyze all 3K+ rows in products.csv: productsResult 1`] = `
 Object {
   "fields": Object {
@@ -1068,6 +1126,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "products",
   "totalRows": 3135,
 }
 `;
@@ -1230,6 +1289,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "sampleCsv",
   "totalRows": 5,
 }
 `;
@@ -1672,6 +1732,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "people",
   "totalRows": 40,
 }
 `;
@@ -3657,6 +3718,7 @@ Object {
     },
   },
   "nestedTypes": undefined,
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -4521,6 +4583,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "products",
   "totalRows": 250,
 }
 `;
@@ -5523,6 +5586,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "products",
   "totalRows": 1250,
 }
 `;
@@ -5859,6 +5923,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "users",
   "totalRows": 26,
 }
 `;
@@ -7684,6 +7749,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -9669,6 +9735,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -11654,6 +11721,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -13639,6 +13707,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -15624,6 +15693,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -17609,6 +17679,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -19724,6 +19795,7 @@ Object {
     },
   },
   "nestedTypes": Object {},
+  "schemaName": "properties",
   "totalRows": 100,
 }
 `;
@@ -19756,15 +19828,15 @@ Object {
         "String": Object {
           "count": 5,
           "length": Object {
-            "max": 4,
-            "mean": 3.8,
+            "max": 3,
+            "mean": 3,
             "min": 3,
-            "p25": 4,
-            "p33": 4,
-            "p50": 4,
-            "p66": 4,
-            "p75": 4,
-            "p99": 4,
+            "p25": 3,
+            "p33": 3,
+            "p50": 3,
+            "p66": 3,
+            "p75": 3,
+            "p99": 3,
           },
           "rank": 12,
         },
@@ -19773,7 +19845,7 @@ Object {
     "notes": Object {
       "types": Object {
         "$ref": Object {
-          "count": 5,
+          "count": 3,
           "rank": -42,
           "typeAlias": "users.notes",
         },
@@ -19781,12 +19853,12 @@ Object {
           "count": 5,
           "length": Object {
             "max": 3,
-            "mean": 3,
-            "min": 3,
-            "p25": 3,
-            "p33": 3,
-            "p50": 3,
-            "p66": 3,
+            "mean": 2,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 2,
+            "p66": 2,
             "p75": 3,
             "p99": 3,
           },
@@ -19802,33 +19874,33 @@ Object {
           "identity": true,
           "types": Object {
             "Date": Object {
-              "count": 12,
+              "count": 3,
               "rank": 4,
               "value": Object {
-                "max": "1970-01-01T00:00:04.999Z",
-                "mean": "1970-01-01T00:00:03.498Z",
+                "max": "1970-01-01T00:00:02.998Z",
+                "mean": "1970-01-01T00:00:02.664Z",
                 "min": "1970-01-01T00:00:01.997Z",
-                "p25": "1970-01-01T00:00:02.997Z",
-                "p33": "1970-01-01T00:00:02.997Z",
-                "p50": "1970-01-01T00:00:03.997Z",
-                "p66": "1970-01-01T00:00:03.998Z",
-                "p75": "1970-01-01T00:00:04.997Z",
-                "p99": "1970-01-01T00:00:04.999Z",
+                "p25": "1970-01-01T00:00:01.997Z",
+                "p33": "1970-01-01T00:00:01.997Z",
+                "p50": "1970-01-01T00:00:02.997Z",
+                "p66": "1970-01-01T00:00:02.997Z",
+                "p75": "1970-01-01T00:00:02.998Z",
+                "p99": "1970-01-01T00:00:02.998Z",
               },
             },
             "Number": Object {
-              "count": 15,
+              "count": 6,
               "rank": 8,
               "value": Object {
-                "max": 4999,
-                "mean": 2998,
+                "max": 2998,
+                "mean": 1831,
                 "min": 997,
-                "p25": 1997,
-                "p33": 1998,
-                "p50": 2998,
-                "p66": 3997,
-                "p75": 3999,
-                "p99": 4999,
+                "p25": 998,
+                "p33": 998,
+                "p50": 1997,
+                "p66": 1997,
+                "p75": 2997,
+                "p99": 2998,
               },
             },
           },
@@ -19836,7 +19908,7 @@ Object {
         "text": Object {
           "types": Object {
             "String": Object {
-              "count": 15,
+              "count": 6,
               "length": Object {
                 "max": 5,
                 "mean": 5,
@@ -19854,9 +19926,11 @@ Object {
         },
       },
       "nestedTypes": Object {},
-      "totalRows": 15,
+      "schemaName": "notes",
+      "totalRows": 6,
     },
   },
+  "schemaName": "users",
   "totalRows": 5,
 }
 `;

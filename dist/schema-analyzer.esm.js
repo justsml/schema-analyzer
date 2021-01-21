@@ -1,4 +1,4 @@
-'use strict';Object.defineProperty(exports,'__esModule',{value:true});function _interopDefault(e){return(e&&(typeof e==='object')&&'default'in e)?e['default']:e}var tty=_interopDefault(require('tty')),util$1=_interopDefault(require('util')),os=_interopDefault(require('os'));function unwrapExports (x) {
+'use strict';Object.defineProperty(exports,'__esModule',{value:true});function unwrapExports (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
@@ -243,8 +243,10 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
     }
     privateMap.set(receiver, value);
     return value;
-}var tslib_es6=/*#__PURE__*/Object.freeze({__proto__:null,__extends: __extends,get __assign(){return __assign},__rest: __rest,__decorate: __decorate,__param: __param,__metadata: __metadata,__awaiter: __awaiter,__generator: __generator,__createBinding: __createBinding,__exportStar: __exportStar,__values: __values,__read: __read,__spread: __spread,__spreadArrays: __spreadArrays,__spreadArray: __spreadArray,__await: __await,__asyncGenerator: __asyncGenerator,__asyncDelegator: __asyncDelegator,__asyncValues: __asyncValues,__makeTemplateObject: __makeTemplateObject,__importStar: __importStar,__importDefault: __importDefault,__classPrivateFieldGet: __classPrivateFieldGet,__classPrivateFieldSet: __classPrivateFieldSet});/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;/** Detect free variable `self`. */
+}var tslib_es6=/*#__PURE__*/Object.freeze({__proto__:null,__extends: __extends,get __assign(){return __assign},__rest: __rest,__decorate: __decorate,__param: __param,__metadata: __metadata,__awaiter: __awaiter,__generator: __generator,__createBinding: __createBinding,__exportStar: __exportStar,__values: __values,__read: __read,__spread: __spread,__spreadArrays: __spreadArrays,__spreadArray: __spreadArray,__await: __await,__asyncGenerator: __asyncGenerator,__asyncDelegator: __asyncDelegator,__asyncValues: __asyncValues,__makeTemplateObject: __makeTemplateObject,__importStar: __importStar,__importDefault: __importDefault,__classPrivateFieldGet: __classPrivateFieldGet,__classPrivateFieldSet: __classPrivateFieldSet});var global$1 = (typeof global !== "undefined" ? global :
+            typeof self !== "undefined" ? self :
+            typeof window !== "undefined" ? window : {});/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global$1 == 'object' && global$1 && global$1.Object === Object && global$1;/** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
@@ -10052,7 +10054,7 @@ var nativeIsFinite$1 = root.isFinite;
  * _.isFinite('3');
  * // => false
  */
-function isFinite$1(value) {
+function isFinite(value) {
   return typeof value == 'number' && nativeIsFinite$1(value);
 }/**
  * Checks if `value` is an integer.
@@ -16198,7 +16200,7 @@ var zipWith = baseRest(function(arrays) {
   conformsTo, eq, gt, gte, isArguments,
   isArray, isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean,
   isBuffer, isDate, isElement, isEmpty, isEqual,
-  isEqualWith, isError, isFinite: isFinite$1, isFunction, isInteger,
+  isEqualWith, isError, isFinite, isFunction, isInteger,
   isLength, isMap, isMatch, isMatchWith, isNaN: isNaN$1,
   isNative, isNil, isNull, isNumber, isObject,
   isObjectLike, isPlainObject, isRegExp, isSafeInteger, isSet,
@@ -16982,7 +16984,7 @@ if (symIterator$1) {
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- */var lodash$1=/*#__PURE__*/Object.freeze({__proto__:null,add: add,after: after,ary: ary,assign: assign,assignIn: assignIn,assignInWith: assignInWith,assignWith: assignWith,at: at,attempt: attempt,before: before,bind: bind,bindAll: bindAll,bindKey: bindKey,camelCase: camelCase,capitalize: capitalize,castArray: castArray,ceil: ceil,chain: chain,chunk: chunk,clamp: clamp,clone: clone,cloneDeep: cloneDeep,cloneDeepWith: cloneDeepWith,cloneWith: cloneWith,commit: wrapperCommit,compact: compact,concat: concat,cond: cond,conforms: conforms,conformsTo: conformsTo,constant: constant,countBy: countBy,create: create,curry: curry,curryRight: curryRight,debounce: debounce,deburr: deburr,defaultTo: defaultTo,defaults: defaults,defaultsDeep: defaultsDeep,defer: defer,delay: delay,difference: difference,differenceBy: differenceBy,differenceWith: differenceWith,divide: divide,drop: drop,dropRight: dropRight,dropRightWhile: dropRightWhile,dropWhile: dropWhile,each: forEach,eachRight: forEachRight,endsWith: endsWith,entries: toPairs,entriesIn: toPairsIn,eq: eq,escape: escape,escapeRegExp: escapeRegExp,every: every,extend: assignIn,extendWith: assignInWith,fill: fill,filter: filter,find: find,findIndex: findIndex,findKey: findKey,findLast: findLast,findLastIndex: findLastIndex,findLastKey: findLastKey,first: head,flatMap: flatMap,flatMapDeep: flatMapDeep,flatMapDepth: flatMapDepth,flatten: flatten,flattenDeep: flattenDeep,flattenDepth: flattenDepth,flip: flip,floor: floor,flow: flow,flowRight: flowRight,forEach: forEach,forEachRight: forEachRight,forIn: forIn,forInRight: forInRight,forOwn: forOwn,forOwnRight: forOwnRight,fromPairs: fromPairs,functions: functions,functionsIn: functionsIn,get: get,groupBy: groupBy,gt: gt,gte: gte,has: has,hasIn: hasIn,head: head,identity: identity,inRange: inRange,includes: includes,indexOf: indexOf,initial: initial,intersection: intersection,intersectionBy: intersectionBy,intersectionWith: intersectionWith,invert: invert,invertBy: invertBy,invoke: invoke,invokeMap: invokeMap,isArguments: isArguments,isArray: isArray,isArrayBuffer: isArrayBuffer,isArrayLike: isArrayLike,isArrayLikeObject: isArrayLikeObject,isBoolean: isBoolean,isBuffer: isBuffer,isDate: isDate,isElement: isElement,isEmpty: isEmpty,isEqual: isEqual,isEqualWith: isEqualWith,isError: isError,isFinite: isFinite$1,isFunction: isFunction,isInteger: isInteger,isLength: isLength,isMap: isMap,isMatch: isMatch,isMatchWith: isMatchWith,isNaN: isNaN$1,isNative: isNative,isNil: isNil,isNull: isNull,isNumber: isNumber,isObject: isObject,isObjectLike: isObjectLike,isPlainObject: isPlainObject,isRegExp: isRegExp,isSafeInteger: isSafeInteger,isSet: isSet,isString: isString,isSymbol: isSymbol,isTypedArray: isTypedArray,isUndefined: isUndefined,isWeakMap: isWeakMap,isWeakSet: isWeakSet,iteratee: iteratee,join: join,kebabCase: kebabCase,keyBy: keyBy,keys: keys,keysIn: keysIn,last: last,lastIndexOf: lastIndexOf,lodash: lodash,lowerCase: lowerCase,lowerFirst: lowerFirst,lt: lt,lte: lte,map: map,mapKeys: mapKeys,mapValues: mapValues,matches: matches,matchesProperty: matchesProperty,max: max,maxBy: maxBy,mean: mean,meanBy: meanBy,memoize: memoize,merge: merge,mergeWith: mergeWith,method: method,methodOf: methodOf,min: min,minBy: minBy,mixin: mixin,multiply: multiply,negate: negate,next: wrapperNext,noop: noop,now: now,nth: nth,nthArg: nthArg,omit: omit,omitBy: omitBy,once: once,orderBy: orderBy,over: over,overArgs: overArgs,overEvery: overEvery,overSome: overSome,pad: pad,padEnd: padEnd,padStart: padStart,parseInt: parseInt$1,partial: partial,partialRight: partialRight,partition: partition,pick: pick,pickBy: pickBy,plant: wrapperPlant,property: property,propertyOf: propertyOf,pull: pull,pullAll: pullAll,pullAllBy: pullAllBy,pullAllWith: pullAllWith,pullAt: pullAt,random: random,range: range,rangeRight: rangeRight,rearg: rearg,reduce: reduce,reduceRight: reduceRight,reject: reject,remove: remove,repeat: repeat,replace: replace,rest: rest,result: result,reverse: reverse,round: round,sample: sample,sampleSize: sampleSize,set: set,setWith: setWith,shuffle: shuffle,size: size,slice: slice,snakeCase: snakeCase,some: some,sortBy: sortBy,sortedIndex: sortedIndex,sortedIndexBy: sortedIndexBy,sortedIndexOf: sortedIndexOf,sortedLastIndex: sortedLastIndex,sortedLastIndexBy: sortedLastIndexBy,sortedLastIndexOf: sortedLastIndexOf,sortedUniq: sortedUniq,sortedUniqBy: sortedUniqBy,split: split,spread: spread,startCase: startCase,startsWith: startsWith,stubArray: stubArray,stubFalse: stubFalse,stubObject: stubObject,stubString: stubString,stubTrue: stubTrue,subtract: subtract,sum: sum,sumBy: sumBy,tail: tail,take: take,takeRight: takeRight,takeRightWhile: takeRightWhile,takeWhile: takeWhile,tap: tap,template: template,templateSettings: templateSettings,throttle: throttle,thru: thru,times: times,toArray: toArray,toFinite: toFinite,toInteger: toInteger,toIterator: wrapperToIterator,toJSON: wrapperValue,toLength: toLength,toLower: toLower,toNumber: toNumber,toPairs: toPairs,toPairsIn: toPairsIn,toPath: toPath,toPlainObject: toPlainObject,toSafeInteger: toSafeInteger,toString: toString,toUpper: toUpper,transform: transform,trim: trim,trimEnd: trimEnd,trimStart: trimStart,truncate: truncate,unary: unary,unescape: unescape,union: union,unionBy: unionBy,unionWith: unionWith,uniq: uniq,uniqBy: uniqBy,uniqWith: uniqWith,uniqueId: uniqueId,unset: unset,unzip: unzip,unzipWith: unzipWith,update: update,updateWith: updateWith,upperCase: upperCase,upperFirst: upperFirst,value: wrapperValue,valueOf: wrapperValue,values: values,valuesIn: valuesIn,without: without,words: words,wrap: wrap,wrapperAt: wrapperAt,wrapperChain: wrapperChain,wrapperCommit: wrapperCommit,wrapperLodash: lodash,wrapperNext: wrapperNext,wrapperPlant: wrapperPlant,wrapperReverse: wrapperReverse,wrapperToIterator: wrapperToIterator,wrapperValue: wrapperValue,xor: xor,xorBy: xorBy,xorWith: xorWith,zip: zip,zipObject: zipObject,zipObjectDeep: zipObjectDeep,zipWith: zipWith,'default': lodash});var lodash_es_1 = getCjsExportFromNamespace(lodash$1);var typeDetectors = createCommonjsModule(function (module, exports) {
+ */var lodash$1=/*#__PURE__*/Object.freeze({__proto__:null,add: add,after: after,ary: ary,assign: assign,assignIn: assignIn,assignInWith: assignInWith,assignWith: assignWith,at: at,attempt: attempt,before: before,bind: bind,bindAll: bindAll,bindKey: bindKey,camelCase: camelCase,capitalize: capitalize,castArray: castArray,ceil: ceil,chain: chain,chunk: chunk,clamp: clamp,clone: clone,cloneDeep: cloneDeep,cloneDeepWith: cloneDeepWith,cloneWith: cloneWith,commit: wrapperCommit,compact: compact,concat: concat,cond: cond,conforms: conforms,conformsTo: conformsTo,constant: constant,countBy: countBy,create: create,curry: curry,curryRight: curryRight,debounce: debounce,deburr: deburr,defaultTo: defaultTo,defaults: defaults,defaultsDeep: defaultsDeep,defer: defer,delay: delay,difference: difference,differenceBy: differenceBy,differenceWith: differenceWith,divide: divide,drop: drop,dropRight: dropRight,dropRightWhile: dropRightWhile,dropWhile: dropWhile,each: forEach,eachRight: forEachRight,endsWith: endsWith,entries: toPairs,entriesIn: toPairsIn,eq: eq,escape: escape,escapeRegExp: escapeRegExp,every: every,extend: assignIn,extendWith: assignInWith,fill: fill,filter: filter,find: find,findIndex: findIndex,findKey: findKey,findLast: findLast,findLastIndex: findLastIndex,findLastKey: findLastKey,first: head,flatMap: flatMap,flatMapDeep: flatMapDeep,flatMapDepth: flatMapDepth,flatten: flatten,flattenDeep: flattenDeep,flattenDepth: flattenDepth,flip: flip,floor: floor,flow: flow,flowRight: flowRight,forEach: forEach,forEachRight: forEachRight,forIn: forIn,forInRight: forInRight,forOwn: forOwn,forOwnRight: forOwnRight,fromPairs: fromPairs,functions: functions,functionsIn: functionsIn,get: get,groupBy: groupBy,gt: gt,gte: gte,has: has,hasIn: hasIn,head: head,identity: identity,inRange: inRange,includes: includes,indexOf: indexOf,initial: initial,intersection: intersection,intersectionBy: intersectionBy,intersectionWith: intersectionWith,invert: invert,invertBy: invertBy,invoke: invoke,invokeMap: invokeMap,isArguments: isArguments,isArray: isArray,isArrayBuffer: isArrayBuffer,isArrayLike: isArrayLike,isArrayLikeObject: isArrayLikeObject,isBoolean: isBoolean,isBuffer: isBuffer,isDate: isDate,isElement: isElement,isEmpty: isEmpty,isEqual: isEqual,isEqualWith: isEqualWith,isError: isError,isFinite: isFinite,isFunction: isFunction,isInteger: isInteger,isLength: isLength,isMap: isMap,isMatch: isMatch,isMatchWith: isMatchWith,isNaN: isNaN$1,isNative: isNative,isNil: isNil,isNull: isNull,isNumber: isNumber,isObject: isObject,isObjectLike: isObjectLike,isPlainObject: isPlainObject,isRegExp: isRegExp,isSafeInteger: isSafeInteger,isSet: isSet,isString: isString,isSymbol: isSymbol,isTypedArray: isTypedArray,isUndefined: isUndefined,isWeakMap: isWeakMap,isWeakSet: isWeakSet,iteratee: iteratee,join: join,kebabCase: kebabCase,keyBy: keyBy,keys: keys,keysIn: keysIn,last: last,lastIndexOf: lastIndexOf,lodash: lodash,lowerCase: lowerCase,lowerFirst: lowerFirst,lt: lt,lte: lte,map: map,mapKeys: mapKeys,mapValues: mapValues,matches: matches,matchesProperty: matchesProperty,max: max,maxBy: maxBy,mean: mean,meanBy: meanBy,memoize: memoize,merge: merge,mergeWith: mergeWith,method: method,methodOf: methodOf,min: min,minBy: minBy,mixin: mixin,multiply: multiply,negate: negate,next: wrapperNext,noop: noop,now: now,nth: nth,nthArg: nthArg,omit: omit,omitBy: omitBy,once: once,orderBy: orderBy,over: over,overArgs: overArgs,overEvery: overEvery,overSome: overSome,pad: pad,padEnd: padEnd,padStart: padStart,parseInt: parseInt$1,partial: partial,partialRight: partialRight,partition: partition,pick: pick,pickBy: pickBy,plant: wrapperPlant,property: property,propertyOf: propertyOf,pull: pull,pullAll: pullAll,pullAllBy: pullAllBy,pullAllWith: pullAllWith,pullAt: pullAt,random: random,range: range,rangeRight: rangeRight,rearg: rearg,reduce: reduce,reduceRight: reduceRight,reject: reject,remove: remove,repeat: repeat,replace: replace,rest: rest,result: result,reverse: reverse,round: round,sample: sample,sampleSize: sampleSize,set: set,setWith: setWith,shuffle: shuffle,size: size,slice: slice,snakeCase: snakeCase,some: some,sortBy: sortBy,sortedIndex: sortedIndex,sortedIndexBy: sortedIndexBy,sortedIndexOf: sortedIndexOf,sortedLastIndex: sortedLastIndex,sortedLastIndexBy: sortedLastIndexBy,sortedLastIndexOf: sortedLastIndexOf,sortedUniq: sortedUniq,sortedUniqBy: sortedUniqBy,split: split,spread: spread,startCase: startCase,startsWith: startsWith,stubArray: stubArray,stubFalse: stubFalse,stubObject: stubObject,stubString: stubString,stubTrue: stubTrue,subtract: subtract,sum: sum,sumBy: sumBy,tail: tail,take: take,takeRight: takeRight,takeRightWhile: takeRightWhile,takeWhile: takeWhile,tap: tap,template: template,templateSettings: templateSettings,throttle: throttle,thru: thru,times: times,toArray: toArray,toFinite: toFinite,toInteger: toInteger,toIterator: wrapperToIterator,toJSON: wrapperValue,toLength: toLength,toLower: toLower,toNumber: toNumber,toPairs: toPairs,toPairsIn: toPairsIn,toPath: toPath,toPlainObject: toPlainObject,toSafeInteger: toSafeInteger,toString: toString,toUpper: toUpper,transform: transform,trim: trim,trimEnd: trimEnd,trimStart: trimStart,truncate: truncate,unary: unary,unescape: unescape,union: union,unionBy: unionBy,unionWith: unionWith,uniq: uniq,uniqBy: uniqBy,uniqWith: uniqWith,uniqueId: uniqueId,unset: unset,unzip: unzip,unzipWith: unzipWith,update: update,updateWith: updateWith,upperCase: upperCase,upperFirst: upperFirst,value: wrapperValue,valueOf: wrapperValue,values: values,valuesIn: valuesIn,without: without,words: words,wrap: wrap,wrapperAt: wrapperAt,wrapperChain: wrapperChain,wrapperCommit: wrapperCommit,wrapperLodash: lodash,wrapperNext: wrapperNext,wrapperPlant: wrapperPlant,wrapperReverse: wrapperReverse,wrapperToIterator: wrapperToIterator,wrapperValue: wrapperValue,xor: xor,xorBy: xorBy,xorWith: xorWith,zip: zip,zipObject: zipObject,zipObjectDeep: zipObjectDeep,zipWith: zipWith,'default': lodash});var lodash_es_1 = getCjsExportFromNamespace(lodash$1);var typeDetectors = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isUuid = exports.isTimestamp = exports.isObjectId = exports.isNumeric = exports.isNullish = exports.isFloatish = exports.isEmailShaped = exports.isDateString = exports.isCurrency = exports.isBoolish = void 0;
 
@@ -17446,1133 +17448,281 @@ var typeHelpers_14 = typeHelpers.TYPE_UNKNOWN;
 var typeHelpers_15 = typeHelpers.MetaChecks;
 var typeHelpers_16 = typeHelpers.detectTypes;
 var typeHelpers_17 = typeHelpers.prioritizedTypes;
-var typeHelpers_18 = typeHelpers.typeRankings;/**
- * Helpers.
- */
+var typeHelpers_18 = typeHelpers.typeRankings;var helpers = createCommonjsModule(function (module, exports) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.flattenTypes = void 0;
 
-var s = 1000;
-var m = s * 60;
-var h = m * 60;
-var d = h * 24;
-var w = d * 7;
-var y = d * 365.25;
-
-/**
- * Parse or format the given `val`.
- *
- * Options:
- *
- *  - `long` verbose formatting [false]
- *
- * @param {String|Number} val
- * @param {Object} [options]
- * @throws {Error} throw an error if val is not a non-empty string or a number
- * @return {String|Number}
- * @api public
- */
-
-var ms = function(val, options) {
-  options = options || {};
-  var type = typeof val;
-  if (type === 'string' && val.length > 0) {
-    return parse(val);
-  } else if (type === 'number' && isFinite(val)) {
-    return options.long ? fmtLong(val) : fmtShort(val);
-  }
-  throw new Error(
-    'val is not a non-empty string or a valid number. val=' +
-      JSON.stringify(val)
-  );
-};
-
-/**
- * Parse the given `str` and return milliseconds.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function parse(str) {
-  str = String(str);
-  if (str.length > 100) {
-    return;
-  }
-  var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
-    str
-  );
-  if (!match) {
-    return;
-  }
-  var n = parseFloat(match[1]);
-  var type = (match[2] || 'ms').toLowerCase();
-  switch (type) {
-    case 'years':
-    case 'year':
-    case 'yrs':
-    case 'yr':
-    case 'y':
-      return n * y;
-    case 'weeks':
-    case 'week':
-    case 'w':
-      return n * w;
-    case 'days':
-    case 'day':
-    case 'd':
-      return n * d;
-    case 'hours':
-    case 'hour':
-    case 'hrs':
-    case 'hr':
-    case 'h':
-      return n * h;
-    case 'minutes':
-    case 'minute':
-    case 'mins':
-    case 'min':
-    case 'm':
-      return n * m;
-    case 'seconds':
-    case 'second':
-    case 'secs':
-    case 'sec':
-    case 's':
-      return n * s;
-    case 'milliseconds':
-    case 'millisecond':
-    case 'msecs':
-    case 'msec':
-    case 'ms':
-      return n;
-    default:
-      return undefined;
-  }
+function flattenTypes(results) {
+    var fields = {};
+    Object.entries(results.fields)
+        .map(function (_a) {
+        var fieldName = _a[0], fieldInfo = _a[1];
+        fields[fieldName] = _simplifyFieldInfo(fieldInfo);
+    });
+    return {
+        schemaName: results.schemaName,
+        totalRows: results.totalRows,
+        nestedTypes: results.nestedTypes ? lodash_es_1.mapValues(results.nestedTypes, flattenTypes) : undefined,
+        fields: fields,
+    };
+}
+exports.flattenTypes = flattenTypes;
+function _simplifyFieldInfo(fieldInfo) {
+    var arrayOfTypes = Object.entries(fieldInfo.types); //as [n: TypeNameString, summary?: FieldTypeSummary][]
+    arrayOfTypes = arrayOfTypes.slice(0)
+        .filter(function (f) { return f[0] !== 'Null' && f[0] !== 'Unknown'; })
+        .sort(function (a, b) { return a[1].count > b[1].count ? -1 : a[1].count === b[1].count ? 0 : 1; });
+    var topType = arrayOfTypes.length > 0 ? arrayOfTypes[0][0] : 'Null';
+    return {
+        identity: fieldInfo.identity,
+        type: topType,
+        enum: fieldInfo.enum,
+        nullable: fieldInfo.nullable,
+        unique: fieldInfo.unique,
+    };
 }
 
-/**
- * Short format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtShort(ms) {
-  var msAbs = Math.abs(ms);
-  if (msAbs >= d) {
-    return Math.round(ms / d) + 'd';
-  }
-  if (msAbs >= h) {
-    return Math.round(ms / h) + 'h';
-  }
-  if (msAbs >= m) {
-    return Math.round(ms / m) + 'm';
-  }
-  if (msAbs >= s) {
-    return Math.round(ms / s) + 's';
-  }
-  return ms + 'ms';
-}
-
-/**
- * Long format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtLong(ms) {
-  var msAbs = Math.abs(ms);
-  if (msAbs >= d) {
-    return plural(ms, msAbs, d, 'day');
-  }
-  if (msAbs >= h) {
-    return plural(ms, msAbs, h, 'hour');
-  }
-  if (msAbs >= m) {
-    return plural(ms, msAbs, m, 'minute');
-  }
-  if (msAbs >= s) {
-    return plural(ms, msAbs, s, 'second');
-  }
-  return ms + ' ms';
-}
-
-/**
- * Pluralization helper.
- */
-
-function plural(ms, msAbs, n, name) {
-  var isPlural = msAbs >= n * 1.5;
-  return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
-}/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- */
-
-function setup(env) {
-	createDebug.debug = createDebug;
-	createDebug.default = createDebug;
-	createDebug.coerce = coerce;
-	createDebug.disable = disable;
-	createDebug.enable = enable;
-	createDebug.enabled = enabled;
-	createDebug.humanize = ms;
-	createDebug.destroy = destroy;
-
-	Object.keys(env).forEach(key => {
-		createDebug[key] = env[key];
-	});
-
-	/**
-	* The currently active debug mode names, and names to skip.
-	*/
-
-	createDebug.names = [];
-	createDebug.skips = [];
-
-	/**
-	* Map of special "%n" handling functions, for the debug "format" argument.
-	*
-	* Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
-	*/
-	createDebug.formatters = {};
-
-	/**
-	* Selects a color for a debug namespace
-	* @param {String} namespace The namespace string for the for the debug instance to be colored
-	* @return {Number|String} An ANSI color code for the given namespace
-	* @api private
-	*/
-	function selectColor(namespace) {
-		let hash = 0;
-
-		for (let i = 0; i < namespace.length; i++) {
-			hash = ((hash << 5) - hash) + namespace.charCodeAt(i);
-			hash |= 0; // Convert to 32bit integer
-		}
-
-		return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-	}
-	createDebug.selectColor = selectColor;
-
-	/**
-	* Create a debugger with the given `namespace`.
-	*
-	* @param {String} namespace
-	* @return {Function}
-	* @api public
-	*/
-	function createDebug(namespace) {
-		let prevTime;
-		let enableOverride = null;
-
-		function debug(...args) {
-			// Disabled?
-			if (!debug.enabled) {
-				return;
-			}
-
-			const self = debug;
-
-			// Set `diff` timestamp
-			const curr = Number(new Date());
-			const ms = curr - (prevTime || curr);
-			self.diff = ms;
-			self.prev = prevTime;
-			self.curr = curr;
-			prevTime = curr;
-
-			args[0] = createDebug.coerce(args[0]);
-
-			if (typeof args[0] !== 'string') {
-				// Anything else let's inspect with %O
-				args.unshift('%O');
-			}
-
-			// Apply any `formatters` transformations
-			let index = 0;
-			args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-				// If we encounter an escaped % then don't increase the array index
-				if (match === '%%') {
-					return '%';
-				}
-				index++;
-				const formatter = createDebug.formatters[format];
-				if (typeof formatter === 'function') {
-					const val = args[index];
-					match = formatter.call(self, val);
-
-					// Now we need to remove `args[index]` since it's inlined in the `format`
-					args.splice(index, 1);
-					index--;
-				}
-				return match;
-			});
-
-			// Apply env-specific formatting (colors, etc.)
-			createDebug.formatArgs.call(self, args);
-
-			const logFn = self.log || createDebug.log;
-			logFn.apply(self, args);
-		}
-
-		debug.namespace = namespace;
-		debug.useColors = createDebug.useColors();
-		debug.color = createDebug.selectColor(namespace);
-		debug.extend = extend;
-		debug.destroy = createDebug.destroy; // XXX Temporary. Will be removed in the next major release.
-
-		Object.defineProperty(debug, 'enabled', {
-			enumerable: true,
-			configurable: false,
-			get: () => enableOverride === null ? createDebug.enabled(namespace) : enableOverride,
-			set: v => {
-				enableOverride = v;
-			}
-		});
-
-		// Env-specific initialization logic for debug instances
-		if (typeof createDebug.init === 'function') {
-			createDebug.init(debug);
-		}
-
-		return debug;
-	}
-
-	function extend(namespace, delimiter) {
-		const newDebug = createDebug(this.namespace + (typeof delimiter === 'undefined' ? ':' : delimiter) + namespace);
-		newDebug.log = this.log;
-		return newDebug;
-	}
-
-	/**
-	* Enables a debug mode by namespaces. This can include modes
-	* separated by a colon and wildcards.
-	*
-	* @param {String} namespaces
-	* @api public
-	*/
-	function enable(namespaces) {
-		createDebug.save(namespaces);
-
-		createDebug.names = [];
-		createDebug.skips = [];
-
-		let i;
-		const split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-		const len = split.length;
-
-		for (i = 0; i < len; i++) {
-			if (!split[i]) {
-				// ignore empty strings
-				continue;
-			}
-
-			namespaces = split[i].replace(/\*/g, '.*?');
-
-			if (namespaces[0] === '-') {
-				createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-			} else {
-				createDebug.names.push(new RegExp('^' + namespaces + '$'));
-			}
-		}
-	}
-
-	/**
-	* Disable debug output.
-	*
-	* @return {String} namespaces
-	* @api public
-	*/
-	function disable() {
-		const namespaces = [
-			...createDebug.names.map(toNamespace),
-			...createDebug.skips.map(toNamespace).map(namespace => '-' + namespace)
-		].join(',');
-		createDebug.enable('');
-		return namespaces;
-	}
-
-	/**
-	* Returns true if the given mode name is enabled, false otherwise.
-	*
-	* @param {String} name
-	* @return {Boolean}
-	* @api public
-	*/
-	function enabled(name) {
-		if (name[name.length - 1] === '*') {
-			return true;
-		}
-
-		let i;
-		let len;
-
-		for (i = 0, len = createDebug.skips.length; i < len; i++) {
-			if (createDebug.skips[i].test(name)) {
-				return false;
-			}
-		}
-
-		for (i = 0, len = createDebug.names.length; i < len; i++) {
-			if (createDebug.names[i].test(name)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	* Convert regexp to namespace
-	*
-	* @param {RegExp} regxep
-	* @return {String} namespace
-	* @api private
-	*/
-	function toNamespace(regexp) {
-		return regexp.toString()
-			.substring(2, regexp.toString().length - 2)
-			.replace(/\.\*\?$/, '*');
-	}
-
-	/**
-	* Coerce `val`.
-	*
-	* @param {Mixed} val
-	* @return {Mixed}
-	* @api private
-	*/
-	function coerce(val) {
-		if (val instanceof Error) {
-			return val.stack || val.message;
-		}
-		return val;
-	}
-
-	/**
-	* XXX DO NOT USE. This is a temporary stub function.
-	* XXX It WILL be removed in the next major release.
-	*/
-	function destroy() {
-		console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-	}
-
-	createDebug.enable(createDebug.load());
-
-	return createDebug;
-}
-
-var common = setup;var browser = createCommonjsModule(function (module, exports) {
-/* eslint-env browser */
-
-/**
- * This is the web browser implementation of `debug()`.
- */
-
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = localstorage();
-exports.destroy = (() => {
-	let warned = false;
-
-	return () => {
-		if (!warned) {
-			warned = true;
-			console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-		}
-	};
-})();
-
-/**
- * Colors.
- */
-
-exports.colors = [
-	'#0000CC',
-	'#0000FF',
-	'#0033CC',
-	'#0033FF',
-	'#0066CC',
-	'#0066FF',
-	'#0099CC',
-	'#0099FF',
-	'#00CC00',
-	'#00CC33',
-	'#00CC66',
-	'#00CC99',
-	'#00CCCC',
-	'#00CCFF',
-	'#3300CC',
-	'#3300FF',
-	'#3333CC',
-	'#3333FF',
-	'#3366CC',
-	'#3366FF',
-	'#3399CC',
-	'#3399FF',
-	'#33CC00',
-	'#33CC33',
-	'#33CC66',
-	'#33CC99',
-	'#33CCCC',
-	'#33CCFF',
-	'#6600CC',
-	'#6600FF',
-	'#6633CC',
-	'#6633FF',
-	'#66CC00',
-	'#66CC33',
-	'#9900CC',
-	'#9900FF',
-	'#9933CC',
-	'#9933FF',
-	'#99CC00',
-	'#99CC33',
-	'#CC0000',
-	'#CC0033',
-	'#CC0066',
-	'#CC0099',
-	'#CC00CC',
-	'#CC00FF',
-	'#CC3300',
-	'#CC3333',
-	'#CC3366',
-	'#CC3399',
-	'#CC33CC',
-	'#CC33FF',
-	'#CC6600',
-	'#CC6633',
-	'#CC9900',
-	'#CC9933',
-	'#CCCC00',
-	'#CCCC33',
-	'#FF0000',
-	'#FF0033',
-	'#FF0066',
-	'#FF0099',
-	'#FF00CC',
-	'#FF00FF',
-	'#FF3300',
-	'#FF3333',
-	'#FF3366',
-	'#FF3399',
-	'#FF33CC',
-	'#FF33FF',
-	'#FF6600',
-	'#FF6633',
-	'#FF9900',
-	'#FF9933',
-	'#FFCC00',
-	'#FFCC33'
-];
-
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
-// eslint-disable-next-line complexity
-function useColors() {
-	// NB: In an Electron preload script, document will be defined but not fully
-	// initialized. Since we know we're in Chrome, we'll just detect this case
-	// explicitly
-	if (typeof window !== 'undefined' && window.process && (window.process.type === 'renderer' || window.process.__nwjs)) {
-		return true;
-	}
-
-	// Internet Explorer and Edge do not support colors.
-	if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-		return false;
-	}
-
-	// Is webkit? http://stackoverflow.com/a/16459606/376773
-	// document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-	return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-		// Is firebug? http://stackoverflow.com/a/398120/376773
-		(typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-		// Is firefox >= v31?
-		// https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-		(typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
-		// Double check webkit in userAgent just in case we are in a worker
-		(typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
-}
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-function formatArgs(args) {
-	args[0] = (this.useColors ? '%c' : '') +
-		this.namespace +
-		(this.useColors ? ' %c' : ' ') +
-		args[0] +
-		(this.useColors ? '%c ' : ' ') +
-		'+' + module.exports.humanize(this.diff);
-
-	if (!this.useColors) {
-		return;
-	}
-
-	const c = 'color: ' + this.color;
-	args.splice(1, 0, c, 'color: inherit');
-
-	// The final "%c" is somewhat tricky, because there could be other
-	// arguments passed either before or after the %c, so we need to
-	// figure out the correct index to insert the CSS into
-	let index = 0;
-	let lastC = 0;
-	args[0].replace(/%[a-zA-Z%]/g, match => {
-		if (match === '%%') {
-			return;
-		}
-		index++;
-		if (match === '%c') {
-			// We only are interested in the *last* %c
-			// (the user may have provided their own)
-			lastC = index;
-		}
-	});
-
-	args.splice(lastC, 0, c);
-}
-
-/**
- * Invokes `console.debug()` when available.
- * No-op when `console.debug` is not a "function".
- * If `console.debug` is not available, falls back
- * to `console.log`.
- *
- * @api public
- */
-exports.log = console.debug || console.log || (() => {});
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-function save(namespaces) {
-	try {
-		if (namespaces) {
-			exports.storage.setItem('debug', namespaces);
-		} else {
-			exports.storage.removeItem('debug');
-		}
-	} catch (error) {
-		// Swallow
-		// XXX (@Qix-) should we be logging these?
-	}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-function load() {
-	let r;
-	try {
-		r = exports.storage.getItem('debug');
-	} catch (error) {
-		// Swallow
-		// XXX (@Qix-) should we be logging these?
-	}
-
-	// If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-	if (!r && typeof process !== 'undefined' && 'env' in process) {
-		r = process.env.DEBUG;
-	}
-
-	return r;
-}
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-function localstorage() {
-	try {
-		// TVMLKit (Apple TV JS Runtime) does not have a window object, just localStorage in the global context
-		// The Browser also has localStorage in the global context.
-		return localStorage;
-	} catch (error) {
-		// Swallow
-		// XXX (@Qix-) should we be logging these?
-	}
-}
-
-module.exports = common(exports);
-
-const {formatters} = module.exports;
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-formatters.j = function (v) {
-	try {
-		return JSON.stringify(v);
-	} catch (error) {
-		return '[UnexpectedJSONParseError]: ' + error.message;
-	}
-};
 });
-var browser_1 = browser.formatArgs;
-var browser_2 = browser.save;
-var browser_3 = browser.load;
-var browser_4 = browser.useColors;
-var browser_5 = browser.storage;
-var browser_6 = browser.destroy;
-var browser_7 = browser.colors;
-var browser_8 = browser.log;var hasFlag = (flag, argv = process.argv) => {
-	const prefix = flag.startsWith('-') ? '' : (flag.length === 1 ? '-' : '--');
-	const position = argv.indexOf(prefix + flag);
-	const terminatorPosition = argv.indexOf('--');
-	return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
-};const {env} = process;
 
-let forceColor;
-if (hasFlag('no-color') ||
-	hasFlag('no-colors') ||
-	hasFlag('color=false') ||
-	hasFlag('color=never')) {
-	forceColor = 0;
-} else if (hasFlag('color') ||
-	hasFlag('colors') ||
-	hasFlag('color=true') ||
-	hasFlag('color=always')) {
-	forceColor = 1;
+unwrapExports(helpers);
+var helpers_1 = helpers.flattenTypes;// shim for using process in browser
+// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+var cachedSetTimeout = defaultSetTimout;
+var cachedClearTimeout = defaultClearTimeout;
+if (typeof global$1.setTimeout === 'function') {
+    cachedSetTimeout = setTimeout;
+}
+if (typeof global$1.clearTimeout === 'function') {
+    cachedClearTimeout = clearTimeout;
 }
 
-if ('FORCE_COLOR' in env) {
-	if (env.FORCE_COLOR === 'true') {
-		forceColor = 1;
-	} else if (env.FORCE_COLOR === 'false') {
-		forceColor = 0;
-	} else {
-		forceColor = env.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env.FORCE_COLOR, 10), 3);
-	}
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
 }
 
-function translateLevel(level) {
-	if (level === 0) {
-		return false;
-	}
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
 
-	return {
-		level,
-		hasBasic: true,
-		has256: level >= 2,
-		has16m: level >= 3
-	};
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
 }
-
-function supportsColor(haveStream, streamIsTTY) {
-	if (forceColor === 0) {
-		return 0;
-	}
-
-	if (hasFlag('color=16m') ||
-		hasFlag('color=full') ||
-		hasFlag('color=truecolor')) {
-		return 3;
-	}
-
-	if (hasFlag('color=256')) {
-		return 2;
-	}
-
-	if (haveStream && !streamIsTTY && forceColor === undefined) {
-		return 0;
-	}
-
-	const min = forceColor || 0;
-
-	if (env.TERM === 'dumb') {
-		return min;
-	}
-
-	if (process.platform === 'win32') {
-		// Windows 10 build 10586 is the first Windows release that supports 256 colors.
-		// Windows 10 build 14931 is the first release that supports 16m/TrueColor.
-		const osRelease = os.release().split('.');
-		if (
-			Number(osRelease[0]) >= 10 &&
-			Number(osRelease[2]) >= 10586
-		) {
-			return Number(osRelease[2]) >= 14931 ? 3 : 2;
-		}
-
-		return 1;
-	}
-
-	if ('CI' in env) {
-		if (['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI'].some(sign => sign in env) || env.CI_NAME === 'codeship') {
-			return 1;
-		}
-
-		return min;
-	}
-
-	if ('TEAMCITY_VERSION' in env) {
-		return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
-	}
-
-	if ('GITHUB_ACTIONS' in env) {
-		return 1;
-	}
-
-	if (env.COLORTERM === 'truecolor') {
-		return 3;
-	}
-
-	if ('TERM_PROGRAM' in env) {
-		const version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
-
-		switch (env.TERM_PROGRAM) {
-			case 'iTerm.app':
-				return version >= 3 ? 3 : 2;
-			case 'Apple_Terminal':
-				return 2;
-			// No default
-		}
-	}
-
-	if (/-256(color)?$/i.test(env.TERM)) {
-		return 2;
-	}
-
-	if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
-		return 1;
-	}
-
-	if ('COLORTERM' in env) {
-		return 1;
-	}
-
-	return min;
+function nextTick(fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
 }
-
-function getSupportLevel(stream) {
-	const level = supportsColor(stream, stream && stream.isTTY);
-	return translateLevel(level);
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
 }
-
-var supportsColor_1 = {
-	supportsColor: getSupportLevel,
-	stdout: translateLevel(supportsColor(true, tty.isatty(1))),
-	stderr: translateLevel(supportsColor(true, tty.isatty(2)))
-};var node = createCommonjsModule(function (module, exports) {
-/**
- * Module dependencies.
- */
-
-
-
-
-/**
- * This is the Node.js implementation of `debug()`.
- */
-
-exports.init = init;
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.destroy = util$1.deprecate(
-	() => {},
-	'Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.'
-);
-
-/**
- * Colors.
- */
-
-exports.colors = [6, 2, 3, 4, 5, 1];
-
-try {
-	// Optional dependency (as in, doesn't need to be installed, NOT like optionalDependencies in package.json)
-	// eslint-disable-next-line import/no-extraneous-dependencies
-	const supportsColor = supportsColor_1;
-
-	if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
-		exports.colors = [
-			20,
-			21,
-			26,
-			27,
-			32,
-			33,
-			38,
-			39,
-			40,
-			41,
-			42,
-			43,
-			44,
-			45,
-			56,
-			57,
-			62,
-			63,
-			68,
-			69,
-			74,
-			75,
-			76,
-			77,
-			78,
-			79,
-			80,
-			81,
-			92,
-			93,
-			98,
-			99,
-			112,
-			113,
-			128,
-			129,
-			134,
-			135,
-			148,
-			149,
-			160,
-			161,
-			162,
-			163,
-			164,
-			165,
-			166,
-			167,
-			168,
-			169,
-			170,
-			171,
-			172,
-			173,
-			178,
-			179,
-			184,
-			185,
-			196,
-			197,
-			198,
-			199,
-			200,
-			201,
-			202,
-			203,
-			204,
-			205,
-			206,
-			207,
-			208,
-			209,
-			214,
-			215,
-			220,
-			221
-		];
-	}
-} catch (error) {
-	// Swallow - we only care if `supports-color` is available; it doesn't have to be.
-}
-
-/**
- * Build up the default `inspectOpts` object from the environment variables.
- *
- *   $ DEBUG_COLORS=no DEBUG_DEPTH=10 DEBUG_SHOW_HIDDEN=enabled node script.js
- */
-
-exports.inspectOpts = Object.keys(process.env).filter(key => {
-	return /^debug_/i.test(key);
-}).reduce((obj, key) => {
-	// Camel-case
-	const prop = key
-		.substring(6)
-		.toLowerCase()
-		.replace(/_([a-z])/g, (_, k) => {
-			return k.toUpperCase();
-		});
-
-	// Coerce string value into JS value
-	let val = process.env[key];
-	if (/^(yes|on|true|enabled)$/i.test(val)) {
-		val = true;
-	} else if (/^(no|off|false|disabled)$/i.test(val)) {
-		val = false;
-	} else if (val === 'null') {
-		val = null;
-	} else {
-		val = Number(val);
-	}
-
-	obj[prop] = val;
-	return obj;
-}, {});
-
-/**
- * Is stdout a TTY? Colored output is enabled when `true`.
- */
-
-function useColors() {
-	return 'colors' in exports.inspectOpts ?
-		Boolean(exports.inspectOpts.colors) :
-		tty.isatty(process.stderr.fd);
-}
-
-/**
- * Adds ANSI color escape codes if enabled.
- *
- * @api public
- */
-
-function formatArgs(args) {
-	const {namespace: name, useColors} = this;
-
-	if (useColors) {
-		const c = this.color;
-		const colorCode = '\u001B[3' + (c < 8 ? c : '8;5;' + c);
-		const prefix = `  ${colorCode};1m${name} \u001B[0m`;
-
-		args[0] = prefix + args[0].split('\n').join('\n' + prefix);
-		args.push(colorCode + 'm+' + module.exports.humanize(this.diff) + '\u001B[0m');
-	} else {
-		args[0] = getDate() + name + ' ' + args[0];
-	}
-}
-
-function getDate() {
-	if (exports.inspectOpts.hideDate) {
-		return '';
-	}
-	return new Date().toISOString() + ' ';
-}
-
-/**
- * Invokes `util.format()` with the specified arguments and writes to stderr.
- */
-
-function log(...args) {
-	return process.stderr.write(util$1.format(...args) + '\n');
-}
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-function save(namespaces) {
-	if (namespaces) {
-		process.env.DEBUG = namespaces;
-	} else {
-		// If you set a process.env field to null or undefined, it gets cast to the
-		// string 'null' or 'undefined'. Just delete instead.
-		delete process.env.DEBUG;
-	}
-}
-
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-function load() {
-	return process.env.DEBUG;
-}
-
-/**
- * Init logic for `debug` instances.
- *
- * Create a new `inspectOpts` object in case `useColors` is set
- * differently for a particular `debug` instance.
- */
-
-function init(debug) {
-	debug.inspectOpts = {};
-
-	const keys = Object.keys(exports.inspectOpts);
-	for (let i = 0; i < keys.length; i++) {
-		debug.inspectOpts[keys[i]] = exports.inspectOpts[keys[i]];
-	}
-}
-
-module.exports = common(exports);
-
-const {formatters} = module.exports;
-
-/**
- * Map %o to `util.inspect()`, all on a single line.
- */
-
-formatters.o = function (v) {
-	this.inspectOpts.colors = this.useColors;
-	return util$1.inspect(v, this.inspectOpts)
-		.split('\n')
-		.map(str => str.trim())
-		.join(' ');
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
 };
+var title = 'browser';
+var platform = 'browser';
+var browser = true;
+var env = {};
+var argv = [];
+var version = ''; // empty string to avoid regexp issues
+var versions = {};
+var release = {};
+var config = {};
 
-/**
- * Map %O to `util.inspect()`, allowing multiple lines if needed.
- */
+function noop$1() {}
 
-formatters.O = function (v) {
-	this.inspectOpts.colors = this.useColors;
-	return util$1.inspect(v, this.inspectOpts);
-};
-});
-var node_1 = node.init;
-var node_2 = node.log;
-var node_3 = node.formatArgs;
-var node_4 = node.save;
-var node_5 = node.load;
-var node_6 = node.useColors;
-var node_7 = node.destroy;
-var node_8 = node.colors;
-var node_9 = node.inspectOpts;var src = createCommonjsModule(function (module) {
-/**
+var on = noop$1;
+var addListener = noop$1;
+var once$1 = noop$1;
+var off = noop$1;
+var removeListener = noop$1;
+var removeAllListeners = noop$1;
+var emit = noop$1;
+
+function binding(name) {
+    throw new Error('process.binding is not supported');
+}
+
+function cwd () { return '/' }
+function chdir (dir) {
+    throw new Error('process.chdir is not supported');
+}function umask() { return 0; }
+
+// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
+var performance = global$1.performance || {};
+var performanceNow =
+  performance.now        ||
+  performance.mozNow     ||
+  performance.msNow      ||
+  performance.oNow       ||
+  performance.webkitNow  ||
+  function(){ return (new Date()).getTime() };
+
+// generate timestamp or delta
+// see http://nodejs.org/api/process.html#process_process_hrtime
+function hrtime(previousTimestamp){
+  var clocktime = performanceNow.call(performance)*1e-3;
+  var seconds = Math.floor(clocktime);
+  var nanoseconds = Math.floor((clocktime%1)*1e9);
+  if (previousTimestamp) {
+    seconds = seconds - previousTimestamp[0];
+    nanoseconds = nanoseconds - previousTimestamp[1];
+    if (nanoseconds<0) {
+      seconds--;
+      nanoseconds += 1e9;
+    }
+  }
+  return [seconds,nanoseconds]
+}
+
+var startTime = new Date();
+function uptime() {
+  var currentTime = new Date();
+  var dif = currentTime - startTime;
+  return dif / 1000;
+}
+
+var process = {
+  nextTick: nextTick,
+  title: title,
+  browser: browser,
+  env: env,
+  argv: argv,
+  version: version,
+  versions: versions,
+  on: on,
+  addListener: addListener,
+  once: once$1,
+  off: off,
+  removeListener: removeListener,
+  removeAllListeners: removeAllListeners,
+  emit: emit,
+  binding: binding,
+  cwd: cwd,
+  chdir: chdir,
+  umask: umask,
+  hrtime: hrtime,
+  platform: platform,
+  release: release,
+  config: config,
+  uptime: uptime
+};var browser$1 = true;/**
  * Detect Electron renderer / nwjs process, which is node, but we should
  * treat as a browser.
  */
 
-if (typeof process === 'undefined' || process.type === 'renderer' || process.browser === true || process.__nwjs) {
-	module.exports = browser;
+if (typeof process === 'undefined' || process.type === 'renderer' || browser$1 === true || process.__nwjs) {
+	module.exports = require('./browser.js');
 } else {
-	module.exports = node;
-}
-});var schemaDetector = createCommonjsModule(function (module, exports) {
+	module.exports = require('./node.js');
+}var src=/*#__PURE__*/Object.freeze({__proto__:null});var debug = getCjsExportFromNamespace(src);var schemaDetector = createCommonjsModule(function (module, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._isValidDate = exports._getFieldMetadata = exports._formatRangeStats = exports._getNumberRangeStats = exports._pivotFieldDataByType = exports._condenseFieldData = exports.schemaAnalyzer = exports.parseDate = void 0;
+exports._isValidDate = exports._getFieldMetadata = exports._formatRangeStats = exports._getNumberRangeStats = exports._pivotFieldDataByType = exports._condenseFieldData = exports.schemaAnalyzer = exports.parseDate = exports.helpers = void 0;
 
 
+var helpers$1 = tslib_1.__importStar(helpers);
+exports.helpers = helpers$1;
 
-var log = src("schema-builder:index");
+var log = debug("schema-builder:");
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 function isValidDate(date) {
     date = date instanceof Date ? date : new Date(date);
@@ -18636,12 +17786,13 @@ function schemaAnalyzer(schemaName, input, options) {
         throw Error("Input Data must be an Array of Objects");
     if (typeof input[0] !== "object")
         throw Error("Input Data must be an Array of Objects");
-    if (input.length < 5)
-        throw Error("Analysis requires at least 5 records. (Use 200+ for great results.)");
+    if (input.length < 1)
+        throw Error("At least 1 record required. 100+ recommended.");
     var _a = options.onProgress, onProgress = _a === void 0 ? function (_a) {
         var totalRows = _a.totalRows, currentRow = _a.currentRow;
     } : _a, _b = options.strictMatching, strictMatching = _b === void 0 ? true : _b, _c = options.disableNestedTypes, disableNestedTypes = _c === void 0 ? false : _c, _d = options.enumMinimumRowCount, enumMinimumRowCount = _d === void 0 ? 25 : _d, _e = options.enumAbsoluteLimit, _f = options.enumPercentThreshold, _g = options.nullableRowsThreshold, _h = options.uniqueRowsThreshold;
     var isEnumEnabled = input.length >= enumMinimumRowCount;
+    log("isEnumEnabled: " + isEnumEnabled);
     var nestedData = {};
     var pivotRowsGroupedByType = _pivotRowsGroupedByType({
         schemaName: schemaName,
@@ -18651,7 +17802,7 @@ function schemaAnalyzer(schemaName, input, options) {
         strictMatching: strictMatching,
         onProgress: onProgress,
     });
-    log("Starting");
+    log("Processing '" + schemaName + "', found " + input.length + " rows...");
     return Promise.resolve(input)
         .then(pivotRowsGroupedByType)
         .then(condenseFieldData)
@@ -18684,6 +17835,7 @@ function schemaAnalyzer(schemaName, input, options) {
                         return fieldInfo;
                     }, {});
                     _b = {
+                        schemaName: schemaName,
                         fields: fields,
                         totalRows: schema.totalRows
                     };
@@ -19061,4 +18213,5 @@ var schemaDetector_4 = schemaDetector._getNumberRangeStats;
 var schemaDetector_5 = schemaDetector._pivotFieldDataByType;
 var schemaDetector_6 = schemaDetector._condenseFieldData;
 var schemaDetector_7 = schemaDetector.schemaAnalyzer;
-var schemaDetector_8 = schemaDetector.parseDate;exports._condenseFieldData=schemaDetector_6;exports._formatRangeStats=schemaDetector_3;exports._getFieldMetadata=schemaDetector_2;exports._getNumberRangeStats=schemaDetector_4;exports._isValidDate=schemaDetector_1;exports._pivotFieldDataByType=schemaDetector_5;exports.default=index;exports.parseDate=schemaDetector_8;exports.schemaAnalyzer=schemaDetector_7;//# sourceMappingURL=schema-analyzer.esm.js.map
+var schemaDetector_8 = schemaDetector.parseDate;
+var schemaDetector_9 = schemaDetector.helpers;exports._condenseFieldData=schemaDetector_6;exports._formatRangeStats=schemaDetector_3;exports._getFieldMetadata=schemaDetector_2;exports._getNumberRangeStats=schemaDetector_4;exports._isValidDate=schemaDetector_1;exports._pivotFieldDataByType=schemaDetector_5;exports.default=index;exports.helpers=schemaDetector_9;exports.parseDate=schemaDetector_8;exports.schemaAnalyzer=schemaDetector_7;//# sourceMappingURL=schema-analyzer.esm.js.map

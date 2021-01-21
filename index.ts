@@ -1,6 +1,10 @@
 import { detectTypes, MetaChecks, typeRankings } from "./utils/type-helpers";
+import * as helpers from "./utils/helpers";
+
+export {helpers};
+
 const debug = require("debug");
-const log = debug("schema-builder:index");
+const log = debug("schema-builder:");
 
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
@@ -48,14 +52,15 @@ export interface ISchemaAnalyzerOptions {
 /**
  * Includes the results of main top-level schema.
  */
-export type TypeSummary = {
+export type TypeSummary<TFieldDetails = FieldInfo> = {
+  schemaName?: string,
   fields: {
-    [x: string]: FieldInfo;
+    [x: string]: TFieldDetails;
   };
   totalRows: number;
   nestedTypes?:
     | {
-        [x: string]: TypeSummary;
+        [x: string]: TypeSummary<TFieldDetails>;
       }
     | undefined;
 };
@@ -77,8 +82,11 @@ export type TypedFieldObject<T> = {
   Object?: T | undefined;
   Null?: T | undefined;
 };
+
 /**
- * Describes one or more potential types discovered for a field. The `types` object will have a `$ref` key if any nested structures were found.
+ * Details about a field, including potential types discovered. 
+ * The `types` object will have a `$ref` key if any nested data types were found. 
+ * See the `nestedTypes` on `TypeSummary`.
  */
 export type FieldInfo = {
   identity?: boolean;
@@ -93,6 +101,27 @@ export type FieldInfo = {
   /** enumeration detected, the values are listed on this property. */
   enum?: string[] | number[] | undefined;
 };
+
+/**
+ * Similar to FieldInfo, SimpleFieldInfo omits stats & extra types.
+ * 
+ * This provides a simpler structure for traversing and generating code.
+ */
+export type SimpleFieldInfo = {
+  /** field stats organized by type */
+  type: TypeNameString;
+  /** Should contain any $ref keys */
+  typeRef?: string,
+  /** indicates unique identifier or primary key */
+  identity?: boolean;
+  /** is the field nullable */
+  nullable?: boolean;
+  /** is the field unique */
+  unique?: boolean;
+  /** enumeration detected, the values are listed on this property. */
+  enum?: string[] | number[] | undefined;
+};
+
 /**
  * Contains stats for a given field's (potential) type.
  *
@@ -209,12 +238,10 @@ function schemaAnalyzer(
 ) {
   if (!Array.isArray(input) || typeof input !== "object")
     throw Error("Input Data must be an Array of Objects");
+  if (input.length < 1) throw Error("1 record required. 100+ recommended.");
   if (typeof input[0] !== "object")
     throw Error("Input Data must be an Array of Objects");
-  if (input.length < 5)
-    throw Error(
-      "Analysis requires at least 5 records. (Use 200+ for great results.)"
-    );
+
   const {
     onProgress = ({ totalRows, currentRow }) => {},
     strictMatching = true,
@@ -226,6 +253,7 @@ function schemaAnalyzer(
     uniqueRowsThreshold = 0.99,
   } = options;
   const isEnumEnabled = input.length >= enumMinimumRowCount;
+  log(`isEnumEnabled: ${isEnumEnabled}`)
   const nestedData = {};
 
   const pivotRowsGroupedByType = _pivotRowsGroupedByType({
@@ -237,7 +265,7 @@ function schemaAnalyzer(
     onProgress,
   });
 
-  log("Starting");
+  log(`Processing '${schemaName}', found ${input.length} rows...`);
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
     .then(condenseFieldData)
@@ -277,6 +305,7 @@ function schemaAnalyzer(
       );
 
       return {
+        schemaName,
         fields,
         totalRows: schema.totalRows,
         nestedTypes: disableNestedTypes
