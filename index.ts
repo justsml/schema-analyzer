@@ -122,6 +122,11 @@ export type SimpleFieldInfo = {
   enum?: string[] | number[] | null;
 };
 
+export type NumberFieldInfo = SimpleFieldInfo & {
+  scale: number;
+  precision: number;
+}
+
 /**
  * Contains stats for a given field's (potential) type.
  *
@@ -130,7 +135,7 @@ export type SimpleFieldInfo = {
  */
 export type FieldTypeSummary = {
   /** for nested type support. */
-  typeAlias?: string;
+  typeAlias?: string | TypeNameString;
   /** extracted field values, placed into an array. This simplifies (at expense of memory) type analysis and summarization when creating the `AggregateSummary`. */
   value?: AggregateSummary | number;
   /** summary of array of string (or decimal) sizes, pre processing into an AggregateSummary */

@@ -1,13 +1,22 @@
 import { mapValues } from "lodash-es";
 import {
+  AggregateSummary,
   FieldInfo,
   SimpleFieldInfo,
   TypeNameString,
   TypeSummary,
 } from "..";
 
+interface IHelperOptions {
+  targetLength: keyof AggregateSummary;
+  targetScale: keyof AggregateSummary;
+  targetPrecision: keyof AggregateSummary;
+
+}
+
 export function flattenTypes(
-  results: TypeSummary<FieldInfo>
+  results: TypeSummary<FieldInfo>,
+  options: IHelperOptions
 ): TypeSummary<SimpleFieldInfo> {
   const fields: { [key: string]: SimpleFieldInfo } = {};
 

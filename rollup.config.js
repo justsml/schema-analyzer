@@ -34,7 +34,6 @@ https://stackoverflow.com/questions/52852167/how-to-use-lodash-es-in-typescript-
 */
 
 export default [
-  // browser-friendly UMD build
   {
     input: './index.ts',
     output: {
@@ -45,19 +44,17 @@ export default [
       exports: 'named',
       ...envOptions
     },
-    // external: [/lodash.*/, 'debug'],
     plugins: [
       typescript({ sourceMap: !isProduction }),
       // globals({} ),
+      globals(),
+      builtins(),
       resolve({
         // pass custom options to the resolve plugin
         customResolveOptions: {
           moduleDirectory: 'node_modules'
-        },
-        browser: true
+        }
       }), // so Rollup can find `ms`
-      globals(),
-      builtins(),
       commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
@@ -76,15 +73,14 @@ export default [
     plugins: [
       typescript({ sourceMap: !isProduction }),
       // globals({} ),
+      globals(),
+      builtins(),
       resolve({
         // pass custom options to the resolve plugin
         customResolveOptions: {
           moduleDirectory: 'node_modules'
-        },
-        browser: true
+        }
       }), // so Rollup can find `ms`
-      globals(),
-      builtins(),
       commonjs({ extensions: ['.js', '.ts'] })
     ].concat(...extraPlugins)
   },
@@ -102,16 +98,15 @@ export default [
     // external: [/lodash.*/, 'debug'],
     plugins: [
       typescript({ sourceMap: !isProduction, module: ModuleKind.ES2020 }),
+      globals(),
+      builtins(),
       // globals({} ),
       resolve({
         // pass custom options to the resolve plugin
         customResolveOptions: {
           moduleDirectory: 'node_modules'
-        },
-        browser: true
-      }), // so Rollup can find `ms`
-      globals(),
-      builtins()
+        }
+      }) // so Rollup can find `ms`
       // commonjs({extensions: ['.js', '.ts']})
     ].concat(...extraPlugins)
   }
