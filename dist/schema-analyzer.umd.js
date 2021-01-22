@@ -17442,31 +17442,54 @@ exports.flattenTypes = void 0;
 
 function flattenTypes(results) {
     var fields = {};
-    Object.entries(results.fields)
-        .map(function (_a) {
+    Object.entries(results.fields).map(function (_a) {
+        var _b;
         var fieldName = _a[0], fieldInfo = _a[1];
+        if (results.nestedTypes && fieldInfo.types.$ref) {
+            var typeAlias = ((_b = fieldInfo.types) === null || _b === void 0 ? void 0 : _b.$ref).typeAlias;
+            // lookup real count, set it on the $ref
+            var totalRows = results.nestedTypes[typeAlias].totalRows;
+            fieldInfo.types.$ref.count = totalRows;
+        }
         fields[fieldName] = _simplifyFieldInfo(fieldInfo);
     });
     return {
         schemaName: results.schemaName,
-        totalRows: results.totalRows,
-        nestedTypes: results.nestedTypes ? lodash.mapValues(results.nestedTypes, flattenTypes) : undefined,
         fields: fields,
+        nestedTypes: results.nestedTypes
+            ? lodash.mapValues(results.nestedTypes, flattenTypes)
+            : undefined,
+        totalRows: results.totalRows,
     };
 }
 exports.flattenTypes = flattenTypes;
 function _simplifyFieldInfo(fieldInfo) {
+    var _a, _b, _c, _d, _e;
     var arrayOfTypes = Object.entries(fieldInfo.types); //as [n: TypeNameString, summary?: FieldTypeSummary][]
-    arrayOfTypes = arrayOfTypes.slice(0)
-        .filter(function (f) { return f[0] !== 'Null' && f[0] !== 'Unknown'; })
-        .sort(function (a, b) { return a[1].count > b[1].count ? -1 : a[1].count === b[1].count ? 0 : 1; });
-    var topType = arrayOfTypes.length > 0 ? arrayOfTypes[0][0] : 'Null';
+    arrayOfTypes = arrayOfTypes
+        .slice(0)
+        .filter(function (f) { return f[0] !== "Null" && f[0] !== "Unknown"; })
+        .sort(function (a, b) {
+        return a[1].count > b[1].count ? -1 : a[1].count === b[1].count ? 0 : 1;
+    });
+    var topType = arrayOfTypes.length > 0 ? arrayOfTypes[0][0] : "Null";
+    var typeRef = undefined;
+    // check for undercounted $ref due to empty arrays in the rows
+    if (topType === "Array" && ((_a = arrayOfTypes[1]) === null || _a === void 0 ? void 0 : _a[0]) === "$ref") {
+        typeRef = (_c = (_b = arrayOfTypes[1]) === null || _b === void 0 ? void 0 : _b[1]) === null || _c === void 0 ? void 0 : _c.typeAlias;
+    }
+    if (topType === "$ref") {
+        console.error("arrayOfTypes", arrayOfTypes);
+        // console.error(`arrayOfTypes[1]`, arrayOfTypes[1]);
+        typeRef = (_e = (_d = arrayOfTypes[0]) === null || _d === void 0 ? void 0 : _d[1]) === null || _e === void 0 ? void 0 : _e.typeAlias;
+    }
     return {
         identity: fieldInfo.identity,
         type: topType,
-        enum: fieldInfo.enum,
-        nullable: fieldInfo.nullable,
-        unique: fieldInfo.unique,
+        typeRef: typeRef,
+        enum: fieldInfo.enum || null,
+        nullable: fieldInfo.nullable || false,
+        unique: fieldInfo.unique || false,
     };
 }
 
@@ -17710,7 +17733,7 @@ exports._isValidDate = exports._getFieldMetadata = exports._formatRangeStats = e
 var helpers$1 = tslib_es6.__importStar(helpers);
 exports.helpers = helpers$1;
 
-var log = src("schema-builder:");
+var log = src("schema-builder");
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 function isValidDate(date) {
     date = date instanceof Date ? date : new Date(date);
@@ -17772,10 +17795,10 @@ function schemaAnalyzer(schemaName, input, options) {
     }; }
     if (!Array.isArray(input) || typeof input !== "object")
         throw Error("Input Data must be an Array of Objects");
+    if (input.length < 1)
+        throw Error("1 record required. 100+ recommended.");
     if (typeof input[0] !== "object")
         throw Error("Input Data must be an Array of Objects");
-    if (input.length < 1)
-        throw Error("At least 1 record required. 100+ recommended.");
     var _a = options.onProgress, onProgress = _a === void 0 ? function (_a) {
         var totalRows = _a.totalRows, currentRow = _a.currentRow;
     } : _a, _b = options.strictMatching, strictMatching = _b === void 0 ? true : _b, _c = options.disableNestedTypes, disableNestedTypes = _c === void 0 ? false : _c, _d = options.enumMinimumRowCount, enumMinimumRowCount = _d === void 0 ? 25 : _d, _e = options.enumAbsoluteLimit, _f = options.enumPercentThreshold, _g = options.nullableRowsThreshold, _h = options.uniqueRowsThreshold;

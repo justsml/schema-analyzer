@@ -1,10 +1,10 @@
 import { detectTypes, MetaChecks, typeRankings } from "./utils/type-helpers";
 import * as helpers from "./utils/helpers";
 
-export {helpers};
+export { helpers };
 
 const debug = require("debug");
-const log = debug("schema-builder:");
+const log = debug("schema-builder");
 
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
@@ -53,12 +53,12 @@ export interface ISchemaAnalyzerOptions {
  * Includes the results of main top-level schema.
  */
 export type TypeSummary<TFieldDetails = FieldInfo> = {
-  schemaName?: string,
+  schemaName?: string;
   fields: {
     [x: string]: TFieldDetails;
   };
   totalRows: number;
-  nestedTypes?:
+  nestedTypes:
     | {
         [x: string]: TypeSummary<TFieldDetails>;
       }
@@ -84,8 +84,8 @@ export type TypedFieldObject<T> = {
 };
 
 /**
- * Details about a field, including potential types discovered. 
- * The `types` object will have a `$ref` key if any nested data types were found. 
+ * Details about a field, including potential types discovered.
+ * The `types` object will have a `$ref` key if any nested data types were found.
  * See the `nestedTypes` on `TypeSummary`.
  */
 export type FieldInfo = {
@@ -104,14 +104,14 @@ export type FieldInfo = {
 
 /**
  * Similar to FieldInfo, SimpleFieldInfo omits stats & extra types.
- * 
+ *
  * This provides a simpler structure for traversing and generating code.
  */
 export type SimpleFieldInfo = {
   /** field stats organized by type */
   type: TypeNameString;
   /** Should contain any $ref keys */
-  typeRef?: string,
+  typeRef?: string;
   /** indicates unique identifier or primary key */
   identity?: boolean;
   /** is the field nullable */
@@ -119,7 +119,7 @@ export type SimpleFieldInfo = {
   /** is the field unique */
   unique?: boolean;
   /** enumeration detected, the values are listed on this property. */
-  enum?: string[] | number[] | undefined;
+  enum?: string[] | number[] | null;
 };
 
 /**
@@ -253,7 +253,7 @@ function schemaAnalyzer(
     uniqueRowsThreshold = 0.99,
   } = options;
   const isEnumEnabled = input.length >= enumMinimumRowCount;
-  log(`isEnumEnabled: ${isEnumEnabled}`)
+  log(`isEnumEnabled: ${isEnumEnabled}`);
   const nestedData = {};
 
   const pivotRowsGroupedByType = _pivotRowsGroupedByType({

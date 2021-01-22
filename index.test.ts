@@ -13,11 +13,19 @@ import userNotes from "./__tests__/user-notes.json";
 import properties from "./__tests__/real-estate.example.json";
 import people from "./__tests__/swapi-people.json";
 import users from "./__tests__/users.example.json";
+import userData_SparseSubtypes from "./__tests__/user_sparse-subtypes.json";
 import { flattenTypes } from "./utils/helpers";
 
 const productCsv: Promise<any[]> = parseCsv(
   fs.readFileSync(
     path.resolve(__dirname, "./__tests__/products-3000.csv"),
+    "utf8"
+  )
+);
+
+const usersCsv: Promise<any[]> = parseCsv(
+  fs.readFileSync(
+    path.resolve(__dirname, "./__tests__/users-alt.csv"),
     "utf8"
   )
 );
@@ -101,7 +109,7 @@ describe("primary use-cases", () => {
   5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`);
 
     return schemaAnalyzer("sampleCsv", sampleCsv as any[]).then((result) => {
-      // if (!isCI) console.log(JSON.stringify(result, null, 2))
+      if (!isCI) console.log(JSON.stringify(flattenTypes(result), null, 2))
       expect(result).toMatchSnapshot("accountsCsvResult");
     });
   });
@@ -130,19 +138,32 @@ describe("primary use-cases", () => {
 
       expect(result.fields.name?.nullable).toBeFalsy();
       expect(result.fields.notes).toBeDefined();
-      // @ts-ignore
-      expect(result.fields?.notes?.types.$ref).toBeDefined();
-      // @ts-ignore
-      expect(result.fields?.notes?.types.$ref.typeAlias).toBe("users.notes");
+      expect(result.fields?.notes?.types?.$ref).toBeDefined();
+      expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe("users.notes");
       expect(result.nestedTypes).toBeDefined();
-      // @ts-ignore
-      expect(result.nestedTypes["users.notes"]).toBeDefined();
-      // @ts-ignore
-      expect(result.nestedTypes["users.notes"].fields.id.nullable).toBeFalsy();
+      expect(result.nestedTypes!["users.notes"]).toBeDefined();
+      expect(result.nestedTypes!["users.notes"].fields.id.nullable).toBeFalsy();
       expect(result).toMatchSnapshot("nestedData");
     });
   });
 
+  it("can handle sparsely nested types", () => {
+    return schemaAnalyzer("users", userData_SparseSubtypes).then((result) => {
+      console.warn(result); 
+      expect(result.fields.name).toBeDefined();
+      expect(result.fields.name?.nullable).toBeFalsy();
+      expect(result.fields.notes).toBeDefined();
+      expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(userData_SparseSubtypes.length);
+      expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
+      expect(result.fields?.notes?.types?.$ref).toBeDefined();
+      expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe("users.notes");
+      expect(result.nestedTypes).toBeDefined();
+      expect(result.nestedTypes!["users.notes"]).toBeDefined();
+      expect(result.nestedTypes!["users.notes"].fields.id.nullable).toBeFalsy();
+      expect(result).toMatchSnapshot("sparseNestedData");
+    });
+  });
+  
   it("can analyze schema w/ enum options", () => {
     const lowEnumLimitLoosePct = schemaAnalyzer("properties", properties, {
       enumMinimumRowCount: 10,
