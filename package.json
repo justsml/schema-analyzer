@@ -24,6 +24,9 @@
     "format": "prettier -w index*.ts utils/*.ts",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"
   },
+  "engines": {
+    "node": "< 14"
+  },
   "types": "./index.ts",
   "repository": {
     "type": "git",
