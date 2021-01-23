@@ -322,16 +322,16 @@ function schemaAnalyzer(
             rowCount: input.length,
             uniques: schema.uniques[fieldName] ?? [],
           }
-          let f = schema.fields[fieldName]
+          let f = schema.fields[fieldName]!
 
           let fInfo: FieldInfo = {
-            identity: f?.identity || false,
-            types: f?.types!,
-            enum: f?.enum,
-            nullable: f?.nullable,
-            nullCount: f?.nullCount || 0,
-            unique: f?.unique,
-            uniqueCount: f?.uniqueCount || 0,
+            identity: f.identity || false,
+            types: f.types!,
+            enum: f.enum,
+            nullable: f.nullable,
+            nullCount: f.nullCount || 0,
+            unique: f.unique,
+            uniqueCount: f.uniqueCount || 0,
           }
 
           fInfo = TYPE_ENUM.check(fInfo, jobState, options)
@@ -568,7 +568,7 @@ function condenseFieldData({ enumAbsoluteLimit, isEnumEnabled }) {
       fieldSummary[fieldName] = fieldSummary[fieldName] || { types: {} }
       fieldSummary[fieldName]!.types = condenseFieldSizes(pivotedData)
 
-      if (pivotedData.Null?.count != null && pivotedData.Null?.count >= 0) {
+      if (pivotedData.Null?.count != null && pivotedData.Null.count >= 0) {
         fieldSummary[fieldName]!.nullCount = pivotedData.Null.count
       }
 
@@ -588,7 +588,7 @@ function condenseFieldData({ enumAbsoluteLimit, isEnumEnabled }) {
       if (
         isEnumEnabled &&
         schema.uniques[fieldName] != null &&
-        schema.uniques[fieldName]?.length! <= enumAbsoluteLimit
+        schema.uniques[fieldName]!.length! <= enumAbsoluteLimit
       ) {
         fieldSummary[fieldName]!.enum = schema.uniques[fieldName]
       }
@@ -599,7 +599,7 @@ function condenseFieldData({ enumAbsoluteLimit, isEnumEnabled }) {
     log('Replaced fieldData with fieldSummary')
     return {
       fields: fieldSummary,
-      uniques: schema.uniques || {},
+      uniques: schema.uniques,
       totalRows: schema.totalRows,
     }
   }

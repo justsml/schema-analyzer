@@ -28,9 +28,9 @@ export function flattenTypes(
   results: TypeSummary<FieldInfo>,
   options: IHelperOptions,
 ): TypeSummary<CombinedFieldInfo> {
-  const fields = mapValues(results.fields, (fieldInfo) => {
+  const fields = mapValues(results.fields, (fieldInfo, name) => {
     if (results.nestedTypes && fieldInfo.types.$ref) {
-      const { typeAlias } = fieldInfo.types?.$ref
+      const { typeAlias } = fieldInfo.types.$ref
       // lookup real count, set it on the $ref
       const { totalRows } = results.nestedTypes[typeAlias!]!
       log(
@@ -45,12 +45,10 @@ export function flattenTypes(
     schemaName: results.schemaName,
     fields,
     // @ts-ignore
-    nestedTypes: results.nestedTypes
-      ? ((mapValues(
-          results.nestedTypes,
-          flattenTypes,
-        ) as unknown) as CombinedFieldsDict)
-      : undefined,
+    nestedTypes: (mapValues(
+      results.nestedTypes,
+      value => flattenTypes(value, options),
+    ) as unknown) as CombinedFieldsDict,
     totalRows: results.totalRows,
   }
 }
@@ -67,26 +65,23 @@ function _simplifyFieldInfo(
       a[1]!.count > b[1]!.count ? -1 : a[1]!.count === b[1]!.count ? 0 : 1,
     )
   // get info about Null fields
-  const nullCount = fieldInfo.types?.Null?.count || 0
-  fieldInfo.nullCount = nullCount
+  // const nullCount = fieldInfo.types.Null?.count || 0
+  // fieldInfo.nullCount = nullCount
   // if (nullCount != null) {
   //   fieldInfo.nullable = nullCount === 0 ? false : true;
   //   // console.error(`WARN: Field cannot have nullable!==true AND nullCount `)
   // }
   // get the 'winning' type from sorted array
-  let topType =
-    arrayOfTypes.length > 0 ? arrayOfTypes[0]![0] : ('Null' as TypeNameString)
+  let topType = arrayOfTypes[0]![0]
   let typeRef: string | undefined = undefined
 
   // check for undercounted $ref due to empty arrays in the rows
-  if (topType === 'Array' && arrayOfTypes[1]?.[0] === '$ref') {
-    typeRef = arrayOfTypes[1]?.[1]?.typeAlias
+  if (topType === 'Array' && arrayOfTypes[1] != null && arrayOfTypes[1][0] === '$ref') {
+    typeRef = arrayOfTypes[1]![1]!.typeAlias
   }
 
   if (topType === '$ref') {
-    // console.error(`arrayOfTypes`, arrayOfTypes);
-    // console.error(`arrayOfTypes[1]`, arrayOfTypes[1]);
-    typeRef = arrayOfTypes[0]?.[1]?.typeAlias
+    typeRef = arrayOfTypes[0]![1]!.typeAlias
   }
 
   const fieldTypeDetails = fieldInfo.types[topType as TypeNameString]!
@@ -96,19 +91,19 @@ function _simplifyFieldInfo(
     typeRef,
     identity: fieldInfo.identity || false,
     enum: fieldInfo.enum || null,
-    nullable: nullCount === 0 ? false : true,
+    nullable: Boolean(fieldInfo.nullable),
     unique: fieldInfo.unique || false,
-    count: fieldTypeDetails?.count || -1,
+    count: fieldTypeDetails.count,
   }
 
-  // keep desired value
-  if (fieldTypeDetails.value) {
-    const { value } = fieldTypeDetails
-    return {
-      ...result,
-      value: value![options.targetValue],
-    } as SimpleFieldInfo
-  }
+  // // keep desired value
+  // if (fieldTypeDetails.value) {
+  //   const { value } = fieldTypeDetails
+  //   return {
+  //     ...result,
+  //     value: value![options.targetValue],
+  //   } as SimpleFieldInfo
+  // }
 
   // keep length for composite fields
   if (fieldTypeDetails.length) {
@@ -121,7 +116,7 @@ function _simplifyFieldInfo(
   }
 
   // keep scale & precision for decimal fields
-  if (fieldTypeDetails.scale) {
+  if (fieldTypeDetails.scale || fieldTypeDetails.precision) {
     // if (TypeNameStringDecimal.includes(topType)) {
     const { scale, precision } = fieldTypeDetails
     return {

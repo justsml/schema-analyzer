@@ -8,13 +8,13 @@ import {
 import path from 'path'
 import fs from 'fs'
 import csvParse from 'csv-parse'
+import { flattenTypes } from './utils/helpers'
 
 import userNotes from './__tests__/user-notes.json'
 import properties from './__tests__/real-estate.example.json'
 import people from './__tests__/swapi-people.json'
 import users from './__tests__/users.example.json'
 import userData_SparseSubtypes from './__tests__/user_sparse-subtypes.json'
-import { flattenTypes } from './utils/helpers'
 
 const productCsv: Promise<any[]> = parseCsv(
   fs.readFileSync(
@@ -109,12 +109,13 @@ describe('primary use-cases', () => {
   })
 
   it('analyze inline csv', async () => {
-    const sampleCsv = await parseCsv(`id,name,role,email,createdAt,accountConfirmed
-  1,Eve,poweruser,eve@example.com,2020-01-20,undefined
-  2,Alice,user,ali@example.com,2020-02-02,true
-  3,Bob,user,robert@example.com,2019-12-31,true
-  4,Elliot Alderson,admin,falkensmaze@protonmail.com,2001-01-01,false
-  5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`)
+    const sampleCsv = await parseCsv(`id,name,role,email,createdAt,accountConfirmed,rankScore
+  1,Eve,poweruser,eve@example.com,2020-01-20,undefined,123.456
+  2,Alice,user,ali@example.com,2020-02-02,true,111.23
+  3,Bob,user,robert@example.com,2019-12-31,true,1.23
+  4,Elliot Alderson,admin,falkensmaze@protonmail.com,2001-01-01,false,1.23
+  5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true,1.23
+`)
 
     return schemaAnalyzer('sampleCsv', sampleCsv as any[]).then((result) => {
       expect(flattenWrapper(result)).toMatchSnapshot('accountsCsvResult_flat')
