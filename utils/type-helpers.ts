@@ -41,8 +41,10 @@ export type IAdvancedMatcherOptions = Partial<
     IAdvancedMatcherOptionsNullable
 >
 export type IAdvancedMatcherOptionsEnum = {
+  /** the maximum # unique enum values allowed before switching to `String` mode. For US States, 50 or so would be appropriate. */
   enumAbsoluteLimit: number
-  enumPercentThreshold: number
+  // enumPercentThreshold: number
+  enumMinimumRowCount: number
 }
 export type IAdvancedMatcherOptionsUnique = {
   uniqueRowsThreshold: number
@@ -87,21 +89,15 @@ const TYPE_ENUM: IAdvancedTypeMatcher = {
   check: (
     typeInfo,
     { rowCount, uniques },
-    { enumAbsoluteLimit, enumPercentThreshold },
+    { enumAbsoluteLimit = 5, enumMinimumRowCount = 100 },
   ) => {
+    if (rowCount < enumMinimumRowCount) return typeInfo
     if (!uniques || uniques.length === 0) return typeInfo
     // TODO: calculate uniqueness using ALL uniques combined from ALL types, this only sees consistently typed data
-    // const uniqueness = rowCount / uniques.length
-    const relativeEnumLimit = Math.min(
-      parseInt(String(rowCount * enumPercentThreshold!), 10),
-      enumAbsoluteLimit!,
-    )
-    if (uniques.length > relativeEnumLimit) return typeInfo
-    // const enumLimit = uniqueness < enumAbsoluteLimit && relativeEnumLimit < enumAbsoluteLimit
-    //   ? enumAbsoluteLimit
-    //   : relativeEnumLimit
+    if (uniques.length <= enumAbsoluteLimit)
+      return { ...typeInfo, enum: uniques }
 
-    return { ...typeInfo, enum: uniques }
+    return typeInfo
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount
   },
 }
@@ -110,7 +106,7 @@ const TYPE_NULLABLE: IAdvancedTypeMatcher = {
   // matchBasicTypes: ['String', 'Number'],
   check: (typeInfo, { rowCount, uniques }, { nullableRowsThreshold }) => {
     if (!uniques || uniques.length === 0) return typeInfo
-    let nullishTypeCount = 0
+    let nullishTypeCount = typeInfo.nullCount || 0
     // if (typeInfo && typeInfo.types && typeInfo.types.Null) console.warn('Unexpected type info structure! (.types. key!)');
 
     if (typeInfo.types.Null) {
@@ -121,7 +117,7 @@ const TYPE_NULLABLE: IAdvancedTypeMatcher = {
     const nullLimit = nullableRowsThreshold
       ? rowCount * nullableRowsThreshold
       : 0
-    const isNullable = nullishTypeCount >= nullLimit
+    const isNullable = nullishTypeCount > 0 && nullishTypeCount >= nullLimit
     // TODO: Look into specifically checking 'Null' or 'Unknown' type stats
     return { ...typeInfo, nullable: isNullable, nullCount: nullishTypeCount }
     // TODO: calculate entropy using a sum of all non-null detected types, not just typeCount

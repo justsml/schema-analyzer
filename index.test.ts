@@ -135,11 +135,15 @@ describe('primary use-cases', () => {
   })
 
   it('supports enum detection', async () => {
-    const results = await schemaAnalyzer('people', people, { strictMatching: false, enumMinimumRowCount: 10, enumAbsoluteLimit: 8 })
+    const results = await schemaAnalyzer('people', people, {
+      strictMatching: false,
+      enumMinimumRowCount: 10,
+      enumAbsoluteLimit: 8,
+    })
+    expect(results).toMatchSnapshot('peopleWithEnums')
     expect(results.fields?.id?.unique).toBeTruthy()
     expect(results.fields?.eye_color?.enum?.length).toBe(8)
     expect(results.fields?.gender?.enum?.length).toBe(5)
-    expect(results).toMatchSnapshot('peopleWithEnums')
   })
 
   it('handles null field data', async () => {
@@ -169,7 +173,7 @@ describe('primary use-cases', () => {
     expect(result?.nestedTypes).toBeDefined()
     expect(result?.nestedTypes!['users.notes']).toBeDefined()
     expect(
-      result?.nestedTypes!['users.notes']?.fields?.id?.nullable
+      result?.nestedTypes!['users.notes']?.fields?.id?.nullable,
     ).toBeFalsy()
     expect(result).toMatchSnapshot('nestedData')
     expect(flattenWrapper(result)).toMatchSnapshot('nestedData_flat')
@@ -182,7 +186,7 @@ describe('primary use-cases', () => {
     expect(result.fields.name?.nullable).toBeFalsy()
     expect(result.fields.notes).toBeDefined()
     expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
-      userData_SparseSubtypes.length
+      userData_SparseSubtypes.length,
     )
     // expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
     expect(result.nestedTypes!['users.notes']?.totalRows).toBe(6)
@@ -191,7 +195,7 @@ describe('primary use-cases', () => {
     expect(result?.nestedTypes).toBeDefined()
     expect(result?.nestedTypes!['users.notes']).toBeDefined()
     expect(
-      result?.nestedTypes!['users.notes']?.fields?.id?.nullable
+      result?.nestedTypes!['users.notes']?.fields?.id?.nullable,
     ).toBeFalsy()
     expect(result).toMatchSnapshot('sparseNestedData')
     expect(flattenWrapper(result)).toMatchSnapshot('sparseNestedData_flat')
@@ -213,16 +217,14 @@ describe('primary use-cases', () => {
     expect(result.fields.name?.nullable).toBeFalsy()
     expect(result.fields.notes).toBeDefined()
     expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
-      data.length
+      data.length,
     )
     expect(result.nestedTypes!['users.notes']?.totalRows).toBe(15)
     expect(result.fields?.notes?.types?.$ref).toBeDefined()
     expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe('users.notes')
     expect(result.nestedTypes).toBeDefined()
     expect(result.nestedTypes!['users.notes']).toBeDefined()
-    expect(
-      result.nestedTypes!['users.notes']?.fields?.id?.nullable
-    ).toBeFalsy()
+    expect(result.nestedTypes!['users.notes']?.fields?.id?.nullable).toBeFalsy()
     expect(result).toMatchSnapshot('denseNestedData')
     expect(flattenWrapper(result)).toMatchSnapshot('denseNestedData_flat')
   })
@@ -231,7 +233,6 @@ describe('primary use-cases', () => {
     const lowEnumLimitLoosePct = schemaAnalyzer('properties', properties, {
       enumMinimumRowCount: 10,
       enumAbsoluteLimit: 30,
-      enumPercentThreshold: 0.2,
     }).then((result) =>
       expect(result).toMatchSnapshot('propertiesResult_lowEnumLimitLoosePct'),
     )

@@ -55,14 +55,20 @@ export type TypeNameStringDecimal =
 
 export interface ISchemaAnalyzerOptions {
   onProgress?: progressCallback | undefined
+  /** Required # of rows, default 100 */
   enumMinimumRowCount?: number | undefined
+  /** The maximum # unique enum values allowed before switching to `String` mode. For US States, 50 or so would be appropriate. Default 5. */
   enumAbsoluteLimit?: number | undefined
-  enumPercentThreshold?: number | undefined
+  /** Obsolete? */
+  // enumPercentThreshold?: number | undefined
+  /** Percent of empty records indicating field is still non-null. (Error tolerance for bad data.) */
   nullableRowsThreshold?: number | undefined
+  /** */
   uniqueRowsThreshold?: number | undefined
+  /** Match multiple (possibly overlapping) types. For example, `dan@danlevy.net` is both a `String` and an `Email`. */
   strictMatching?: boolean | undefined
+  /** Nested object arrays will return sub-type info by default. */
   disableNestedTypes?: boolean | undefined
-  bogusSizeThreshold?: number | undefined
 }
 
 /**
@@ -181,7 +187,7 @@ export type FieldTypeSummary = {
   /** number of times the type was matched */
   count: number
   /** absolute priority of the detected TypeName, defined in the object `typeRankings` */
-  rank: number
+  // rank: number
 }
 /**
  * This is an internal intermediate structure.
@@ -201,7 +207,7 @@ export type InternalFieldTypeData = {
   /** number of times the type was matched */
   count?: number | undefined
   /** absolute priority of the detected TypeName, defined in the object `typeRankings` */
-  rank?: number | undefined
+  // rank?: number | undefined
 }
 /**
  * Used to represent a number series of any size.
@@ -265,12 +271,11 @@ function schemaAnalyzer(
     onProgress: ({ totalRows, currentRow }) => {},
     strictMatching: true,
     disableNestedTypes: false,
-    enumMinimumRowCount: 25,
-    enumAbsoluteLimit: 10,
-    enumPercentThreshold: 0.01,
+    enumMinimumRowCount: 100,
+    enumAbsoluteLimit: 5,
+    // enumPercentThreshold: 0.01,
     nullableRowsThreshold: 0.001,
     uniqueRowsThreshold: 0.99,
-    bogusSizeThreshold: 0.1,
   },
 ): Promise<TypeSummary<FieldInfo>> {
   if (!Array.isArray(input) || typeof input !== 'object')
@@ -285,7 +290,7 @@ function schemaAnalyzer(
     disableNestedTypes = false,
     enumMinimumRowCount = 25,
     enumAbsoluteLimit = 10,
-    enumPercentThreshold = 0.01,
+    // enumPercentThreshold = 0.01,
     nullableRowsThreshold = 0.001,
     uniqueRowsThreshold = 0.99,
   } = options
@@ -305,37 +310,43 @@ function schemaAnalyzer(
   log(`Processing '${schemaName}', found ${input.length} rows...`)
   return Promise.resolve(input)
     .then(pivotRowsGroupedByType)
-    .then(condenseFieldData)
+    .then(condenseFieldData({ enumAbsoluteLimit, isEnumEnabled }))
     .then(async (schema) => {
       log('Built summary from Field Type data.')
       // console.log('Schema', JSON.stringify(schema, null, 2))
 
       const fields = Object.keys(schema.fields).reduce(
-        (fieldInfo, fieldName) => {
+        (fieldTypesResults, fieldName) => {
           const typesInfo = schema.fields[fieldName]!.types
           const jobState = {
             rowCount: input.length,
             uniques: schema.uniques[fieldName] ?? [],
           }
+          let f = schema.fields[fieldName]
 
-          fieldInfo[fieldName] = { types: typesInfo! }
-          const fInfo = fieldInfo[fieldName]
+          let fInfo: FieldInfo = {
+            identity: f?.identity || false,
+            types: f?.types!,
+            enum: f?.enum,
+            nullable: f?.nullable,
+            nullCount: f?.nullCount || 0,
+            unique: f?.unique,
+            uniqueCount: f?.uniqueCount || 0,
+          }
 
-          fieldInfo[fieldName] = TYPE_ENUM.check(fInfo!, jobState, options)
-          fieldInfo[fieldName] = TYPE_NULLABLE.check(fInfo!, jobState, options)
-          fieldInfo[fieldName] = TYPE_UNIQUE.check(fInfo!, jobState, options)
+          fInfo = TYPE_ENUM.check(fInfo, jobState, options)
+          fInfo = TYPE_NULLABLE.check(fInfo, jobState, options)
+          fInfo = TYPE_UNIQUE.check(fInfo, jobState, options)
 
           const isIdentity =
             (typesInfo.Number || typesInfo.UUID || typesInfo.ObjectId) &&
             /^(gu|uu|_)?id/i.test(fieldName)
 
-          if (isIdentity) fieldInfo[fieldName]!.identity = true
+          if (isIdentity) fInfo.identity = true
 
           if (schema.uniques && schema.uniques[fieldName]) {
-            fieldInfo[fieldName]!.uniqueCount = schema.uniques[
-              fieldName
-            ]!.length
-            fieldInfo[fieldName]!.unique = fieldInfo[fieldName]!.uniqueCount === jobState.rowCount
+            fInfo.uniqueCount = schema.uniques[fieldName]!.length
+            fInfo.unique = fInfo.uniqueCount === jobState.rowCount
           }
 
           // verify `uniques` tracking
@@ -348,8 +359,9 @@ function schemaAnalyzer(
           //     `ERROR: No unique data tracked for field (${schemaName} ${fieldName}) !!!`
           //   );
           // }
+          fieldTypesResults[fieldName] = fInfo
 
-          return fieldInfo
+          return fieldTypesResults
         },
         {} as { [fieldName: string]: FieldInfo },
       )
@@ -427,7 +439,7 @@ const _evaluateSchemaLevel = ({
 }) =>
   function evaluateSchemaLevel(
     schema: {
-      totalRows: any
+      totalRows: number
       uniques: { [x: string]: any[] }
       fieldsData: { [x: string]: TypedFieldObject<FieldTypeSummary>[] }
     },
@@ -466,7 +478,7 @@ const _evaluateSchemaLevel = ({
           nestedData[keyPath] = nestedData[keyPath] || []
           nestedData[keyPath].push(...value)
           typeFingerprint.$ref = typeFingerprint.$ref || {
-            rank: -12,
+            // rank: -12,
             count: index,
           }
           typeFingerprint.$ref.typeAlias = keyPath
@@ -534,49 +546,62 @@ const _evaluateSchemaLevel = ({
  * }
  * ```
  */
-function condenseFieldData(schema: {
-  fieldsData: {
-    [x: string]: TypedFieldObject<InternalFieldTypeData>[]
-  }
-  uniques: {
-    [x: string]: any[]
-  }
-  totalRows: number
-}) {
-  const { fieldsData } = schema
-  const fieldNames = Object.keys(fieldsData)
-
-  const fieldSummary: { [key: string]: FieldInfo } = {}
-  log(
-    `Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`,
-  )
-  fieldNames.forEach((fieldName) => {
-    const pivotedData = pivotFieldDataByType(fieldsData[fieldName]!)
-    fieldSummary[fieldName] = fieldSummary[fieldName] || { types: {} }
-    fieldSummary[fieldName]!.types = condenseFieldSizes(pivotedData)
-
-    if (pivotedData.Null?.count != null && pivotedData.Null?.count >= 0) {
-      fieldSummary[fieldName]!.nullCount = pivotedData.Null.count
+function condenseFieldData({ enumAbsoluteLimit, isEnumEnabled }) {
+  return (schema: {
+    fieldsData: {
+      [x: string]: TypedFieldObject<InternalFieldTypeData>[]
     }
-
-    if (pivotedData.$ref?.count ?? 0 > 1) {
-      // Prevent overriding the $ref type label
-      // 1. Find the first $ref
-      const refType = fieldsData[fieldName]!.find((typeRefs) => typeRefs.$ref)
-      // if (!fieldSummary[fieldName]?.types?.$ref) {
-      //   throw new Error(`Invalid nested type $ref: fieldSummary[${fieldName}].types.$ref`)
-      // }
-      fieldSummary[fieldName]!.types.$ref!.typeAlias = refType!.$ref!.typeAlias
+    uniques: {
+      [x: string]: any[]
     }
+    totalRows: number
+  }) => {
+    const { fieldsData } = schema
+    const fieldNames = Object.keys(fieldsData)
 
-    // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
-  })
-  log('Post-condenseFieldSizes(fields[fieldName])')
-  log('Replaced fieldData with fieldSummary')
-  return {
-    fields: fieldSummary,
-    uniques: schema.uniques || {},
-    totalRows: schema.totalRows,
+    const fieldSummary: { [key: string]: FieldInfo } = {}
+    log(
+      `Pre-condenseFieldSizes(fields[fieldName]) for ${fieldNames.length} columns`,
+    )
+    fieldNames.forEach((fieldName) => {
+      const pivotedData = pivotFieldDataByType(fieldsData[fieldName]!)
+      fieldSummary[fieldName] = fieldSummary[fieldName] || { types: {} }
+      fieldSummary[fieldName]!.types = condenseFieldSizes(pivotedData)
+
+      if (pivotedData.Null?.count != null && pivotedData.Null?.count >= 0) {
+        fieldSummary[fieldName]!.nullCount = pivotedData.Null.count
+      }
+
+      if (pivotedData.$ref?.count ?? 0 > 1) {
+        // Prevent overriding the $ref type label
+        // 1. Find the first $ref
+        const refType = fieldsData[fieldName]!.find((typeRefs) => typeRefs.$ref)
+        // if (!fieldSummary[fieldName]?.types?.$ref) {
+        //   throw new Error(`Invalid nested type $ref: fieldSummary[${fieldName}].types.$ref`)
+        // }
+        fieldSummary[
+          fieldName
+        ]!.types.$ref!.typeAlias = refType!.$ref!.typeAlias
+      }
+
+      // check for enum fields
+      if (
+        isEnumEnabled &&
+        schema.uniques[fieldName] != null &&
+        schema.uniques[fieldName]?.length! <= enumAbsoluteLimit
+      ) {
+        fieldSummary[fieldName]!.enum = schema.uniques[fieldName]
+      }
+
+      // console.log(`fieldSummary[${fieldName}]`, fieldSummary[fieldName])
+    })
+    log('Post-condenseFieldSizes(fields[fieldName])')
+    log('Replaced fieldData with fieldSummary')
+    return {
+      fields: fieldSummary,
+      uniques: schema.uniques || {},
+      totalRows: schema.totalRows,
+    }
   }
 }
 
@@ -609,7 +634,10 @@ function pivotFieldDataByType(
           pivotedData[typeName].scale = []
         if (Number.isFinite(precision) && !pivotedData[typeName].precision)
           pivotedData[typeName].precision = []
-        if (Number.isFinite(value) && !pivotedData[typeName].value)
+        if (
+          (Number.isFinite(value) || typeof value === 'string') &&
+          !pivotedData[typeName].value
+        )
           pivotedData[typeName].value = []
 
         pivotedData[typeName].count++
@@ -646,7 +674,7 @@ function condenseFieldSizes(
     (typeName: string, idx: number, arr: any[]) => {
       aggregateSummary[typeName] = {
         // typeName,
-        rank: typeRankings[typeName] || -42,
+        // rank: typeRankings[typeName] || -42,
         count: pivotedDataByType[typeName]!.count,
       }
 
@@ -659,7 +687,7 @@ function condenseFieldSizes(
           typeName
         ]!.typeAlias = pivotedDataByType.$ref!.typeAlias
       } else {
-        if (pivotedDataByType[typeName]!.value)
+        if (typeName !== 'String' && pivotedDataByType[typeName]!.value)
           aggregateSummary[typeName]!.value = getNumberRangeStats(
             pivotedDataByType[typeName].value,
           )
@@ -710,18 +738,18 @@ function getFieldMetadata({
       let length
       let precision
       let scale
-      let rank = index + 1
+      // let rank = index + 1
       let count = 1
 
-      analysis[typeGuess] = { rank, count }
+      analysis[typeGuess] = { count }
 
       if (typeGuess === 'Array') {
         length = value.length
-        analysis[typeGuess] = { ...analysis[typeGuess], rank, count, length }
+        analysis[typeGuess] = { ...analysis[typeGuess], count, length }
       }
       if (typeGuess === 'Float') {
         value = parseFloat(String(value))
-        analysis[typeGuess] = { ...analysis[typeGuess], rank, count, value }
+        analysis[typeGuess] = { ...analysis[typeGuess], count, value }
         const significandAndMantissa = String(value).split('.')
         if (significandAndMantissa.length === 2) {
           // Note: To future self, the following is correct: 'precision' is the total # of digits!
@@ -729,7 +757,6 @@ function getFieldMetadata({
           scale = significandAndMantissa[1]!.length
           analysis[typeGuess] = {
             ...analysis[typeGuess],
-            rank,
             count,
             precision,
             scale,
@@ -738,14 +765,13 @@ function getFieldMetadata({
       }
       if (typeGuess === 'Number') {
         value = Number(value)
-        analysis[typeGuess] = { ...analysis[typeGuess], rank, count, value }
+        analysis[typeGuess] = { ...analysis[typeGuess], count, value }
       }
       if (typeGuess === 'Date' || typeGuess === 'Timestamp') {
         const checkedDate = isValidDate(value)
         if (checkedDate) {
           analysis[typeGuess] = {
             ...analysis[typeGuess],
-            rank,
             count,
             value: checkedDate.getTime(),
           }
@@ -755,7 +781,7 @@ function getFieldMetadata({
       }
       if (typeGuess === 'String' || typeGuess === 'Email') {
         length = String(value).length
-        analysis[typeGuess] = { ...analysis[typeGuess], rank, count, length }
+        analysis[typeGuess] = { ...analysis[typeGuess], count, length, value }
       }
       return analysis
     },
