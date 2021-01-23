@@ -85,7 +85,11 @@
     "webpack-cli": "^4.4.0"
   },
   "prettier": {
-    "endOfLine": "lf"
+    "endOfLine": "lf",
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true  
   },
   "jest": {
     "moduleFileExtensions": [

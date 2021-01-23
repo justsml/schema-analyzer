@@ -72,5 +72,6 @@
     // "skipLibCheck": true,                     /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
   },
-  "files": ["./index.ts"]
+  "files": ["./index.ts"],
+  "include": ["./**/*.test.{ts,js,tsx,jsx}"]
 }

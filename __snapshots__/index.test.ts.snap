@@ -10,7 +10,8 @@ Object {
       "nullable": false,
       "type": "Number",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
+      "value": 5,
     },
     "name": Object {
       "count": 5,
@@ -42,7 +43,8 @@ Object {
           "nullable": false,
           "type": "Number",
           "typeRef": undefined,
-          "unique": false,
+          "unique": true,
+          "value": undefined,
         },
         "text": Object {
           "count": 6,
@@ -1142,6 +1144,8 @@ exports[`primary use-cases analyze inline csv: accountsCsvResult 1`] = `
 Object {
   "fields": Object {
     "accountConfirmed": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Boolean": Object {
           "count": 4,
@@ -1167,8 +1171,12 @@ Object {
           "rank": -1,
         },
       },
+      "unique": false,
+      "uniqueCount": 1,
     },
     "createdAt": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Date": Object {
           "count": 4,
@@ -1201,8 +1209,12 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 1,
     },
     "email": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Email": Object {
           "count": 5,
@@ -1223,6 +1235,8 @@ Object {
     },
     "id": Object {
       "identity": true,
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 5,
@@ -1255,8 +1269,12 @@ Object {
           "rank": 12,
         },
       },
+      "unique": true,
+      "uniqueCount": 5,
     },
     "name": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 5,
@@ -1274,8 +1292,12 @@ Object {
           "rank": 12,
         },
       },
+      "unique": true,
+      "uniqueCount": 5,
     },
     "role": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 5,
@@ -1293,6 +1315,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
   },
   "nestedTypes": Object {},
@@ -1321,6 +1345,7 @@ Object {
       "type": "Date",
       "typeRef": undefined,
       "unique": false,
+      "value": "2001-01-01T00:00:00.000Z",
     },
     "email": Object {
       "count": 5,
@@ -1339,7 +1364,8 @@ Object {
       "nullable": false,
       "type": "Number",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
+      "value": 5,
     },
     "name": Object {
       "count": 5,
@@ -1349,7 +1375,7 @@ Object {
       "nullable": false,
       "type": "String",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
     },
     "role": Object {
       "count": 5,
@@ -3801,6 +3827,8 @@ exports[`primary use-cases analyze top 250 rows in products.csv: productsResult_
 Object {
   "fields": Object {
     "Alcohol By Volume": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -3812,6 +3840,8 @@ Object {
       "uniqueCount": 1,
     },
     "Author": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -3833,6 +3863,8 @@ Object {
       "uniqueCount": 3,
     },
     "Brand Name": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -3854,6 +3886,8 @@ Object {
       "uniqueCount": 112,
     },
     "Calories": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 11,
@@ -3890,6 +3924,8 @@ Object {
       "uniqueCount": 11,
     },
     "Carbohydrate (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 11,
@@ -3926,6 +3962,8 @@ Object {
       "uniqueCount": 9,
     },
     "Cholesterol (mg)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 1,
@@ -3962,6 +4000,8 @@ Object {
       "uniqueCount": 3,
     },
     "Fat (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 11,
@@ -3988,6 +4028,8 @@ Object {
       "uniqueCount": 1,
     },
     "Fat Calories": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 9,
@@ -4024,6 +4066,8 @@ Object {
       "uniqueCount": 9,
     },
     "Fiber (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 8,
@@ -4060,6 +4104,8 @@ Object {
       "uniqueCount": 6,
     },
     "Format": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4081,6 +4127,8 @@ Object {
       "uniqueCount": 2,
     },
     "GTIN-14": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4102,6 +4150,8 @@ Object {
       "uniqueCount": 250,
     },
     "Images": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4123,6 +4173,8 @@ Object {
       "uniqueCount": 2,
     },
     "Ingredients": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4144,6 +4196,8 @@ Object {
       "uniqueCount": 28,
     },
     "Monounsaturated Fat (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 4,
@@ -4192,6 +4246,8 @@ Object {
       "uniqueCount": 1,
     },
     "Name": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4213,6 +4269,8 @@ Object {
       "uniqueCount": 219,
     },
     "Pages": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 2,
@@ -4249,6 +4307,8 @@ Object {
       "uniqueCount": 3,
     },
     "Polyunsaturated Fat (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 4,
@@ -4297,6 +4357,8 @@ Object {
       "uniqueCount": 1,
     },
     "Potassium (mg)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 4,
@@ -4333,6 +4395,8 @@ Object {
       "uniqueCount": 5,
     },
     "Protein (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 9,
@@ -4369,6 +4433,8 @@ Object {
       "uniqueCount": 8,
     },
     "Publisher": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4390,6 +4456,8 @@ Object {
       "uniqueCount": 3,
     },
     "Saturated Fat (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 10,
@@ -4438,6 +4506,8 @@ Object {
       "uniqueCount": 1,
     },
     "Serving Size": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "String": Object {
           "count": 250,
@@ -4459,6 +4529,8 @@ Object {
       "uniqueCount": 12,
     },
     "Servings Per Container": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 4,
@@ -4495,6 +4567,8 @@ Object {
       "uniqueCount": 12,
     },
     "Size": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 2,
@@ -4568,6 +4642,8 @@ Object {
       "uniqueCount": 71,
     },
     "Sodium (mg)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 10,
@@ -4604,6 +4680,8 @@ Object {
       "uniqueCount": 12,
     },
     "Sugars (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Number": Object {
           "count": 9,
@@ -4640,6 +4718,8 @@ Object {
       "uniqueCount": 10,
     },
     "Trans Fat (g)": Object {
+      "nullCount": 0,
+      "nullable": false,
       "types": Object {
         "Float": Object {
           "count": 10,
@@ -6150,11 +6230,15 @@ Object {
     },
     "location": Object {
       "types": Object {
+        "Null": Object {
+          "count": 1,
+          "rank": 10,
+        },
         "String": Object {
-          "count": 26,
+          "count": 25,
           "length": Object {
             "max": 6,
-            "mean": 5.769230769230769,
+            "mean": 5.76,
             "min": 3,
             "p25": 6,
             "p33": 6,
@@ -6297,6 +6381,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "address2": Object {
       "types": Object {
@@ -6316,6 +6402,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 96,
     },
     "city": Object {
       "types": Object {
@@ -6335,6 +6423,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "commissionRate": Object {
       "types": Object {
@@ -6395,6 +6485,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 14,
     },
     "createdAt": Object {
       "types": Object {
@@ -6437,6 +6529,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "fireplace1": Object {
       "types": Object {
@@ -6460,6 +6554,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 9,
     },
     "fireplace1Location": Object {
       "types": Object {
@@ -6479,6 +6575,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 18,
     },
     "fireplace2": Object {
       "types": Object {
@@ -6502,6 +6600,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 9,
     },
     "fireplace2Location": Object {
       "types": Object {
@@ -6521,6 +6621,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 17,
     },
     "fireplace3": Object {
       "types": Object {
@@ -6544,6 +6646,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 9,
     },
     "fireplace3Location": Object {
       "types": Object {
@@ -6563,6 +6667,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 18,
     },
     "garage": Object {
       "types": Object {
@@ -6586,6 +6692,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 4,
     },
     "heating": Object {
       "types": Object {
@@ -6609,6 +6717,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 15,
     },
     "hoaFrequency": Object {
       "types": Object {
@@ -6628,6 +6738,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 4,
     },
     "id": Object {
       "identity": true,
@@ -6637,6 +6749,8 @@ Object {
           "rank": 2,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "kitchenFeature1": Object {
       "types": Object {
@@ -6656,6 +6770,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 14,
     },
     "kitchenFeature2": Object {
       "types": Object {
@@ -6675,6 +6791,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 14,
     },
     "kitchenFeature3": Object {
       "types": Object {
@@ -6694,6 +6812,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 14,
     },
     "latitude": Object {
       "types": Object {
@@ -6769,6 +6889,8 @@ Object {
           },
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "listingAgentCompanyName": Object {
       "types": Object {
@@ -6788,6 +6910,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "listingAgentFirstName": Object {
       "types": Object {
@@ -6807,6 +6931,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 94,
     },
     "listingAgentFullName": Object {
       "types": Object {
@@ -6826,6 +6952,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "listingAgentLastName": Object {
       "types": Object {
@@ -6845,6 +6973,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 87,
     },
     "listingAgentNamePrefix": Object {
       "types": Object {
@@ -6864,6 +6994,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 5,
     },
     "listingAgentNameSuffix": Object {
       "types": Object {
@@ -6883,6 +7015,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 11,
     },
     "listingAgentPhone": Object {
       "types": Object {
@@ -6902,6 +7036,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "listingId": Object {
       "types": Object {
@@ -6921,6 +7057,8 @@ Object {
           },
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "locationBedroom2": Object {
       "types": Object {
@@ -6944,6 +7082,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationBedroom3": Object {
       "types": Object {
@@ -6967,6 +7107,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationBedroom4": Object {
       "types": Object {
@@ -6990,6 +7132,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationBedroom5": Object {
       "types": Object {
@@ -7013,6 +7157,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationBonusRoom": Object {
       "types": Object {
@@ -7036,6 +7182,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationDenRoom": Object {
       "types": Object {
@@ -7059,6 +7207,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationEatingSpace": Object {
       "types": Object {
@@ -7082,6 +7232,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationEntryRoom": Object {
       "types": Object {
@@ -7105,6 +7257,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationFamilyRoom": Object {
       "types": Object {
@@ -7128,6 +7282,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationFormalDiningR": Object {
       "types": Object {
@@ -7151,6 +7307,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationGreatRoom": Object {
       "types": Object {
@@ -7174,6 +7332,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationKitchen": Object {
       "types": Object {
@@ -7197,6 +7357,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationLivingRoom": Object {
       "types": Object {
@@ -7220,6 +7382,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationMasterBedroom": Object {
       "types": Object {
@@ -7243,6 +7407,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationOffice": Object {
       "types": Object {
@@ -7266,6 +7432,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationOtherRoom": Object {
       "types": Object {
@@ -7289,6 +7457,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationRecreationRoo": Object {
       "types": Object {
@@ -7312,6 +7482,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "locationUtilityRoom": Object {
       "types": Object {
@@ -7335,6 +7507,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 3,
     },
     "longitude": Object {
       "types": Object {
@@ -7418,6 +7592,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 6,
     },
     "propertyType": Object {
       "types": Object {
@@ -7437,6 +7613,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 7,
     },
     "sellingAgentCompanyName": Object {
       "types": Object {
@@ -7456,6 +7634,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sellingAgentFirstName": Object {
       "types": Object {
@@ -7475,6 +7655,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "sellingAgentFullName": Object {
       "types": Object {
@@ -7494,6 +7676,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "sellingAgentLastName": Object {
       "types": Object {
@@ -7513,6 +7697,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 90,
     },
     "sellingAgentNamePrefix": Object {
       "types": Object {
@@ -7532,6 +7718,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 5,
     },
     "sellingAgentNameSuffix": Object {
       "types": Object {
@@ -7551,6 +7739,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 11,
     },
     "sellingAgentPhone": Object {
       "types": Object {
@@ -7570,6 +7760,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "sizeBedroom2": Object {
       "types": Object {
@@ -7589,6 +7781,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 96,
     },
     "sizeBedroom3": Object {
       "types": Object {
@@ -7608,6 +7802,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sizeBedroom4": Object {
       "types": Object {
@@ -7627,6 +7823,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeBedroom5": Object {
       "types": Object {
@@ -7646,6 +7844,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sizeBonusRoom": Object {
       "types": Object {
@@ -7665,6 +7865,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 98,
     },
     "sizeDenRoom": Object {
       "types": Object {
@@ -7684,6 +7886,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeEatingSpace": Object {
       "types": Object {
@@ -7703,6 +7907,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeEntryRoom": Object {
       "types": Object {
@@ -7722,6 +7928,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 96,
     },
     "sizeFamilyRoom": Object {
       "types": Object {
@@ -7741,6 +7949,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sizeFormalDiningRoom": Object {
       "types": Object {
@@ -7760,6 +7970,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 94,
     },
     "sizeGreatRoom": Object {
       "types": Object {
@@ -7779,6 +7991,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeKitchen": Object {
       "types": Object {
@@ -7798,6 +8012,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sizeLivingRoom": Object {
       "types": Object {
@@ -7817,6 +8033,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "sizeMasterBedroom": Object {
       "types": Object {
@@ -7836,6 +8054,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 99,
     },
     "sizeOffice": Object {
       "types": Object {
@@ -7855,6 +8075,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeOtherRoom": Object {
       "types": Object {
@@ -7874,6 +8096,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 94,
     },
     "sizeRecreationRoom": Object {
       "types": Object {
@@ -7893,6 +8117,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 95,
     },
     "sizeUtilityRoom": Object {
       "types": Object {
@@ -7912,6 +8138,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 97,
     },
     "soldPrice": Object {
       "types": Object {
@@ -7946,6 +8174,8 @@ Object {
           },
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
     "state": Object {
       "types": Object {
@@ -7965,6 +8195,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 44,
     },
     "status": Object {
       "types": Object {
@@ -7984,6 +8216,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 6,
     },
     "structureFeature1": Object {
       "types": Object {
@@ -8003,6 +8237,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 28,
     },
     "structureFeature2": Object {
       "types": Object {
@@ -8022,6 +8258,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 28,
     },
     "structureFeature3": Object {
       "types": Object {
@@ -8041,6 +8279,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 27,
     },
     "water": Object {
       "types": Object {
@@ -8060,6 +8300,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 7,
     },
     "zip": Object {
       "types": Object {
@@ -8094,6 +8336,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 100,
     },
   },
   "nestedTypes": Object {},
@@ -20170,6 +20414,8 @@ Object {
           },
         },
       },
+      "unique": true,
+      "uniqueCount": 12,
     },
     "name": Object {
       "types": Object {
@@ -20189,6 +20435,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 1,
     },
     "notes": Object {
       "types": Object {
@@ -20252,6 +20500,8 @@ Object {
               },
             },
           },
+          "unique": false,
+          "uniqueCount": 6,
         },
         "text": Object {
           "types": Object {
@@ -20271,6 +20521,8 @@ Object {
               "rank": 12,
             },
           },
+          "unique": false,
+          "uniqueCount": 2,
         },
       },
       "nestedTypes": Object {},
@@ -20293,7 +20545,8 @@ Object {
       "nullable": false,
       "type": "Number",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
+      "value": 12,
     },
     "name": Object {
       "count": 12,
@@ -20326,6 +20579,7 @@ Object {
           "type": "Number",
           "typeRef": undefined,
           "unique": false,
+          "value": undefined,
         },
         "text": Object {
           "count": 15,
@@ -20370,6 +20624,8 @@ Object {
           },
         },
       },
+      "unique": true,
+      "uniqueCount": 5,
     },
     "name": Object {
       "types": Object {
@@ -20389,6 +20645,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 1,
     },
     "notes": Object {
       "types": Object {
@@ -20452,6 +20710,8 @@ Object {
               },
             },
           },
+          "unique": true,
+          "uniqueCount": 6,
         },
         "text": Object {
           "types": Object {
@@ -20471,6 +20731,8 @@ Object {
               "rank": 12,
             },
           },
+          "unique": false,
+          "uniqueCount": 2,
         },
       },
       "nestedTypes": Object {},
@@ -20493,7 +20755,8 @@ Object {
       "nullable": false,
       "type": "Number",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
+      "value": 5,
     },
     "name": Object {
       "count": 5,
@@ -20525,7 +20788,8 @@ Object {
           "nullable": false,
           "type": "Number",
           "typeRef": undefined,
-          "unique": false,
+          "unique": true,
+          "value": undefined,
         },
         "text": Object {
           "count": 6,
@@ -20570,6 +20834,8 @@ Object {
           },
         },
       },
+      "unique": true,
+      "uniqueCount": 12,
     },
     "name": Object {
       "types": Object {
@@ -20589,6 +20855,8 @@ Object {
           "rank": 12,
         },
       },
+      "unique": false,
+      "uniqueCount": 1,
     },
     "notes": Object {
       "types": Object {
@@ -20652,6 +20920,8 @@ Object {
               },
             },
           },
+          "unique": true,
+          "uniqueCount": 6,
         },
         "text": Object {
           "types": Object {
@@ -20671,6 +20941,8 @@ Object {
               "rank": 12,
             },
           },
+          "unique": false,
+          "uniqueCount": 2,
         },
       },
       "nestedTypes": Object {},
@@ -20693,7 +20965,8 @@ Object {
       "nullable": false,
       "type": "Number",
       "typeRef": undefined,
-      "unique": false,
+      "unique": true,
+      "value": 12,
     },
     "name": Object {
       "count": 12,
@@ -20726,7 +20999,8 @@ Object {
           "nullable": false,
           "type": "Number",
           "typeRef": undefined,
-          "unique": false,
+          "unique": true,
+          "value": undefined,
         },
         "text": Object {
           "count": 6,
@@ -20746,5 +21020,543 @@ Object {
   },
   "schemaName": "users",
   "totalRows": 12,
+}
+`;
+
+exports[`primary use-cases handles null field data: nullFieldsSmall 1`] = `
+Object {
+  "fields": Object {
+    "id": Object {
+      "identity": true,
+      "types": Object {
+        "Number": Object {
+          "count": 3,
+          "rank": 8,
+          "value": Object {
+            "max": 999,
+            "mean": 998,
+            "min": 997,
+            "p25": 997,
+            "p33": 997,
+            "p50": 998,
+            "p66": 998,
+            "p75": 999,
+            "p99": 999,
+          },
+        },
+      },
+      "unique": true,
+      "uniqueCount": 3,
+    },
+    "sparseField": Object {
+      "types": Object {
+        "Null": Object {
+          "count": 1,
+          "rank": 10,
+        },
+      },
+    },
+    "text": Object {
+      "types": Object {
+        "String": Object {
+          "count": 3,
+          "length": Object {
+            "max": 5,
+            "mean": 5,
+            "min": 5,
+            "p25": 5,
+            "p33": 5,
+            "p50": 5,
+            "p66": 5,
+            "p75": 5,
+            "p99": 5,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 2,
+    },
+  },
+  "nestedTypes": Object {},
+  "schemaName": "notes",
+  "totalRows": 3,
+}
+`;
+
+exports[`primary use-cases supports enum detection: peopleWithEnums 1`] = `
+Object {
+  "fields": Object {
+    "birth_year": Object {
+      "types": Object {
+        "Null": Object {
+          "count": 10,
+          "rank": 10,
+        },
+        "String": Object {
+          "count": 30,
+          "length": Object {
+            "max": 7,
+            "mean": 5.3,
+            "min": 4,
+            "p25": 5,
+            "p33": 5,
+            "p50": 5,
+            "p66": 5,
+            "p75": 5,
+            "p99": 7,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 27,
+    },
+    "created": Object {
+      "types": Object {
+        "Date": Object {
+          "count": 40,
+          "rank": 4,
+          "value": Object {
+            "max": "2014-12-19T17:55:43.348Z",
+            "mean": "1963-04-16T14:35:27.920Z",
+            "min": "0000-01-01T00:00:00.000Z",
+            "p25": "2014-12-10T16:20:44.310Z",
+            "p33": "2014-12-10T16:49:14.582Z",
+            "p50": "2014-12-15T12:49:32.457Z",
+            "p66": "2014-12-18T11:12:38.895Z",
+            "p75": "2014-12-19T16:54:53.618Z",
+            "p99": "2014-12-19T17:55:43.348Z",
+          },
+        },
+        "Object": Object {
+          "count": 3,
+          "rank": 14,
+        },
+        "String": Object {
+          "count": 37,
+          "length": Object {
+            "max": 27,
+            "mean": 27,
+            "min": 27,
+            "p25": 27,
+            "p33": 27,
+            "p50": 27,
+            "p66": 27,
+            "p75": 27,
+            "p99": 27,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 37,
+    },
+    "edited": Object {
+      "types": Object {
+        "Date": Object {
+          "count": 40,
+          "rank": 4,
+          "value": Object {
+            "max": "2014-12-20T21:17:56.891Z",
+            "mean": "2014-12-20T21:17:50.514Z",
+            "min": "2014-12-20T21:17:50.309Z",
+            "p25": "2014-12-20T21:17:50.327Z",
+            "p33": "2014-12-20T21:17:50.334Z",
+            "p50": "2014-12-20T21:17:50.349Z",
+            "p66": "2014-12-20T21:17:50.364Z",
+            "p75": "2014-12-20T21:17:50.375Z",
+            "p99": "2014-12-20T21:17:50.399Z",
+          },
+        },
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 27,
+            "mean": 27,
+            "min": 27,
+            "p25": 27,
+            "p33": 27,
+            "p50": 27,
+            "p66": 27,
+            "p75": 27,
+            "p99": 27,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 40,
+    },
+    "eye_color": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 9,
+            "mean": 4.8,
+            "min": 3,
+            "p25": 4,
+            "p33": 4,
+            "p50": 5,
+            "p66": 5,
+            "p75": 6,
+            "p99": 9,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 8,
+    },
+    "films": Object {
+      "types": Object {
+        "Array": Object {
+          "count": 40,
+          "length": Object {
+            "max": 7,
+            "mean": 2.525,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 2,
+            "p66": 3,
+            "p75": 4,
+            "p99": 7,
+          },
+          "rank": 13,
+        },
+      },
+    },
+    "gender": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 13,
+            "mean": 4.3,
+            "min": 3,
+            "p25": 4,
+            "p33": 4,
+            "p50": 4,
+            "p66": 4,
+            "p75": 4,
+            "p99": 13,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 5,
+    },
+    "hair_color": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 13,
+            "mean": 5,
+            "min": 3,
+            "p25": 4,
+            "p33": 4,
+            "p50": 5,
+            "p66": 5,
+            "p75": 5,
+            "p99": 13,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 11,
+    },
+    "height": Object {
+      "types": Object {
+        "Null": Object {
+          "count": 1,
+          "rank": 10,
+        },
+        "Number": Object {
+          "count": 39,
+          "rank": 8,
+          "value": Object {
+            "max": 228,
+            "mean": 169.23076923076923,
+            "min": 66,
+            "p25": 182,
+            "p33": 228,
+            "p50": 170,
+            "p66": 180,
+            "p75": 193,
+            "p99": 183,
+          },
+        },
+        "String": Object {
+          "count": 39,
+          "length": Object {
+            "max": 3,
+            "mean": 2.8974358974358974,
+            "min": 2,
+            "p25": 3,
+            "p33": 3,
+            "p50": 3,
+            "p66": 3,
+            "p75": 3,
+            "p99": 3,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 29,
+    },
+    "homeworld": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 32,
+            "mean": 31.525,
+            "min": 31,
+            "p25": 31,
+            "p33": 31,
+            "p50": 32,
+            "p66": 32,
+            "p75": 32,
+            "p99": 32,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 23,
+    },
+    "id": Object {
+      "identity": true,
+      "types": Object {
+        "Number": Object {
+          "count": 40,
+          "rank": 8,
+          "value": Object {
+            "max": 42,
+            "mean": 21.275,
+            "min": 1,
+            "p25": 11,
+            "p33": 14,
+            "p50": 22,
+            "p66": 28,
+            "p75": 32,
+            "p99": 42,
+          },
+        },
+      },
+      "unique": false,
+      "uniqueCount": 40,
+    },
+    "mass": Object {
+      "types": Object {
+        "Float": Object {
+          "count": 1,
+          "precision": Object {
+            "max": 3,
+            "mean": 3,
+            "min": 3,
+            "p25": 3,
+            "p33": 3,
+            "p50": 3,
+            "p66": 3,
+            "p75": 3,
+            "p99": 3,
+          },
+          "rank": 7,
+          "scale": Object {
+            "max": 1,
+            "mean": 1,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 1,
+            "p66": 1,
+            "p75": 1,
+            "p99": 1,
+          },
+          "value": Object {
+            "max": 78.2,
+            "mean": 78.2,
+            "min": 78.2,
+            "p25": 78.2,
+            "p33": 78.2,
+            "p50": 78.2,
+            "p66": 78.2,
+            "p75": 78.2,
+            "p99": 78.2,
+          },
+        },
+        "Null": Object {
+          "count": 8,
+          "rank": 10,
+        },
+        "Number": Object {
+          "count": 32,
+          "rank": 8,
+          "value": Object {
+            "max": 140,
+            "mean": 77.84516129032258,
+            "min": 17,
+            "p25": 32,
+            "p33": 84,
+            "p50": 110,
+            "p66": 113,
+            "p75": 83,
+            "p99": 40,
+          },
+        },
+        "String": Object {
+          "count": 32,
+          "length": Object {
+            "max": 4,
+            "mean": 2.28125,
+            "min": 2,
+            "p25": 2,
+            "p33": 2,
+            "p50": 2,
+            "p66": 2,
+            "p75": 3,
+            "p99": 4,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 25,
+    },
+    "name": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 21,
+            "mean": 10.7,
+            "min": 4,
+            "p25": 7,
+            "p33": 9,
+            "p50": 11,
+            "p66": 13,
+            "p75": 14,
+            "p99": 21,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 40,
+    },
+    "skin_color": Object {
+      "types": Object {
+        "Null": Object {
+          "count": 1,
+          "rank": 10,
+        },
+        "String": Object {
+          "count": 39,
+          "length": Object {
+            "max": 16,
+            "mean": 5.717948717948718,
+            "min": 4,
+            "p25": 4,
+            "p33": 4,
+            "p50": 5,
+            "p66": 5,
+            "p75": 5,
+            "p99": 16,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 18,
+    },
+    "species": Object {
+      "types": Object {
+        "Array": Object {
+          "count": 40,
+          "length": Object {
+            "max": 1,
+            "mean": 1,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 1,
+            "p66": 1,
+            "p75": 1,
+            "p99": 1,
+          },
+          "rank": 13,
+        },
+      },
+    },
+    "starships": Object {
+      "types": Object {
+        "Array": Object {
+          "count": 40,
+          "length": Object {
+            "max": 5,
+            "mean": 1.6428571428571428,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 1,
+            "p66": 2,
+            "p75": 2,
+            "p99": 5,
+          },
+          "rank": 13,
+        },
+      },
+    },
+    "url": Object {
+      "types": Object {
+        "String": Object {
+          "count": 40,
+          "length": Object {
+            "max": 31,
+            "mean": 30.775,
+            "min": 30,
+            "p25": 31,
+            "p33": 31,
+            "p50": 31,
+            "p66": 31,
+            "p75": 31,
+            "p99": 31,
+          },
+          "rank": 12,
+        },
+      },
+      "unique": false,
+      "uniqueCount": 40,
+    },
+    "vehicles": Object {
+      "types": Object {
+        "Array": Object {
+          "count": 40,
+          "length": Object {
+            "max": 2,
+            "mean": 1.2857142857142858,
+            "min": 1,
+            "p25": 1,
+            "p33": 1,
+            "p50": 1,
+            "p66": 1,
+            "p75": 2,
+            "p99": 2,
+          },
+          "rank": 13,
+        },
+      },
+    },
+  },
+  "nestedTypes": Object {},
+  "schemaName": "people",
+  "totalRows": 40,
 }
 `;

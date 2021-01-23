@@ -386,7 +386,7 @@
     "companyName": "Braun Group",
     "credits": 9,
     "salesScore": 9.75129,
-    "location": "remote",
+    "location": null,
     "profile": 999999999999
   }
 ]
