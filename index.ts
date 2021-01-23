@@ -335,6 +335,7 @@ function schemaAnalyzer(
             fieldInfo[fieldName]!.uniqueCount = schema.uniques[
               fieldName
             ]!.length
+            fieldInfo[fieldName]!.unique = fieldInfo[fieldName]!.uniqueCount === jobState.rowCount
           }
 
           // verify `uniques` tracking

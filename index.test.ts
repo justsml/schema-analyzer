@@ -136,6 +136,9 @@ describe('primary use-cases', () => {
 
   it('supports enum detection', async () => {
     const results = await schemaAnalyzer('people', people, { strictMatching: false, enumMinimumRowCount: 10, enumAbsoluteLimit: 8 })
+    expect(results.fields?.id?.unique).toBeTruthy()
+    expect(results.fields?.eye_color?.enum?.length).toBe(8)
+    expect(results.fields?.gender?.enum?.length).toBe(5)
     expect(results).toMatchSnapshot('peopleWithEnums')
   })
 
@@ -172,30 +175,29 @@ describe('primary use-cases', () => {
     expect(flattenWrapper(result)).toMatchSnapshot('nestedData_flat')
   })
 
-  it('can handle sparsely nested types', () => {
-    return schemaAnalyzer('users', userData_SparseSubtypes).then((result) => {
-      // console.warn(result);
-      expect(result.fields.name).toBeDefined()
-      expect(result.fields.name?.nullable).toBeFalsy()
-      expect(result.fields.notes).toBeDefined()
-      expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
-        userData_SparseSubtypes.length,
-      )
-      // expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
-      expect(result.nestedTypes!['users.notes']?.totalRows).toBe(6)
-      expect(result.fields?.notes?.types?.$ref).toBeDefined()
-      expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe('users.notes')
-      expect(result?.nestedTypes).toBeDefined()
-      expect(result?.nestedTypes!['users.notes']).toBeDefined()
-      expect(
-        result?.nestedTypes!['users.notes']?.fields?.id?.nullable,
-      ).toBeFalsy()
-      expect(result).toMatchSnapshot('sparseNestedData')
-      expect(flattenWrapper(result)).toMatchSnapshot('sparseNestedData_flat')
-    })
+  it('can handle sparsely nested types', async () => {
+    const result = await schemaAnalyzer('users', userData_SparseSubtypes)
+    // console.warn(result);
+    expect(result.fields.name).toBeDefined()
+    expect(result.fields.name?.nullable).toBeFalsy()
+    expect(result.fields.notes).toBeDefined()
+    expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
+      userData_SparseSubtypes.length
+    )
+    // expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
+    expect(result.nestedTypes!['users.notes']?.totalRows).toBe(6)
+    expect(result.fields?.notes?.types?.$ref).toBeDefined()
+    expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe('users.notes')
+    expect(result?.nestedTypes).toBeDefined()
+    expect(result?.nestedTypes!['users.notes']).toBeDefined()
+    expect(
+      result?.nestedTypes!['users.notes']?.fields?.id?.nullable
+    ).toBeFalsy()
+    expect(result).toMatchSnapshot('sparseNestedData')
+    expect(flattenWrapper(result)).toMatchSnapshot('sparseNestedData_flat')
   })
 
-  it('can handle dense nested types', () => {
+  it('can handle dense nested types', async () => {
     const data = userData_SparseSubtypes
     if (typeof data[0] === 'object') {
       // take the 3 notes in row[0] and copy them 3x. Adds 9 to the total.
@@ -205,25 +207,24 @@ describe('primary use-cases', () => {
         ...data[0]!.notes.slice(0),
       )
     }
-    return schemaAnalyzer('users', data).then((result) => {
-      // console.warn(result);
-      expect(result.fields.name).toBeDefined()
-      expect(result.fields.name?.nullable).toBeFalsy()
-      expect(result.fields.notes).toBeDefined()
-      expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
-        data.length,
-      )
-      expect(result.nestedTypes!['users.notes']?.totalRows).toBe(15)
-      expect(result.fields?.notes?.types?.$ref).toBeDefined()
-      expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe('users.notes')
-      expect(result.nestedTypes).toBeDefined()
-      expect(result.nestedTypes!['users.notes']).toBeDefined()
-      expect(
-        result.nestedTypes!['users.notes']?.fields?.id?.nullable,
-      ).toBeFalsy()
-      expect(result).toMatchSnapshot('denseNestedData')
-      expect(flattenWrapper(result)).toMatchSnapshot('denseNestedData_flat')
-    })
+    const result = await schemaAnalyzer('users', data)
+    // console.warn(result);
+    expect(result.fields.name).toBeDefined()
+    expect(result.fields.name?.nullable).toBeFalsy()
+    expect(result.fields.notes).toBeDefined()
+    expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(
+      data.length
+    )
+    expect(result.nestedTypes!['users.notes']?.totalRows).toBe(15)
+    expect(result.fields?.notes?.types?.$ref).toBeDefined()
+    expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe('users.notes')
+    expect(result.nestedTypes).toBeDefined()
+    expect(result.nestedTypes!['users.notes']).toBeDefined()
+    expect(
+      result.nestedTypes!['users.notes']?.fields?.id?.nullable
+    ).toBeFalsy()
+    expect(result).toMatchSnapshot('denseNestedData')
+    expect(flattenWrapper(result)).toMatchSnapshot('denseNestedData_flat')
   })
 
   it('can analyze schema w/ enum options', () => {
