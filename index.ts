@@ -1,10 +1,10 @@
+import debug from "debug";
 import { detectTypes, MetaChecks, typeRankings } from "./utils/type-helpers";
 import * as helpers from "./utils/helpers";
 
 export { helpers };
 
-const debug = require("debug");
-const log = debug("schema-builder");
+const log = debug("schema-builder:main");
 
 // export { schemaAnalyzer, pivotFieldDataByType, getNumberRangeStats, isValidDate }
 
@@ -37,6 +37,11 @@ export type TypeNameString =
   | "Object"
   | "Null";
 
+export const TypeNameStringComposite = ['String', 'Email', 'Array'];
+export type TypeNameStringComposite = 'String' | 'Email' | 'Array';
+export const TypeNameStringDecimal = ['Date', 'Timestamp', 'Currency', 'Float', 'Number'];
+export type TypeNameStringDecimal = 'Date' | 'Timestamp' | 'Currency' | 'Float' | 'Number';
+    
 export interface ISchemaAnalyzerOptions {
   onProgress?: progressCallback | undefined;
   enumMinimumRowCount?: number | undefined;
@@ -120,12 +125,21 @@ export type SimpleFieldInfo = {
   unique?: boolean;
   /** enumeration detected, the values are listed on this property. */
   enum?: string[] | number[] | null;
+  count: number;
 };
 
-export type NumberFieldInfo = SimpleFieldInfo & {
+export type NumericFieldInfo = SimpleFieldInfo & {
+  type: TypeNameStringDecimal,
   scale: number;
   precision: number;
 }
+
+export type ScalarFieldInfo = SimpleFieldInfo & {
+  type: TypeNameStringComposite,
+  length: number;
+}
+
+export type CombinedFieldInfo = NumericFieldInfo | ScalarFieldInfo | SimpleFieldInfo;
 
 /**
  * Contains stats for a given field's (potential) type.
@@ -240,7 +254,7 @@ function schemaAnalyzer(
     uniqueRowsThreshold: 0.99,
     bogusSizeThreshold: 0.1,
   }
-) {
+): Promise<TypeSummary<FieldInfo>> {
   if (!Array.isArray(input) || typeof input !== "object")
     throw Error("Input Data must be an Array of Objects");
   if (input.length < 1) throw Error("1 record required. 100+ recommended.");
@@ -304,6 +318,13 @@ function schemaAnalyzer(
               fieldName
             ]!.length;
           }
+
+          // verify `uniques` tracking
+          if (isIdentity && (!schema.uniques?.[fieldName] || schema.uniques?.[fieldName]!.length <= 0)) {
+            console.trace(`ERROR: No unique data tracked for field (${schemaName} ${fieldName}) !!!`)
+          }
+
+
           return fieldInfo;
         },
         {} as { [fieldName: string]: FieldInfo }

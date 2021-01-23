@@ -3,9 +3,9 @@
   "version": "2.0.0",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "type": "module",
-  "main": "dist/schema-analyzer.bundle.js",
+  "main": "dist/schema-analyzer.umd.js",
   "module": "dist/schema-analyzer.module.js",
-  "browser": "dist/schema-analyzer.bundle.js",
+  "browser": "dist/schema-analyzer.umd.js",
   "files": [
     "dist",
     "build/index.d.ts",

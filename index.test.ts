@@ -30,6 +30,16 @@ const usersCsv: Promise<any[]> = parseCsv(
   )
 );
 
+const flattenWrapper = result => {
+  result = flattenTypes(result, {
+    targetLength: 'p99',
+    targetPrecision: 'p99',
+    targetScale: 'p99',
+  })
+  if (!isCI) console.log(JSON.stringify(result, null, 2))
+  return result
+}
+
 function parseCsv(content): Promise<any[]> {
   return new Promise((resolve, reject) => {
     csvParse(
@@ -97,6 +107,7 @@ describe("primary use-cases", () => {
       "products",
       (await productCsv).slice(0, 250)
     );
+    expect(flattenWrapper(result)).toMatchSnapshot("productsResult_250_flat");
     expect(result).toMatchSnapshot("productsResult_250");
   });
 
@@ -109,7 +120,7 @@ describe("primary use-cases", () => {
   5,Sam Sepiol,admin,falkensmaze@hotmail.com,9/9/99,true`);
 
     return schemaAnalyzer("sampleCsv", sampleCsv as any[]).then((result) => {
-      if (!isCI) console.log(JSON.stringify(flattenTypes(result), null, 2))
+      expect(flattenWrapper(result)).toMatchSnapshot("accountsCsvResult_flat");
       expect(result).toMatchSnapshot("accountsCsvResult");
     });
   });
@@ -140,27 +151,53 @@ describe("primary use-cases", () => {
       expect(result.fields.notes).toBeDefined();
       expect(result.fields?.notes?.types?.$ref).toBeDefined();
       expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe("users.notes");
-      expect(result.nestedTypes).toBeDefined();
-      expect(result.nestedTypes!["users.notes"]).toBeDefined();
-      expect(result.nestedTypes!["users.notes"].fields.id.nullable).toBeFalsy();
+      expect(result?.nestedTypes).toBeDefined();
+      expect(result?.nestedTypes!["users.notes"]).toBeDefined();
+      expect(result?.nestedTypes!["users.notes"]?.fields?.id?.nullable).toBeFalsy();
       expect(result).toMatchSnapshot("nestedData");
+      expect(flattenWrapper(result)).toMatchSnapshot("nestedData_flat");
     });
   });
 
   it("can handle sparsely nested types", () => {
     return schemaAnalyzer("users", userData_SparseSubtypes).then((result) => {
-      console.warn(result); 
+      // console.warn(result); 
       expect(result.fields.name).toBeDefined();
       expect(result.fields.name?.nullable).toBeFalsy();
       expect(result.fields.notes).toBeDefined();
       expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(userData_SparseSubtypes.length);
-      expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
+      // expect(result.fields?.notes?.types?.$ref?.count).toBe(6);
+      expect(result.nestedTypes!["users.notes"]?.totalRows).toBe(6);
+      expect(result.fields?.notes?.types?.$ref).toBeDefined();
+      expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe("users.notes");
+      expect(result?.nestedTypes).toBeDefined();
+      expect(result?.nestedTypes!["users.notes"]).toBeDefined();
+      expect(result?.nestedTypes!["users.notes"]?.fields?.id?.nullable).toBeFalsy();
+      expect(result).toMatchSnapshot("sparseNestedData");
+      expect(flattenWrapper(result)).toMatchSnapshot("sparseNestedData_flat");
+    });
+  });
+
+  it("can handle dense nested types", () => {
+    const data = userData_SparseSubtypes;
+    if (typeof data[0] === 'object') {
+      // take the 3 notes in row[0] and copy them 3x. Adds 9 to the total.
+      data[0].notes = data[0]!.notes.concat(...data[0]!.notes.slice(0), ...data[0]!.notes.slice(0), ...data[0]!.notes.slice(0))
+    }
+    return schemaAnalyzer("users", data).then((result) => {
+      // console.warn(result); 
+      expect(result.fields.name).toBeDefined();
+      expect(result.fields.name?.nullable).toBeFalsy();
+      expect(result.fields.notes).toBeDefined();
+      expect(result.fields?.notes?.types?.Array?.count).toBeGreaterThanOrEqual(data.length);
+      expect(result.nestedTypes!["users.notes"]?.totalRows).toBe(15);
       expect(result.fields?.notes?.types?.$ref).toBeDefined();
       expect(result.fields?.notes?.types?.$ref?.typeAlias).toBe("users.notes");
       expect(result.nestedTypes).toBeDefined();
       expect(result.nestedTypes!["users.notes"]).toBeDefined();
-      expect(result.nestedTypes!["users.notes"].fields.id.nullable).toBeFalsy();
-      expect(result).toMatchSnapshot("sparseNestedData");
+      expect(result.nestedTypes!["users.notes"]?.fields?.id?.nullable).toBeFalsy();
+      expect(result).toMatchSnapshot("denseNestedData");
+      expect(flattenWrapper(result)).toMatchSnapshot("denseNestedData_flat");
     });
   });
   
@@ -232,7 +269,11 @@ describe("progress api", () => {
 describe("helper methods", () => {
   it("can flatten types", () => {
     return schemaAnalyzer("users", userNotes).then((analysis) => {
-      const result = flattenTypes(analysis);
+      const result = flattenTypes(analysis, {
+        targetLength: 'p99',
+        targetPrecision: 'p99',
+        targetScale: 'p99',
+      });
       expect(result.fields.name?.nullable).toBeFalsy();
       expect(result.fields.name?.type).toBe('String')
       expect(result.fields.notes).toBeDefined();

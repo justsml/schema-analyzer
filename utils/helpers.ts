@@ -1,46 +1,59 @@
+import debug from "debug";
 import { mapValues } from "lodash-es";
 import {
   AggregateSummary,
   FieldInfo,
-  SimpleFieldInfo,
+  CombinedFieldInfo,
   TypeNameString,
   TypeSummary,
+  TypeNameStringComposite,
+  TypeNameStringDecimal,
+  ScalarFieldInfo,
+  NumericFieldInfo,
 } from "..";
 
+const log = debug("schema-builder:helpers");
 interface IHelperOptions {
   targetLength: keyof AggregateSummary;
   targetScale: keyof AggregateSummary;
   targetPrecision: keyof AggregateSummary;
-
 }
+
+type CombinedFieldsDict = { [key: string]: CombinedFieldInfo };
 
 export function flattenTypes(
   results: TypeSummary<FieldInfo>,
   options: IHelperOptions
-): TypeSummary<SimpleFieldInfo> {
-  const fields: { [key: string]: SimpleFieldInfo } = {};
-
-  Object.entries(results.fields).map(([fieldName, fieldInfo]) => {
-    if (results.nestedTypes && fieldInfo.types.$ref) {
-      const { typeAlias } = fieldInfo.types?.$ref;
-      // lookup real count, set it on the $ref
-      const { totalRows } = results.nestedTypes[typeAlias!]!;
-      fieldInfo.types.$ref.count = totalRows;
+): TypeSummary<CombinedFieldInfo> {
+  const fields = mapValues(
+    results.fields,
+    (fieldInfo) => {
+      if (results.nestedTypes && fieldInfo.types.$ref) {
+        const { typeAlias } = fieldInfo.types?.$ref;
+        // lookup real count, set it on the $ref
+        const { totalRows } = results.nestedTypes[typeAlias!]!;
+        log(`SubType Count Adjustment, from ${fieldInfo.types.$ref.count} to ${totalRows}`)
+        fieldInfo.types.$ref.count = totalRows;
+      }
+      return _simplifyFieldInfo(fieldInfo, options);
     }
-    fields[fieldName] = _simplifyFieldInfo(fieldInfo);
-  });
+  );
 
   return {
     schemaName: results.schemaName,
     fields,
+    // @ts-ignore
     nestedTypes: results.nestedTypes
-      ? mapValues(results.nestedTypes, flattenTypes)
+      ? mapValues(results.nestedTypes, flattenTypes) as unknown as CombinedFieldsDict
       : undefined,
     totalRows: results.totalRows,
   };
 }
 
-function _simplifyFieldInfo(fieldInfo: FieldInfo): SimpleFieldInfo {
+function _simplifyFieldInfo(
+  fieldInfo: FieldInfo,
+  options: IHelperOptions
+): CombinedFieldInfo {
   let arrayOfTypes = Object.entries(fieldInfo.types); //as [n: TypeNameString, summary?: FieldTypeSummary][]
   arrayOfTypes = arrayOfTypes
     .slice(0)
@@ -59,16 +72,46 @@ function _simplifyFieldInfo(fieldInfo: FieldInfo): SimpleFieldInfo {
   }
 
   if (topType === "$ref") {
-    console.error(`arrayOfTypes`, arrayOfTypes);
+    // console.error(`arrayOfTypes`, arrayOfTypes);
     // console.error(`arrayOfTypes[1]`, arrayOfTypes[1]);
     typeRef = arrayOfTypes[0]?.[1]?.typeAlias;
   }
-  return {
-    identity: fieldInfo.identity,
+
+  const fieldTypeDetails = fieldInfo.types[topType as TypeNameString];
+
+  let result: CombinedFieldInfo = {
     type: topType as TypeNameString,
     typeRef,
+    identity: fieldInfo.identity || false,
     enum: fieldInfo.enum || null,
     nullable: fieldInfo.nullable || false,
     unique: fieldInfo.unique || false,
+    count: fieldTypeDetails?.count || -1
   };
+
+  fieldTypeDetails?.value
+  if (!fieldTypeDetails) throw Error(`Failed to locate or lost track of fieldTypeDetails: ${fieldTypeDetails} typeRef:${typeRef}  topType:${topType}`)
+
+  // keep length for composite fields
+  if (fieldTypeDetails.length) {
+    // if (TypeNameStringComposite.includes(topType)) {
+    const {length} = fieldTypeDetails;
+    return {
+      ...result,
+      length: length![options.targetLength],
+    } as ScalarFieldInfo;
+  }
+
+  // keep scale & precision for decimal fields
+  if (fieldTypeDetails.scale) {
+    // if (TypeNameStringDecimal.includes(topType)) {
+    const {scale, precision} = fieldTypeDetails;
+    return {
+      ...result,
+      scale: scale![options.targetScale],
+      precision: precision![options.targetPrecision],
+    } as NumericFieldInfo;
+  }
+
+  return result;
 }
