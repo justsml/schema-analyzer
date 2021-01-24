@@ -1,7 +1,7 @@
-import TerserPlugin from 'terser-webpack-plugin'
-import path from 'path'
+const TerserPlugin = require('terser-webpack-plugin')
+const path = require('path')
 
-export default {
+module.exports = {
   mode: 'development',
   entry: './index.ts',
   output: {
@@ -10,9 +10,9 @@ export default {
     library: {
       root: 'SchemaAnalyzer',
       amd: 'schema-analyzer',
-      commonjs: 'schema-analyzer'
+      commonjs: 'schema-analyzer',
     },
-    libraryTarget: 'umd' // 'var'
+    libraryTarget: 'umd', // 'var'
   },
   module: {
     rules: [
@@ -21,19 +21,19 @@ export default {
         test: /\.tsx?$/,
         exclude: [/node_modules/, /dist/],
         options: {
-          transpileOnly: true
-        }
-      }
-    ]
+          transpileOnly: true,
+        },
+      },
+    ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()]
+    minimizer: [new TerserPlugin()],
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
   // 'cheap-module-source-map' // 'source-map'
   // optimization: {
   //   runtimeChunk: true

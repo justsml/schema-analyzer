@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "Heuristic \"column\" type & size analysis w/ enumeration detection.",
   "type": "module",
-  "main": "dist/schema-analyzer.umd.js",
-  "module": "dist/schema-analyzer.module.js",
+  "main": "dist/schema-analyzer.cjs.js",
+  "module": "dist/schema-analyzer.bundle.js",
   "browser": "dist/schema-analyzer.umd.js",
   "files": [
     "dist",
@@ -12,8 +12,9 @@
     "index.ts"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist/* && tsc",
+    "prebuild": "rm -rf dist/*",
     "build": "NODE_ENV=production rollup -c && NODE_ENV=development rollup -c && npm run compress",
+    "build:webpack": "webpack -c webpack.config.js",
     "coverage": "jest --coverage --maxWorkers 4 && codecov -f coverage/coverage-final.json",
     "postcoverage": "codecov --token=$CODECOV_TOKEN",
     "dev": "rollup -c -w",
@@ -21,7 +22,7 @@
     "test:debug": "node --inspect-brk=9823 ./node_modules/.bin/jest --runTestsByPath ./index.test.ts ./utils/type-*.test.ts",
     "test:watch": "jest --watch",
     "pretest": "npm run build",
-    "format": "prettier -w index*.ts utils/*.ts",
+    "format": "prettier -w *.js index*.ts utils/*.ts",
     "compress": "zopfli -i2000 --gzip ./dist/schema-analyzer*min.js && brotli --keep --quality=11 -- ./dist/schema-analyzer*min.js"
   },
   "engines": {
@@ -53,10 +54,10 @@
     "@babel/preset-env": "~7.8.3",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/runtime-corejs3": "~7.8.3",
-    "@purtuga/esm-webpack-plugin": "^1.5.0",
     "@rollup/plugin-commonjs": "~11.0.1",
     "@rollup/plugin-node-resolve": "~7.0.0",
-    "@rollup/plugin-typescript": "^8.1.0",
+    "@rollup/plugin-typescript": "8.1.0",
+    "@types/debug": "^4.1.5",
     "@types/jest": "~25.1.0",
     "@types/lodash-es": "^4.17.4",
     "babel-eslint": "~10.0.3",
@@ -79,7 +80,7 @@
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-terser": "~5.2.0",
     "standard": "16.0.3",
-    "terser-webpack-plugin": "^5.1.1",
+    "terser-webpack-plugin": "^4.2.3",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.14",
     "tslib": "^2.1.0",
@@ -92,7 +93,7 @@
     "trailingComma": "all",
     "tabWidth": 2,
     "semi": false,
-    "singleQuote": true  
+    "singleQuote": true
   },
   "jest": {
     "moduleFileExtensions": [

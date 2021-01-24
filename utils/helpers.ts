@@ -45,9 +45,8 @@ export function flattenTypes(
     schemaName: results.schemaName,
     fields,
     // @ts-ignore
-    nestedTypes: (mapValues(
-      results.nestedTypes,
-      value => flattenTypes(value, options),
+    nestedTypes: (mapValues(results.nestedTypes, (value) =>
+      flattenTypes(value, options),
     ) as unknown) as CombinedFieldsDict,
     totalRows: results.totalRows,
   }
@@ -76,7 +75,11 @@ function _simplifyFieldInfo(
   let typeRef: string | undefined = undefined
 
   // check for undercounted $ref due to empty arrays in the rows
-  if (topType === 'Array' && arrayOfTypes[1] != null && arrayOfTypes[1][0] === '$ref') {
+  if (
+    topType === 'Array' &&
+    arrayOfTypes[1] != null &&
+    arrayOfTypes[1][0] === '$ref'
+  ) {
     typeRef = arrayOfTypes[1]![1]!.typeAlias
   }
 
