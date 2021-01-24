@@ -8,6 +8,11 @@ lerna-debug.log*
 
 .DS_Store
 
+build
+
+.rollup.cache
+.cache/
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -107,3 +112,10 @@ typings/
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*

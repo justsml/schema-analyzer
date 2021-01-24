@@ -13,8 +13,8 @@ import {
   TYPE_EMAIL,
   TYPE_STRING,
   TYPE_ARRAY,
-  TYPE_OBJECT
-} from '../type-helpers.js'
+  TYPE_OBJECT,
+} from './type-helpers'
 
 describe('Multiple Type Matching', () => {
   it('correctly handles ambiguous value(s)', () => {
@@ -59,7 +59,7 @@ describe('Multiple Type Matching', () => {
     expect(matchResult.length).toBe(1)
   })
   it('correctly handles float', () => {
-    let matchResult = detectTypes(4.20)
+    let matchResult = detectTypes(4.2)
     expect(matchResult).toContain('Float')
     expect(matchResult.length).toBe(1)
     matchResult = detectTypes('4.20')
@@ -110,7 +110,7 @@ describe('Type Detectors', () => {
     expect(TYPE_UNKNOWN.check(undefined)).toBe(true)
     expect(TYPE_UNKNOWN.check(null)).toBe(false)
   })
-  it('can detect objectId\'s', () => {
+  it("can detect objectId's", () => {
     expect(TYPE_OBJECT_ID.check('112345679065574883030833')).toBe(true)
     expect(TYPE_OBJECT_ID.check('FFFFFFFFFFFFFFFFFFFFFFFF')).toBe(true)
     expect(TYPE_OBJECT_ID.check('45cbc4a0e4123f6920000002')).toBe(true)

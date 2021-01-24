@@ -22,7 +22,8 @@ Schema **Analyzer** is the core library behind Dan's [Schema **Generator**](http
 The primary goal is to support any input JSON/CSV and infer as much as possible. More data will generally yield better results.
 
 - [x] Heuristic type analysis for arrays of objects.
-- [x] Browser-based (local, no server necessary)
+- [x] Nested data structure & multi-table relational output.
+- [x] Browser-based (local, no server used)
 - [x] Automatic type detection:
     - [x] ID - Identifier column, by name and unique Integer check (detects BigInteger)
     - [x] ObjectId (MongoDB's 96 bit/12 Byte ID. 32bit timestamp + 24bit MachineID + 16bit ProcessID + 24bit Counter)
@@ -44,115 +45,32 @@ The primary goal is to support any input JSON/CSV and infer as much as possible.
 - [x] Quantify # of unique values per column
 - [x] Identify `enum` Fields w/ Values
 - [x] Identify `Not Null` fields
-- [ ] Nested data structure & multi-table relational output.
-<!-- - [ ] _Un-de-normalize_ JSON into flat typed objects. -->
+- [x] _Normalize_ structured JSON into flat typed objects.
 
 ### Getting Started
 
-```js
+```bash
 npm install schema-analyzer
 ```
 
-```js
-import { schemaBuilder } from 'schema-builder'
+```ts
+import { schemaAnalyzer } from 'schema-analyzer'
 
-schemaBuilder(schemaName: String, data: Array<Object>): TypeSummary
+schemaAnalyzer(schemaName: string, data: any[]): TypeSummary
 ```
 
 ### Preview Analysis Results
 
 > What does this library's analysis look like?
 
-It consists of 3 key top-level properties:
+It consists of a few top-level properties:
 
-- `totalRows` - # of rows analyzed.
 - `fields: FieldTypeSummary` - a map of field names with all detected types ([includes meta-data](#aggregatesummary) for each type detected, with possible overlaps. e.g. an `Email` is also a `String`, `"42"` is a String and Number)
+- `nestedTypes: { [typeAlias: string]: TypeSummary }` - a nested dictionary of sub-types
+- `totalRows` - # of rows analyzed.
 
-#### Review the raw results below
 
-Details about each field can be found below.
-
-```json
-{
-  "totalRows": 5,
-  "fields": {
-    "id": {
-      "types": {
-        "Number": {
-          "rank": 8,
-          "count": 5,
-          "value": { "min": 1, "mean": 3, "max": 5, "p25": 2, "p33": 2, "p50": 3, "p66": 4, "p75": 4, "p99": 5 }
-        },
-        "String": {
-          "rank": 12,
-          "count": 5,
-          "length": { "min": 1, "mean": 1, "max": 1, "p25": 1, "p33": 1, "p50": 1, "p66": 1, "p75": 1, "p99": 1 }
-        }
-      }
-    },
-    "name": {
-      "types": {
-        "String": {
-          "rank": 12,
-          "count": 5,
-          "length": { "min": 3, "mean": 7.2, "max": 15, "p25": 3, "p33": 3, "p50": 5, "p66": 10, "p75": 10, "p99": 15 }
-        }
-      }
-    },
-    "role": {
-      "types": {
-        "String": {
-          "rank": 12,
-          "count": 5,
-          "length": { "min": 4, "mean": 5.4, "max": 9, "p25": 4, "p33": 4, "p50": 5, "p66": 5, "p75": 5, "p99": 9 }
-        }
-      }
-    },
-    "email": {
-      "types": {
-        "Email": {
-          "rank": 11,
-          "count": 5,
-          "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
-        }
-      }
-    },
-    "createdAt": {
-      "types": {
-        "Date": {
-          "rank": 4,
-          "count": 4,
-          "value": { "min": "2001-01-01T00:00:00.000Z", "mean": "2015-04-14T18:00:00.000Z", "max": "2020-02-02T00:00:00.000Z", "p25": "2020-02-02T00:00:00.000Z", "p33": "2020-02-02T00:00:00.000Z", "p50": "2019-12-31T00:00:00.000Z", "p66": "2019-12-31T00:00:00.000Z", "p75": "2001-01-01T00:00:00.000Z", "p99": "2001-01-01T00:00:00.000Z" }
-        },
-        "String": {
-          "rank": 12,
-          "count": 1,
-          "length": { "min": 6, "mean": 6, "max": 6, "p25": 6, "p33": 6, "p50": 6, "p66": 6, "p75": 6, "p99": 6 }
-        }
-      }
-    },
-    "accountConfirmed": {
-      "types": {
-        "Unknown": {
-          "rank": -1,
-          "count": 1
-        },
-        "String": {
-          "rank": 12,
-          "count": 1,
-          "length": { "min": 9, "mean": 9, "max": 9, "p25": 9, "p33": 9, "p50": 9, "p66": 9, "p75": 9, "p99": 9 }
-        },
-        "Boolean": {
-          "rank": 3,
-          "count": 4
-        }
-      }
-    }
-  }
-}
-```
-
-#### Sample input dataset for the example results above
+#### Example Dataset
 
 | id | name            | role      | email                        | createdAt  | accountConfirmed |
 |----|-----------------|-----------|------------------------------|------------|------------------|
@@ -162,6 +80,81 @@ Details about each field can be found below.
 | 4  | Elliot Alderson | admin     | `falkensmaze@protonmail.com` | 01/01/2001 | false            |
 | 5  | Sam Sepiol      | admin     | `falkensmaze@hotmail.com`    | 9/9/99     | true             |
 
+
+#### Analysis Results
+
+```json
+{
+  "schemaName": "sampleUsers",
+  "totalRows": 5,
+  "fields": {
+    "id": {
+      "identity": true,
+      "types": {
+        "Number": {
+          "count": 5,
+          "value": { "min": 1, "mean": 3, "max": 5, "p25": 2, "p33": 2, "p50": 3, "p66": 4, "p75": 4, "p99": 5 }
+        },
+        "String": {
+          "count": 5,
+          "length": { "min": 1, "mean": 1, "max": 1, "p25": 1, "p33": 1, "p50": 1, "p66": 1, "p75": 1, "p99": 1 }
+        }
+      }
+    },
+    "name": {
+      "types": {
+        "String": {
+          "count": 5,
+          "length": { "min": 3, "mean": 7.2, "max": 15, "p25": 3, "p33": 3, "p50": 5, "p66": 10, "p75": 10, "p99": 15 }
+        }
+      }
+    },
+    "role": {
+      "types": {
+        "String": {
+          "count": 5,
+          "length": { "min": 4, "mean": 5.4, "max": 9, "p25": 4, "p33": 4, "p50": 5, "p66": 5, "p75": 5, "p99": 9 }
+        }
+      }
+    },
+    "email": {
+      "types": {
+        "Email": {
+          "count": 5,
+          "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
+        }
+      }
+    },
+    "createdAt": {
+      "types": {
+        "Date": {
+          "count": 4,
+          "value": { "min": "2001-01-01T00:00:00.000Z", "mean": "2015-04-14T18:00:00.000Z", "max": "2020-02-02T00:00:00.000Z", "p25": "2020-02-02T00:00:00.000Z", "p33": "2020-02-02T00:00:00.000Z", "p50": "2019-12-31T00:00:00.000Z", "p66": "2019-12-31T00:00:00.000Z", "p75": "2001-01-01T00:00:00.000Z", "p99": "2001-01-01T00:00:00.000Z" }
+        },
+        "String": {
+          "count": 1,
+          "length": { "min": 6, "mean": 6, "max": 6, "p25": 6, "p33": 6, "p50": 6, "p66": 6, "p75": 6, "p99": 6 }
+        }
+      }
+    },
+    "accountConfirmed": {
+      "types": {
+        "Unknown": {
+          "count": 1
+        },
+        "String": {
+          "count": 1,
+          "length": { "min": 9, "mean": 9, "max": 9, "p25": 9, "p33": 9, "p50": 9, "p66": 9, "p75": 9, "p99": 9 }
+        },
+        "Boolean": {
+          "count": 4
+        }
+      }
+    }
+  },
+  "nestedTypes": {}
+}
+```
 
 
 #### `AggregateSummary`
@@ -175,7 +168,7 @@ Numeric and String types include a summary of the observed field sizes:
 - `min` the minimum number or string length
 - `max` the maximum number or string length
 - `mean` the average number or string length
-- `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile number or string length
+- `percentiles[25th, 33th, 50th, 66th, 75th, 99th]` values from the `Nth` percentile (number or string length)
 
 Percentile is based on input data, as-is with out sorting.
 
@@ -185,7 +178,6 @@ Range data for the `length` of a `String` field type:
 
 ```js
 {
-  "rank": 11,
   "count": 5,
   "length": { "min": 15, "mean": 19.4, "max": 26, "p25": 15, "p33": 15, "p50": 18, "p66": 23, "p75": 23, "p99": 26 }
 }
@@ -197,7 +189,6 @@ Range data for a `Date` fields `value`:
 
 ```js
 {
-  "rank": 4,
   "count": 4,
   "value": { "min": "2001-01-01T00:00:00.000Z", "mean": "2015-04-14T18:00:00.000Z", "max": "2020-02-02T00:00:00.000Z", "p25": "2020-02-02T00:00:00.000Z", "p33": "2020-02-02T00:00:00.000Z", "p50": "2019-12-31T00:00:00.000Z", "p66": "2019-12-31T00:00:00.000Z", "p75": "2001-01-01T00:00:00.000Z", "p99": "2001-01-01T00:00:00.000Z" }
 }
@@ -211,10 +202,10 @@ We recommend you provide at least 100+ rows. Accuracy increases greatly with 1,0
 The following features require a certain minimum # of records:
 
 - Enumeration detection.
-  - 100+ Rows Required.
+  - Requires at least 100 rows, with 10 or fewer unique values.
   - Number of unique values must not exceed 20 or 5% of the total number of records. (100 records will identify as Enum w/ 5 values. Up to 20 are possible given 400 or 1,000+.)
 - `Not Null` detection.
-  - where rowCount === field count
+  - where `emptyRowCount < (total rows - threshold)`
 
 ### Full List of Detected Types
 
@@ -233,3 +224,8 @@ The following features require a certain minimum # of records:
 - `Object`
 - `Null`
 
+## Similar/Alternative Projects
+
+- https://github.com/quicktype/quicktype
+- https://github.com/SweetIQ/schemats
+- https://github.com/vojtechhabarta/typescript-generator
